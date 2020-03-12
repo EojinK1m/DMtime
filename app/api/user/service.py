@@ -32,7 +32,7 @@ class UserService:
         if not user:
             return jsonify({'msg': 'user not found'}), 404
         elif user.username != username:
-            return jsonify({'msg':f'access denied, you are not {user.username}'}), 401
+            return jsonify({'msg':f'access denied, you are not {user.username}'}), 403
 
         user.username = new_username
         db.session.commit()

@@ -34,7 +34,7 @@ class PostListService():
             posts = PostModel.query.all()
         else:
             if not GalleryModel.query.get(gallery_id):
-                return jsonify({'msg':'Wrong gallery id'}), 404
+                return jsonify({'msg':'Wrong gallery id, gallery not found'}), 404
 
             posts = PostModel.query.filter_by(gallery = gallery_id)
 
@@ -48,7 +48,7 @@ class PostListService():
             return jsonify({'msg':'gallery_id missed'}), 400
         post_gallery = GalleryModel.query.get(gallery_id)
         if not post_gallery:
-            return jsonify({'msg': 'Wrong gallery id'}), 404
+            return jsonify({'msg': 'Wrong gallery id, gallery not found'}), 404
 
         content = data.get('content', None)
         title = data.get('title', None)
