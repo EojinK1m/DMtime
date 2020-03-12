@@ -31,3 +31,6 @@ def create_app():
         db.create_all()
 
     return app
+
+
+application = create_app()
