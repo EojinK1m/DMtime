@@ -19,9 +19,9 @@ class Refresh(Resource):
         return make_response(AuthService.refresh())
 
 class DuplicateCheckEmail(Resource):
-    def get(self, email):
-        return make_response(DuplicateCheck.email_check(email))
+    def get(self):
+        return make_response(DuplicateCheck.email_check(request.args.get('email')))
 
 class DuplicateCheckUsername(Resource):
-    def get(self, username):
-        return make_response(DuplicateCheck.username_check(username))
+    def get(self):
+        return make_response(DuplicateCheck.username_check(request.args.get('username')))

@@ -93,14 +93,18 @@ class DuplicateCheck:
 
     @staticmethod
     def email_check(email):
+        if(email == None):
+            return jsonify({'msg':'email parameter missed'}), 400
         if (AccountModel.query.filter_by(email=email).first() == None):
-            return jsonify({'msg':'same email does not exist'}), 200
+            return jsonify({'msg':'same email does not exist', 'usable':True}), 200
         else:
-            return jsonify({'msg': 'same email exist'}), 400
+            return jsonify({'msg': 'same email exist', 'usable':False}), 200
 
     @staticmethod
     def username_check(username):
+        if(username == None):
+            return jsonify({'msg':'username parameter missed'}), 400
         if (UserModel.query.filter_by(username=username).first() == None):
-            return jsonify({'msg':'same username does not exist'}), 200
+            return jsonify({'msg':'same username does not exist', 'usable':True}), 200
         else:
-            return jsonify({'msg': 'same username exist'}), 400
+            return jsonify({'msg': 'same username exist', 'usable':False}), 200
