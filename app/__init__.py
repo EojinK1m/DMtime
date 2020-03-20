@@ -15,9 +15,11 @@ from app.api.board import board_blueprint
 from app.api.user import user_blueprint
 from app.api.user import account
 
+
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
+
 
     app.register_blueprint(board_blueprint, url_prefix='/api/board')
     app.register_blueprint(user_blueprint, url_prefix='/api/user')
@@ -31,5 +33,4 @@ def create_app(config):
         db.create_all()
 
     return app
-
 
