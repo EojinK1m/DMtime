@@ -24,9 +24,12 @@ class AccountService:
 
     @staticmethod
     def register_account(data):
-        username = data.get('username', None)
         email = data.get('email', None)
         password = data.get('password', None)
+
+        username = data.get('username', None)
+        user_explain = data.get('user_explain', None)
+        profile_image = data.get('profile_image', None)
 
 
         if email is None or password is None or username is None:
@@ -39,11 +42,14 @@ class AccountService:
 
         new_account = AccountModel(email=email,
                                    password_hash=AccountModel.hash_password(password))
+
         db.session.add(new_account)
         db.session.commit()
 
 
-        new_user = UserModel(username=username, account = new_account)
+        new_user = UserModel(username=username, account = new_account,
+                             profile_image=profile_image, explain=user_explain)
+
 
         # try:
         db.session.add(new_user)

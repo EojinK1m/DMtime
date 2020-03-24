@@ -9,7 +9,7 @@ class UserService:
 
 
     @staticmethod
-    def provide_user_info(username): # 유저가 쓴 글도 보내주가ㅣ
+    def provide_user_info(username):
         find_user = UserModel.query.filter_by(username=username).first()
         if not find_user:
             return jsonify({'msg':'user not found'}), 404
@@ -25,8 +25,12 @@ class UserService:
     @jwt_required
     def modify_user_info(username, data):
         new_username = data.get('username', None)
-        if not new_username:
-            return jsonify({'msg': 'username parameter missed '}), 402
+        new_explain = data.get('user_explain', None)
+        new_profile_image = data.get('profile_image', None)
+
+
+        if not new_username or new_explain or new_profile_image:
+            return jsonify({'msg': 'parameter missed '}), 402
 
         user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
         if not user:
@@ -35,6 +39,8 @@ class UserService:
             return jsonify({'msg':f'access denied, you are not {user.username}'}), 403
 
         user.username = new_username
+        user.profile_image = new_profile_image
+        user.explain = new_explain
         db.session.commit()
 
         return jsonify({'msg':'modification succeed'}), 200

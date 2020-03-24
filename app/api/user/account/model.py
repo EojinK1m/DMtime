@@ -11,6 +11,7 @@ class AccountModel(db.Model):
     email = db.Column(db.String(30), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), unique=False, nullable=False)
 
+
     user = db.relationship('UserModel', uselist=False, backref='account')
 
 
@@ -33,7 +34,7 @@ from app.api.user.model import UserSchema
 class AccountSchema(ma.SQLAlchemySchema):
     class Meta:
         model = AccountModel
-    user = ma.Nested(UserSchema, only=['username'])
+    user = ma.Nested(UserSchema)
     email = ma.auto_field()
 
 account_schema = AccountSchema()
