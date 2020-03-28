@@ -1,8 +1,9 @@
 from flask import jsonify
 from flask_jwt_extended import jwt_required, jwt_refresh_token_required,\
     get_jwt_identity
-from app.api.user.model import UserModel, user_schema
+from app.api.user.model import UserModel, UserSchema
 from app.api.user.account.model import AccountModel, account_schema
+from app.api.user.service import UserService
 from app import db
 
 
@@ -29,7 +30,7 @@ class AccountService:
 
         username = data.get('username', None)
         user_explain = data.get('user_explain', None)
-        profile_image = data.get('profile_image', None)
+        profile_image_id = data.get('profile_image', None)
 
 
         if email is None or password is None or username is None:
@@ -47,8 +48,9 @@ class AccountService:
         db.session.commit()
 
 
-        new_user = UserModel(username=username, account = new_account,
-                             profile_image=profile_image, explain=user_explain)
+        new_user = UserModel(username=username, account = new_account,\
+                             explain=user_explain)
+        UserService.set_profile_image(uesr=new_user, profile_image_id=profile_image_id)
 
 
         # try:
@@ -81,7 +83,7 @@ class AuthService:
                 return jsonify({'access_token':access_token,
                                 'refresh_token':refresh_token,
                                 'msg':'login succeed',
-                                'user':user_schema.dump(login_account.user)}), 200
+                                'user':UserSchema(only=['username', 'profile_image']).dump(login_account.user)}), 200
 
         return jsonify({'msg':'incorrect username or password'}), 401
 

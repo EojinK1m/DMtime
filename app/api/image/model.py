@@ -10,12 +10,20 @@ class ImageModel(db.Model):
     gallery_id = db.Column(db.Integer, db.ForeignKey('gallery.id'), nullable=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
 
-    def get_uri(self):
-        return current_app.config["IMAGES_URL"]+self.filename
 
-
-
-class ImageSchema(ma.SQLAlchemyAutoSchema):
+class ImageSchema(ma.SQLAlchemySchema):
     class Meta:
-        pass
+        model = ImageModel()
+
+
+    url = ma.Method(serialize='get_uri', deserialize='get_uri')
+    filename = ma.auto_field()
+    id = ma.auto_field()
+
+    def get_uri(self, obj):
+        return current_app.config["IMAGES_URL"]+obj.filename
+
+
+
+
 

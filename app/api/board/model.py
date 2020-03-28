@@ -22,14 +22,13 @@ class GalleryModel(db.Model):
     posts = db.relationship('PostModel', backref='gallery')
 
 
-from app.api.user.model import UserSchema
 
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:
         model = PostModel
 
     id = ma.auto_field()
-    uploader = ma.Nested(UserSchema, only=['username'], uselist=False)
+    uploader = ma.Nested('UserSchema', only=['username'], uselist=False)
     content = ma.auto_field()
     title = ma.auto_field()
 
@@ -43,7 +42,7 @@ class GallerySchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     explain = ma.auto_field()
     id = ma.auto_field()
-    master = ma.Nested(UserSchema, only=['username'])
+    master = ma.Nested('UserSchema', only=['username'])
 
 
 gallery_schema  = GallerySchema()

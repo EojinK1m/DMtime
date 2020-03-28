@@ -24,10 +24,11 @@ def create_app(config):
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    from app.api.image.model import ImageModel
     from app.api.board.model import PostModel, GallerySchema
     from app.api.user.model import UserModel
     from app.api.user.account.model import AccountModel
-    from app.api.image.model import ImageModel
+
 
     with app.app_context():
         db.create_all()
