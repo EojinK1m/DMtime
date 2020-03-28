@@ -12,14 +12,19 @@ class AccountService:
 
     @staticmethod
     @jwt_required
-    def provide_account_info(account):
+    def provide_account_info(email):
         identity = get_jwt_identity()
+        account = AccountModel.query.filter_by(email=email).first()
 
-        if (account != identity):
-            return jsonify({'msg':'access denied'}), 403
+        if not account:
+            return jsonify(msg='account not found'), 404
 
-        account = AccountModel.query.filter_by(email=account).first()
-        return jsonify(account_schema.dump(account)), 200
+        if (email != identity):
+            return jsonify(msg='access denied'), 403
+
+
+        return jsonify(account_info=account_schema.dump(account),
+                       msg='query succeed'), 200
 
 
 
@@ -47,20 +52,40 @@ class AccountService:
         db.session.add(new_account)
         db.session.commit()
 
+        try:
+            new_user = UserModel(username=username, account = new_account,\
+                                 explain=user_explain)
+            UserService.set_profile_image(new_user, profile_image_id)
 
-        new_user = UserModel(username=username, account = new_account,\
-                             explain=user_explain)
-        UserService.set_profile_image(uesr=new_user, profile_image_id=profile_image_id)
+            db.session.add(new_user)
+            db.session.commit()
+        except:
+            new_account.delete_account()
+
+        return jsonify(msg='register succeed'), 200
 
 
-        # try:
-        db.session.add(new_user)
+    @staticmethod
+    @jwt_required
+    def delete_account(email):
+        account = AccountModel.query.filter_by(email=email).first()
+        if not account:
+            return jsonify(msg='account not found'), 404
+
+        if not get_jwt_identity() == email:
+            return jsonify(msg='access denied'), 403
+
+
+        UserService.delete_user(account.user)
+        account.delete_account()
+
         db.session.commit()
-        # except:
-        #     print()
-        #     return jsonify({'msg':'an error occurred while adding data to db'}), 500
 
-        return jsonify({'msg':'register succeed'}), 200
+        return jsonify(msg='account deleted!'), 200
+
+
+
+
 
 
 class AuthService:

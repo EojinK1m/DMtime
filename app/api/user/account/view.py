@@ -3,12 +3,16 @@ from flask_restful import Resource
 
 from app.api.user.account.service import AccountService, AuthService, DuplicateCheck
 
+
 class Account(Resource):
     def get(self):
-        return make_response(AccountService.provide_account_info(request.args.get('account')))
+        return make_response(AccountService.provide_account_info(request.args.get('email')))
 
     def post(self):
         return make_response(AccountService.register_account(request.json))
+
+    def delete(self):
+        return make_response(AccountService.delete_account(request.args.get('email')))
 
 class Auth(Resource):
     def post(self):

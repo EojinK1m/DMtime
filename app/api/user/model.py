@@ -13,6 +13,8 @@ class UserModel(db.Model):
     galleries = db.relationship('GalleryModel', backref='master')
     profile_image = db.relationship('ImageModel', uselist=False)
 
+    def delete_user(self):
+        db.session.delete(self)
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:

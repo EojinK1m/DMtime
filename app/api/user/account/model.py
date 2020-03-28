@@ -20,7 +20,8 @@ class AccountModel(db.Model):
         return bcrypt.generate_password_hash(password)
 
     def generate_access_token(self):
-        return create_access_token(identity=self.email)
+        import datetime
+        return create_access_token(identity=self.email, expires_delta=datetime.timedelta(days=365))
 
     def generate_refresh_token(self):
         return create_refresh_token(identity=self.email)
@@ -28,6 +29,8 @@ class AccountModel(db.Model):
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
+    def delete_account(self):
+        db.session.delete(self)
 
 from app.api.user.model import UserSchema
 

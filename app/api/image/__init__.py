@@ -7,3 +7,4 @@ image_blueprint = Blueprint('image api', 'image api')
 image_api = Api(image_blueprint)
 image_api.add_resource(ImageUpload, '/')
 
+

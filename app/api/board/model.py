@@ -8,8 +8,11 @@ class PostModel(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(30), nullable=False)
     content = db.Column(db.Text(), nullable=True)
-    uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
+    uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
+
+    def delete_post(self):
+        db.session.remove(self)
 
 class GalleryModel(db.Model):
     __tablename__ = 'gallery'
@@ -17,11 +20,12 @@ class GalleryModel(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.Text, nullable=True)
-    master_id = db.Column(db.Integer(), db.ForeignKey('user.id'),  nullable=False)
+    master_id = db.Column(db.Integer(), db.ForeignKey('user.id'),  nullable=True)
 
     posts = db.relationship('PostModel', backref='gallery')
 
-
+    def delete_gallery(self):
+        db.session.remove(self)
 
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:
