@@ -55,12 +55,15 @@ class AccountService:
         try:
             new_user = UserModel(username=username, account = new_account,\
                                  explain=user_explain)
-            UserService.set_profile_image(new_user, profile_image_id)
 
             db.session.add(new_user)
             db.session.commit()
         except:
             new_account.delete_account()
+            return jsonify(msg='an error occurred while creating new_user'), 500
+
+        if(UserService.set_profile_image(new_user, profile_image_id)):
+            return jsonify(msg='register succeed but while setting profile image, an error occurred'), 206
 
         return jsonify(msg='register succeed'), 200
 

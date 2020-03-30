@@ -8,6 +8,7 @@ from app.api.board.model import PostModel, post_schema, posts_schema,\
 
 
 from app.api.user.account.model import AccountModel
+from app.api.image.service import ImageService
 
 
 class PostService():
@@ -20,6 +21,7 @@ class PostService():
         if not post:
             return jsonify({'msg':'Not found'}), 404
 
+        post.increase_view()
         return jsonify(post_schema.dump(post)), 200
 
 
@@ -80,6 +82,7 @@ class GalleryListService:
     def create_gallery(data):
         name = data.get('name', None)
         explain = data.get('explain', None)
+
         master_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
 
         if not name or not explain:
@@ -95,6 +98,7 @@ class GalleryListService:
         db.session.add(new_gallery)
         db.session.commit()
 
+
         return jsonify({'msg':'successfully gallery created'}), 200
 
 
@@ -109,4 +113,22 @@ class GalleryService:
             return jsonify({'msg':'gallery not fount'}), 404
 
         return jsonify(gallery_schema.dump(gallery)), 200
+
+    @staticmethod
+    @jwt_required
+    def delete_gallery(gallery_id):
+        gallery = GalleryModel.query.get(gallery_id)
+
+        if not gallery:
+            return jsonify(msg='gallery not found'), 404
+
+        delete_user = AccountModel.query.get(get_jwt_identity())
+        if not delete_user:
+            return jsonify(msg='unknown user, user cant found')
+        if not delete_user.id == gallery.master_id:
+            return jsonify(msg='access denied'), 403
+
+        for post in gallery.posts:
+            post.delete_post()
+        gallery.delete_gallery()
 
