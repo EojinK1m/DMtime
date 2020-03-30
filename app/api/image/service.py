@@ -76,16 +76,23 @@ class ImageService:
     @staticmethod
     def set_foreign_key(image_id, key, location):
         image = ImageModel.query.filter_by(id=image_id).first()
+
         if not image:
             return False
-
-        if location == 'user':
-            image.user_id = key
-        elif location == 'gallery':
-            image.gallery_id = key
-        elif location == 'post':
-            image.post_id = key
-        else:
+        if image.post_id or image.user_id:
             return False
+
+        try:
+            if location == 'user':
+                image.user_id = key
+            elif location == 'gallery':
+                image.gallery_id = key
+            elif location == 'post':
+                image.post_id = key
+            else:
+                return False
+        except:
+            return False
+
         return True
 

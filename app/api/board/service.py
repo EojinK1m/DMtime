@@ -54,10 +54,13 @@ class PostListService():
 
         content = data.get('content', None)
         title = data.get('title', None)
+        image_ids = data.get('image_ids', None)
+
         uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
 
         if not content or not title:
             return jsonify({'msg':'missing parameter exist'}), 400
+
 
         new_post = PostModel(content=content,
                              title=title,
@@ -65,8 +68,15 @@ class PostListService():
                              gallery=post_gallery)
 
         db.session.add(new_post)
-        db.session.commit()
+        db.session.flush()
 
+        if image_ids:
+            for image_id in image_ids:
+                if not ImageService.set_foreign_key(image_id=image_id, key=new_post.id, location='post'):
+                    db.session.rollback()
+                    return jsonify(msg='an error occurred while registering images, plz check image ids'), 500
+
+        db.session.commit()
         return jsonify({'msg':'posting succeed'}), 200
 
 
