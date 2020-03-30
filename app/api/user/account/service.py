@@ -46,25 +46,24 @@ class AccountService:
         if UserModel.query.filter_by(username=username).first():
             return jsonify({'msg':'same username exist'}), 400
 
-        new_account = AccountModel(email=email,
-                                   password_hash=AccountModel.hash_password(password))
-
-        db.session.add(new_account)
-        db.session.commit()
-
         try:
+            new_account = AccountModel(email=email,
+                                       password_hash=AccountModel.hash_password(password))
+            db.session.add(new_account)
+            db.session.flush()
+
             new_user = UserModel(username=username, account = new_account,\
                                  explain=user_explain)
-
             db.session.add(new_user)
-            db.session.commit()
         except:
-            new_account.delete_account()
-            return jsonify(msg='an error occurred while creating new_user'), 500
+            db.session.rollback()
+            return jsonify(msg='an error occurred while adding infos in db'), 500
+        db.session.commit()
 
-        if(UserService.set_profile_image(new_user, profile_image_id)):
-            return jsonify(msg='register succeed but while setting profile image, an error occurred'), 206
+        if not UserService.set_profile_image(new_user, profile_image_id):
+            return jsonify(msg='register succeed but while registering profile image, an error occurred.\nplz check image_id'), 206
 
+        db.session.commit()
         return jsonify(msg='register succeed'), 200
 
 

@@ -101,14 +101,15 @@ class GalleryListService:
         if GalleryModel.query.filter_by(name=name).first():
             return jsonify({'msg':'same named gallery exist'}), 403
 
-        new_gallery = GalleryModel(name=name,
-                                   explain=explain,
-                                   master=master_account.user)
+        try:
+            new_gallery = GalleryModel(name=name,
+                                       explain=explain,
+                                       master=master_account.user)
 
-        db.session.add(new_gallery)
+            db.session.add(new_gallery)
+        except:
+            return jsonify(msg='an error occurred while making gallery at db'), 500
         db.session.commit()
-
-
         return jsonify({'msg':'successfully gallery created'}), 200
 
 
