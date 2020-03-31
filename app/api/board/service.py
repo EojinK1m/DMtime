@@ -207,7 +207,6 @@ class GalleryService:
 
 
 
-
     @staticmethod
     @jwt_required
     def delete_gallery(gallery_id):
@@ -216,7 +215,7 @@ class GalleryService:
         if not gallery:
             return jsonify(msg='gallery not found'), 404
 
-        delete_user = AccountModel.query.get(get_jwt_identity())
+        delete_user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
         if not delete_user:
             return jsonify(msg='unknown user, user cant found')
         if not delete_user.id == gallery.master_id:
@@ -226,3 +225,5 @@ class GalleryService:
             post.delete_post()
         gallery.delete_gallery()
 
+        db.session.commit()
+        return jsonify(msg='gallery deleted'), 200
