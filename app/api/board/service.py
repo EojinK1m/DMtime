@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import db
@@ -124,6 +124,27 @@ class GalleryService:
             return jsonify({'msg':'gallery not fount'}), 404
 
         return jsonify(gallery_schema.dump(gallery)), 200
+
+    @staticmethod
+    @jwt_required
+    def modify_gallery_info(gallery_id):
+        gallery = GalleryModel.query.get(gallery_id)
+        if not gallery:
+            return jsonify({'msg': 'gallery not fount'}), 404
+        json_info = request.json
+        explain = json_info.get('explain', None)
+        name = json_info.get('name', None)
+        if not name:
+            return jsonify(msg='name parameter missed'), 403
+
+        gallery.explain = explain
+        gallery.name = name
+
+        db.session.commit()
+        return jsonify(msg='modify succeed'), 200
+
+
+
 
     @staticmethod
     @jwt_required
