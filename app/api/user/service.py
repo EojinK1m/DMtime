@@ -45,6 +45,10 @@ class UserService:
 
     @staticmethod
     def set_profile_image(user, profile_image_id):
+        print(user.id)
+        print(profile_image_id)
+
+
         if user.profile_image == None:
             if profile_image_id == None:
                 return True
@@ -52,10 +56,13 @@ class UserService:
             return True
 
         if user.profile_image:
-            return ImageService.delete_image(user.profile_image.id)
+            if not ImageService.delete_image(user.profile_image.id):
+                return False
         if profile_image_id:
-            return ImageService.set_foreign_key(profile_image_id, user.id, 'user')
+            if not ImageService.set_foreign_key(profile_image_id, user.id, 'user'):
+                return False
 
+        return True
 
     @staticmethod
     def delete_user(user):

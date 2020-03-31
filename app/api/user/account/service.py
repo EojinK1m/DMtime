@@ -35,7 +35,7 @@ class AccountService:
 
         username = data.get('username', None)
         user_explain = data.get('user_explain', None)
-        profile_image_id = data.get('profile_image', None)
+        profile_image_id = data.get('profile_image_id', None)
 
 
         if email is None or password is None or username is None:
@@ -82,7 +82,6 @@ class AccountService:
         account.delete_account()
 
         db.session.commit()
-
         return jsonify(msg='account deleted!'), 200
 
 

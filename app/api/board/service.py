@@ -11,6 +11,12 @@ from app.api.user.account.model import AccountModel
 from app.api.image.service import ImageService
 
 
+def check_user_permission(post):
+    user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+    return user.id == post.uploader.id
+
+
+
 class PostService():
 
 
@@ -23,6 +29,59 @@ class PostService():
 
         post.increase_view()
         return jsonify(post_schema.dump(post)), 200
+
+    @staticmethod
+    @jwt_required
+    def delete_post(post_id):
+        post = PostModel.query.get(post_id)
+
+        if not post:
+            return jsonify({'msg':'Not found'}), 404
+        if not check_user_permission(post):
+            return jsonify(msg='access denied'), 403
+
+        for image in post.images:
+            ImageService.delete_image(image.id)
+        post.delete_post()
+
+        db.session.commit()
+        return jsonify(msg='post deleted'), 200
+
+
+    @staticmethod
+    @jwt_required
+    def modify_post(post_id):
+        post = PostModel.query.get(post_id)
+        if not post:
+            return jsonify(msg='Not found'), 404
+        if not check_user_permission(post):
+            return jsonify(msg='access denied'), 403
+
+        json_data = request.json
+        title = json_data.get('title', None)
+        content = json_data.get('content', None)
+        image_ids = json_data.get('image_ids', None)
+
+        before_image_ids = [image.id for image in post.images]
+        delete_images_ids= [id for id in before_image_ids if not id in image_ids]
+        new_image_ids = [id for id in image_ids if not id in before_image_ids]
+
+        for image_id_to_delete in delete_images_ids:
+            ImageService.delete_image(image_id_to_delete)
+        for image_id_to_register in new_image_ids:
+            ImageService.set_foreign_key(image_id_to_register, post.id, 'post')
+
+        if not title or not content:
+            return jsonify(msg='parameter missed'), 400
+
+        post.content = content
+        post.title = title
+
+        db.session.commit()
+        return jsonify(msg='modify succeed'), 200
+
+
+
 
 
 

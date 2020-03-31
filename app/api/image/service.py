@@ -69,7 +69,6 @@ class ImageService:
         os.remove(get_path_from_filename(file_name))
         db.session.delete(delete_image_column)
 
-        db.session.commit()
         return True
 
 

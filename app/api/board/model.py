@@ -8,20 +8,21 @@ class PostModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(30), nullable=False)
-    content = db.Column(db.Text(), nullable=True)
+    content = db.Column(db.Text(), nullable=True) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
+    images = db.relationship('ImageModel')
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
 
 
+
     def delete_post(self):
-        db.session.remove(self)
+        db.session.delete(self)
 
     def increase_view(self):
         self.views = self.views + 1
-        print(self.views)
         db.session.commit()
 
 
@@ -42,6 +43,7 @@ class PostSchema(ma.SQLAlchemySchema):
     class Meta:
         model = PostModel
 
+    image_ids = ma.Method(serialize='get_image_ids', deserialize='get_image_ids')
     id = ma.auto_field()
     uploader = ma.Nested('UserSchema', only=['username'], uselist=False)
     content = ma.auto_field()
@@ -49,7 +51,11 @@ class PostSchema(ma.SQLAlchemySchema):
     views = ma.auto_field()
     posted_datetime = ma.auto_field()
 
-
+    def get_image_ids(self, obj):
+        list = []
+        for image in obj.images:
+            list.append(image.id)
+        return list
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views"])

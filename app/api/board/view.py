@@ -16,6 +16,10 @@ class PostList(Resource):
 class Post(Resource):
     def get(self, post_id):
         return make_response(PostService.provide_post(post_id))
+    def patch(self, post_id):
+        return make_response(PostService.modify_post(post_id))
+    def delete(self, post_id):
+        return make_response(PostService.delete_post(post_id))
 
 class GalleryList(Resource):
     def get(self):
