@@ -61,6 +61,7 @@ class AccountService:
         db.session.commit()
 
         if not UserService.set_profile_image(new_user, profile_image_id):
+            db.session.rollback()
             return jsonify(msg='register succeed but while registering profile image, an error occurred.\nplz check image_id'), 206
 
         db.session.commit()

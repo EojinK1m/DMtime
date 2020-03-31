@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -124,7 +126,8 @@ class PostListService():
         new_post = PostModel(content=content,
                              title=title,
                              uploader=uploader_account.user,
-                             gallery=post_gallery)
+                             gallery=post_gallery,
+                             posted_datetime=datetime.now())
 
         db.session.add(new_post)
         db.session.flush()
