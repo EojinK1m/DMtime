@@ -91,18 +91,23 @@ class PostListService():
 
 
     @staticmethod
-    def provide_post_list(gallery_id):
+    def provide_post_list(gallery_id, page):
 
         if (gallery_id == None):
             posts = PostModel.query.all()
         else:
             if not GalleryModel.query.get(gallery_id):
                 return jsonify({'msg':'Wrong gallery id, gallery not found'}), 404
+            posts = PostModel.query.filter_by(gallery_id=gallery_id)
 
-            posts = PostModel.query.filter_by(gallery_id = gallery_id)
+        if page:
+             page = int(page)
 
+        posts = posts.order_by(PostModel.posted_datetime.desc()).\
+                paginate(per_page=3, page=page)
 
-        return jsonify(posts_schema.dump(posts)), 200
+        return jsonify({'posts':posts_schema.dump(posts.items),
+                       'number_of_pages':posts.pages}), 200
 
     @staticmethod
     @jwt_required
@@ -115,6 +120,7 @@ class PostListService():
 
         content = data.get('content', None)
         title = data.get('title', None)
+        image_ids = data.get('image_ids', None)
         image_ids = data.get('image_ids', None)
 
         uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
