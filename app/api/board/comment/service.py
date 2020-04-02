@@ -24,7 +24,8 @@ class CommentService():
         if not comment:
             return jsonify(msg='wrong comment_id, comment not found'), 404
 
-        modify_user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+        modify_user = AccountModel.get_user_by_email(email=get_jwt_identity())
+        #modify_user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
         if not modify_user.id == comment.writer.id:
             return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
 
@@ -41,6 +42,7 @@ class CommentService():
         db.session.commit()
 
         return jsonify(msg='comment modify succeed'), 200
+
 
 
 class CommentListService():

@@ -32,6 +32,18 @@ class AccountModel(db.Model):
     def delete_account(self):
         db.session.delete(self)
 
+    @staticmethod
+    def get_user_by_email(email):
+        account = AccountModel.get_account_by_email(email)
+        if not account:
+            return None
+        else:
+            return account.user
+
+    @staticmethod
+    def get_account_by_email(email):
+        return AccountModel.query.filter_by(email=email).first()
+
 from app.api.user.model import UserSchema
 
 class AccountSchema(ma.SQLAlchemySchema):

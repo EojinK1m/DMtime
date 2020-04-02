@@ -16,6 +16,7 @@ class UserModel(db.Model):
     def delete_user(self):
         db.session.delete(self)
 
+
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = UserModel()

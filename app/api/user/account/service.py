@@ -14,7 +14,7 @@ class AccountService:
     @jwt_required
     def provide_account_info(email):
         identity = get_jwt_identity()
-        account = AccountModel.query.filter_by(email=email).first()
+        account = AccountModel.get_account_by_email
 
         if not account:
             return jsonify(msg='account not found'), 404
@@ -41,7 +41,7 @@ class AccountService:
         if email is None or password is None or username is None:
             return jsonify({'msg':'missing parameter exist'}), 400
 
-        if AccountModel.query.filter_by(email=email).first():
+        if AccountModel.get_account_by_email:
             return jsonify({'msg':'same email exist'}), 400
         if UserModel.query.filter_by(username=username).first():
             return jsonify({'msg':'same username exist'}), 400
@@ -71,7 +71,7 @@ class AccountService:
     @staticmethod
     @jwt_required
     def delete_account(email):
-        account = AccountModel.query.filter_by(email=email).first()
+        account = AccountModel.get_account_by_email
         if not account:
             return jsonify(msg='account not found'), 404
 
@@ -100,7 +100,7 @@ class AuthService:
         if not email or not password:
             return jsonify({'msg':'missing parameter exist'}), 400
 
-        login_account = AccountModel.query.filter_by(email=email).first()
+        login_account = AccountModel.get_account_by_email
 
         if login_account:
             if login_account.verify_password(password):
@@ -118,7 +118,7 @@ class AuthService:
     @jwt_refresh_token_required
     def refresh():
         email = get_jwt_identity()
-        account = AccountModel.query.filter_by(email=email).first()
+        account = AccountModel.get_account_by_email
         access_token = account.generate_access_token()
 
         return jsonify({'access_token': access_token}), 200
@@ -130,7 +130,7 @@ class DuplicateCheck:
     def email_check(email):
         if(email == None):
             return jsonify({'msg':'email parameter missed'}), 400
-        if (AccountModel.query.filter_by(email=email).first() == None):
+        if (AccountModel.get_account_by_email == None):
             return jsonify({'msg':'same email does not exist', 'usable':True}), 200
         else:
             return jsonify({'msg': 'same email exist', 'usable':False}), 200
