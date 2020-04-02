@@ -6,7 +6,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 
 from app.api.board.model import PostModel, post_schema, posts_schema,\
-    GalleryModel, gallery_schema, galleries_schema
+    GalleryModel, gallery_schema, galleries_schema,\
+    PostLikeModel
 
 
 from app.api.user.account.model import AccountModel
@@ -81,6 +82,35 @@ class PostService():
 
         db.session.commit()
         return jsonify(msg='modify succeed'), 200
+
+
+    @staticmethod
+    @jwt_required
+    def post_like(post_id):
+        post = PostModel.query.get(post_id)
+        request_user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+
+        if not post:
+            return 404
+
+        postlikes = PostLikeModel.query.filter_by(post_id = post_id)
+        request_user_postlike = postlikes.filter_by(liker_id=request_user.id).first()
+        
+        if(request_user_postlike):
+            db.session.delete(request_user_postlike)
+            db.session.commit()
+
+            return jsonify(msg='cancel post like'), 200
+        else:
+            new_postlike = PostLikeModel(liker_id=request_user.id, post_id=post.id)
+            db.session.add(new_postlike)
+            db.session.commit()
+
+            return jsonify(msg='post like'), 201
+
+
+
+
 
 
 

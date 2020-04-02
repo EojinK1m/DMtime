@@ -22,6 +22,10 @@ class Post(Resource):
     def delete(self, post_id):
         return make_response(PostService.delete_post(post_id))
 
+class PostLike(Resource):
+    def get(self, post_id):
+        return make_response(PostService.post_like(post_id))
+
 class GalleryList(Resource):
     def get(self):
         return make_response(GalleryListService.provide_gallery_list())

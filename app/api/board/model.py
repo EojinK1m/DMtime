@@ -12,10 +12,10 @@ class PostModel(db.Model):
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
     images = db.relationship('ImageModel')
+    postlikes = db.relationship('PostLikeModel')
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
-
 
 
     def delete_post(self):
@@ -24,6 +24,16 @@ class PostModel(db.Model):
     def increase_view(self):
         self.views = self.views + 1
         db.session.commit()
+
+
+
+class PostLikeModel(db.Model):
+    __tablename__ = 'postlike'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    post_id = db.Column(db.Integer(), db.ForeignKey('post.id'), nullable=False)
+    liker_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
+
 
 
 class GalleryModel(db.Model):
@@ -39,6 +49,7 @@ class GalleryModel(db.Model):
     def delete_gallery(self):
         db.session.delete(self)
 
+
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:
         model = PostModel
@@ -50,12 +61,16 @@ class PostSchema(ma.SQLAlchemySchema):
     title = ma.auto_field()
     views = ma.auto_field()
     posted_datetime = ma.auto_field()
+    likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
 
     def get_image_ids(self, obj):
         list = []
         for image in obj.images:
             list.append(image.id)
         return list
+
+    def get_number_of_postlikes(self, obj):
+        return len(obj.postlikes)
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views"])
