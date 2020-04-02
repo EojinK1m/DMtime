@@ -10,8 +10,38 @@ from app.api.board.comment.model import CommentModel, comments_schema
 from app.api.user.account.model import AccountModel
 
 
+def is_correct_length(content_len):
+    return content_len <= 100
+
+
 class CommentService():
-    pass
+
+
+    @staticmethod
+    @jwt_required
+    def modify_comment(comment_id):
+        comment = CommentModel.query.get(comment_id)
+        if not comment:
+            return jsonify(msg='wrong comment_id, comment not found'), 404
+
+        modify_user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+        if not modify_user.id == comment.writer.id:
+            return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
+
+        new_content = request.json.get('content', None)
+        if not new_content:
+            return jsonify(msg='content parameter missed'), 400
+
+        if not is_correct_length(len(new_content)):
+            return jsonify(msg='content is too long, it must be shorter than 100'), 413
+
+        comment.content = new_content
+        comment.wrote_datetime = datetime.now()
+
+        db.session.commit()
+
+        return jsonify(msg='comment modify succeed'), 200
+
 
 class CommentListService():
 
@@ -30,7 +60,7 @@ class CommentListService():
         content = request.json.get('content', None)
         if not content:
             return jsonify(msg='content parameter missed'), 400
-        if len(content) > 100:
+        if not is_correct_length(len(content)):
             return jsonify(msg='content is too long, it must be shorter than 100'), 413
 
 

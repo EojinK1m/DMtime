@@ -11,4 +11,5 @@ class CommentList(Resource):
         return make_response(CommentListService.write_comment())
 
 class Comment(Resource):
-    pass
+    def patch(self, comment_id):
+        return make_response(CommentService.modify_comment(comment_id))
