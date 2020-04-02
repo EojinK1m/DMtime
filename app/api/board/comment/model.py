@@ -13,6 +13,8 @@ class CommentModel(db.Model):
 
     writer = db.relationship('UserModel')
 
+    def delete_comment(self):
+        db.session.delete(self)
 
 class CommentSchema(ma.SQLAlchemySchema):
     class Meta:
