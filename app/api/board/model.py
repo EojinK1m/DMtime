@@ -73,7 +73,7 @@ class PostSchema(ma.SQLAlchemySchema):
         return len(obj.postlikes)
 
 post_schema = PostSchema()
-posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views"])
+posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views", "likes"])
 
 class GallerySchema(ma.SQLAlchemySchema):
     class Meta:
