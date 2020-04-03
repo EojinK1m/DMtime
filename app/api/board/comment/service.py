@@ -108,6 +108,10 @@ class CommentListService():
     def provide_comments():
         post_id = request.args.get('post_id', None)
         username = request.args.get('username', None)
+        page = request.args.get('page', None)
+
+        if not page:
+            page = 1
 
         if post_id:
             if username:
@@ -124,10 +128,18 @@ class CommentListService():
         else:
             return jsonify(msg='parameter missed'), 400
 
-        if username:
-            dumped_comments = comments_schema_user.dump(comments)
-        else:
-            dumped_comments = comments_schema.dump(comments)
+        if page:
+             try: page = int(page)
+             except ValueError: return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
-        return jsonify({'comments':dumped_comments,
-                       'msg':'query_succeed'}), 200
+        comments = comments.order_by(CommentModel.wrote_datetime.desc()).\
+               paginate(per_page=3, page=page)
+
+        if username:
+            dumped_comments = comments_schema_user.dump(comments.items)
+        else:
+            dumped_comments = comments_schema.dump(comments.items)
+
+        return jsonify(comments=dumped_comments,
+                       msg='query_succeed',
+                       number_of_pages=comments.pages), 200
