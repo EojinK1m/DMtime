@@ -12,7 +12,7 @@ class CommentModel(db.Model):
     wrote_datetime = db.Column(db.DateTime(), nullable=False)
 
     writer = db.relationship('UserModel', backref='comments')
-    wrote_post = db.relationship('PostModel')
+    wrote_post = db.relationship('PostModel', backref='comments')
 
     def delete_comment(self):
         db.session.delete(self)

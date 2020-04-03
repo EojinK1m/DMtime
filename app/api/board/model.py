@@ -1,8 +1,6 @@
 from app import db, ma
 from datetime import datetime
 
-
-
 class PostModel(db.Model):
     __tablename__ = 'post'
 
@@ -13,10 +11,11 @@ class PostModel(db.Model):
     views = db.Column(db.Integer(), default=0)
     images = db.relationship('ImageModel')
     postlikes = db.relationship('PostLikeModel')
+    posted_gallery = db.relationship('GalleryModel')
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
-    posted_gallery = db.relationship('GalleryModel')
+
 
     def delete_post(self):
         db.session.delete(self)
@@ -63,6 +62,7 @@ class PostSchema(ma.SQLAlchemySchema):
     posted_datetime = ma.auto_field()
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
     posted_gallery = ma.Nested('GallerySchema', only=['name', 'id'])
+    number_of_comments = ma.Method(serialize='get_number_of_comments')
 
     def get_image_ids(self, obj):
         list = []
@@ -73,8 +73,11 @@ class PostSchema(ma.SQLAlchemySchema):
     def get_number_of_postlikes(self, obj):
         return len(obj.postlikes)
 
+    def get_number_of_comments(self, obj):
+        return len(obj.comments)
+
 post_schema = PostSchema()
-posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views", "likes"])
+posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views", "likes", "number_of_comments"])
 posts_schema_user = PostSchema(many=True, only=["title", "id", "posted_datetime", "views", "likes", "posted_gallery"])
 
 
