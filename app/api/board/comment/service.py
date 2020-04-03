@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 
 from app.api.board.model import PostModel
-from app.api.board.comment.model import CommentModel, comments_schema
+from app.api.board.comment.model import CommentModel, comments_schema, comments_schema_user
 from app.api.user.account.model import AccountModel
 from app.api.user.model import UserModel
 
@@ -113,14 +113,21 @@ class CommentListService():
             if username:
                 return jsonify(msg='post_id and username cant be given together, u must give one of both'), 400
             else:
+                if not PostModel.query.get(post_id):
+                    return jsonify(msg=f'wrong post_id, post {post_id} not found'), 404
                 comments = CommentModel.query.filter_by(wrote_post_id = post_id)
         elif username:
             found_user = UserModel.query.filter_by(username=username).first()
             if not found_user:
-                return jsonify(msg=f'wrong username user {username} not found'), 404
-            comments = found_user.comments
+                return jsonify(msg=f'wrong username, user {username} not found'), 404
+            comments = CommentModel.query.filter_by(wrote_user_id = found_user.id)
         else:
             return jsonify(msg='parameter missed'), 400
 
-        return jsonify({'comments':comments_schema.dump(comments),
+        if username:
+            dumped_comments = comments_schema_user.dump(comments)
+        else:
+            dumped_comments = comments_schema.dump(comments)
+
+        return jsonify({'comments':dumped_comments,
                        'msg':'query_succeed'}), 200

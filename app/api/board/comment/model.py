@@ -26,7 +26,8 @@ class CommentSchema(ma.SQLAlchemySchema):
     wrote_datetime = ma.auto_field()
     upper_comment_id = ma.auto_field()
     writer = ma.Nested('UserSchema', only=['username'])
-    wrote_post = ma.Nested('PostSchema', only=['id', 'title'])
+    wrote_post = ma.Nested('PostSchema', only=['id'])
 
 
-comments_schema = CommentSchema(many=True)
+comments_schema = CommentSchema(many=True, exclude=['wrote_post'])
+comments_schema_user = CommentSchema(many=True, exclude=['writer', 'upper_comment_id'])
