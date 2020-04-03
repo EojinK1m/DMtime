@@ -6,9 +6,7 @@ from app.api.board.service import PostService, PostListService,\
 
 class PostList(Resource):
     def get(self):
-        gallery_id = request.args.get('gallery-id', None)
-        page = request.args.get('page', None)
-        return make_response(PostListService.provide_post_list(gallery_id, page))
+     return make_response(PostListService.provide_post_list())
 
     def post(self):
         gallery_id = request.args.get('gallery-id', None)

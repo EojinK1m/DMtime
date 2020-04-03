@@ -16,7 +16,7 @@ class PostModel(db.Model):
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
-
+    posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):
         db.session.delete(self)
@@ -62,7 +62,7 @@ class PostSchema(ma.SQLAlchemySchema):
     views = ma.auto_field()
     posted_datetime = ma.auto_field()
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
-
+    posted_gallery = ma.Nested('GallerySchema', only=['name', 'id'])
 
     def get_image_ids(self, obj):
         list = []
@@ -75,6 +75,8 @@ class PostSchema(ma.SQLAlchemySchema):
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views", "likes"])
+posts_schema_user = PostSchema(many=True, only=["title", "id", "posted_datetime", "views", "likes", "posted_gallery"])
+
 
 class GallerySchema(ma.SQLAlchemySchema):
     class Meta:

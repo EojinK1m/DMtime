@@ -5,11 +5,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import db
 
-from app.api.board.model import PostModel, post_schema, posts_schema,\
+from app.api.board.model import PostModel, post_schema, posts_schema, posts_schema_user,\
     GalleryModel, gallery_schema, galleries_schema,\
     PostLikeModel
 
 
+from app.api.user.model import UserModel
 from app.api.user.account.model import AccountModel
 from app.api.image.service import ImageService
 
@@ -121,22 +122,40 @@ class PostListService():
 
 
     @staticmethod
-    def provide_post_list(gallery_id, page):
+    def provide_post_list():
+        gallery_id = request.args.get('gallery_id', None)
+        username = request.args.get('username', None)
+        page = request.args.get('page', 1)
+        if not page:
+            page = 1
 
         if (gallery_id == None):
-            posts = PostModel.query.all()
+            if username:
+                user = UserModel.query.filter_by(username=username).first()
+                if not user:
+                    return jsonify(msg='wrong username, user not found'), 404
+                posts = PostModel.query.filter_by(uploader_id=user.id)
+            else:
+                posts = PostModel.query
         else:
+            if username:
+                return jsonify(msg='gallery_id and username cant be given together, u must give one of both'), 400
             if not GalleryModel.query.get(gallery_id):
                 return jsonify({'msg':'Wrong gallery id, gallery not found'}), 404
             posts = PostModel.query.filter_by(gallery_id=gallery_id)
 
         if page:
-             page = int(page)
+             try: page = int(page)
+             except ValueError: return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
         posts = posts.order_by(PostModel.posted_datetime.desc()).\
-                paginate(per_page=3, page=page)
+               paginate(per_page=3, page=page)
+        if username:
+            dumped_posts = posts_schema_user.dump(posts.items)
+        else:
+            dumped_posts = posts_schema.dump(posts.items)
 
-        return jsonify({'posts':posts_schema.dump(posts.items),
+        return jsonify({'posts':dumped_posts,
                        'number_of_pages':posts.pages}), 200
 
     @staticmethod
