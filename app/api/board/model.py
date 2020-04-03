@@ -63,6 +63,7 @@ class PostSchema(ma.SQLAlchemySchema):
     posted_datetime = ma.auto_field()
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
 
+
     def get_image_ids(self, obj):
         list = []
         for image in obj.images:
