@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
 
@@ -16,9 +16,12 @@ from app.api.image.service import ImageService
 
 
 def check_user_permission(post):
-    user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+    identify = get_jwt_identity()
+    roles = get_jwt_claims()['roles']
+    if roles == 'admin':
+        return True
+    user = AccountModel.query.filter_by(email=identify).first().user
     return user.id == post.uploader.id
-
 
 
 class PostService():

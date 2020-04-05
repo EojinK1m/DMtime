@@ -1,7 +1,19 @@
+from flask import current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 from app import bcrypt
 from app import db, ma
+from app import jwt
+
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    if identity in current_app.config['ADMIN_LIST']:
+        print('admin')
+        return {'roles': 'admin'}
+    else:
+        print('peasant')
+        return {'roles': 'peasant'}
 
 
 class AccountModel(db.Model):
@@ -54,3 +66,4 @@ class AccountSchema(ma.SQLAlchemySchema):
 
 account_schema = AccountSchema()
 accounts_schema =  AccountSchema(many=True)
+
