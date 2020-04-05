@@ -63,6 +63,7 @@ class PostSchema(ma.SQLAlchemySchema):
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
     posted_gallery = ma.Nested('GallerySchema', only=['name', 'id'])
     number_of_comments = ma.Method(serialize='get_number_of_comments')
+    whether_exist_image = ma.Method(serialize = 'get_whether_image_exist')
 
     def get_image_ids(self, obj):
         list = []
@@ -76,9 +77,15 @@ class PostSchema(ma.SQLAlchemySchema):
     def get_number_of_comments(self, obj):
         return len(obj.comments)
 
-post_schema = PostSchema()
-posts_schema = PostSchema(many=True, only=["title", "uploader", "id", "posted_datetime", "views", "likes", "number_of_comments"])
-posts_schema_user = PostSchema(many=True, only=["title", "id", "posted_datetime", "views", "likes", "posted_gallery"])
+    def get_whether_image_exist(self, obj):
+        if not obj.images:
+            return False
+        else:
+            return True
+
+post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
+posts_schema = PostSchema(many=True, exclude=['posted_gallery', 'image_ids', 'content'])
+posts_schema_user = PostSchema(many=True, exclude=['content', 'image_ids', 'uploader'])
 
 
 class GallerySchema(ma.SQLAlchemySchema):
