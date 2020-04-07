@@ -6,7 +6,7 @@ class CommentModel(db.Model):
 
     id  = db.Column(db.Integer(), primary_key=True)
     wrote_user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
-    wrote_post_id = db.Column(db.Integer(), db.ForeignKey('post.id'), nullable=False)
+    wrote_post_id = db.Column(db.Integer(), db.ForeignKey('post.id'), nullable=True)
     upper_comment_id = db.Column(db.Integer(), db.ForeignKey('comment.id'), nullable=True)
     content = db.Column(db.String(100), nullable=False)
     wrote_datetime = db.Column(db.DateTime(), nullable=False)

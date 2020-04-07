@@ -4,6 +4,7 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
+from app import admin_required
 
 from app.api.board.model import PostModel, post_schema, posts_schema, posts_schema_user,\
     GalleryModel, gallery_schema, galleries_schema,\
@@ -208,7 +209,7 @@ class GalleryListService:
         return jsonify(galleries_schema.dump(GalleryModel.query.all())), 200
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def create_gallery(data):
         name = data.get('name', None)
         explain = data.get('explain', None)
@@ -246,7 +247,7 @@ class GalleryService:
         return jsonify(gallery_schema.dump(gallery)), 200
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def modify_gallery_info(gallery_id):
         gallery = GalleryModel.query.get(gallery_id)
         if not gallery:
@@ -266,7 +267,7 @@ class GalleryService:
 
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def delete_gallery(gallery_id):
         gallery = GalleryModel.query.get(gallery_id)
 
