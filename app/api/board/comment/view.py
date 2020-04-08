@@ -14,4 +14,5 @@ class Comment(Resource):
     def patch(self, comment_id):
         return make_response(CommentService.modify_comment(comment_id))
     def delete(self, comment_id):
+        print('dddddddddddddd')
         return make_response(CommentService.delete_comment(comment_id))

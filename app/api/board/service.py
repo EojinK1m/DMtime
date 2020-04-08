@@ -48,8 +48,7 @@ class PostService():
         if not check_user_permission(post):
             return jsonify(msg='access denied'), 403
 
-        for image in post.images:
-            ImageService.delete_image(image.id)
+
         post.delete_post()
 
         db.session.commit()
@@ -214,8 +213,6 @@ class GalleryListService:
         name = data.get('name', None)
         explain = data.get('explain', None)
 
-        master_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
-
         if not name or not explain:
             return jsonify({'msg':'missing parameter exist'}), 400
 
@@ -224,8 +221,7 @@ class GalleryListService:
 
         try:
             new_gallery = GalleryModel(name=name,
-                                       explain=explain,
-                                       master=master_account.user)
+                                       explain=explain)
 
             db.session.add(new_gallery)
         except:
@@ -280,8 +276,6 @@ class GalleryService:
         if not delete_user.id == gallery.master_id:
             return jsonify(msg='access denied'), 403
 
-        for post in gallery.posts:
-            post.delete_post()
         gallery.delete_gallery()
 
         db.session.commit()
