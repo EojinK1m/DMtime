@@ -4,6 +4,7 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
+from app import admin_required
 
 from app.api.board.model import PostModel, post_schema, posts_schema, posts_schema_user,\
     GalleryModel, gallery_schema, galleries_schema,\
@@ -47,8 +48,7 @@ class PostService():
         if not check_user_permission(post):
             return jsonify(msg='access denied'), 403
 
-        for image in post.images:
-            ImageService.delete_image(image.id)
+
         post.delete_post()
 
         db.session.commit()
@@ -208,12 +208,10 @@ class GalleryListService:
         return jsonify(galleries_schema.dump(GalleryModel.query.all())), 200
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def create_gallery(data):
         name = data.get('name', None)
         explain = data.get('explain', None)
-
-        master_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
 
         if not name or not explain:
             return jsonify({'msg':'missing parameter exist'}), 400
@@ -223,8 +221,7 @@ class GalleryListService:
 
         try:
             new_gallery = GalleryModel(name=name,
-                                       explain=explain,
-                                       master=master_account.user)
+                                       explain=explain)
 
             db.session.add(new_gallery)
         except:
@@ -246,7 +243,7 @@ class GalleryService:
         return jsonify(gallery_schema.dump(gallery)), 200
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def modify_gallery_info(gallery_id):
         gallery = GalleryModel.query.get(gallery_id)
         if not gallery:
@@ -266,7 +263,7 @@ class GalleryService:
 
 
     @staticmethod
-    @jwt_required
+    @admin_required
     def delete_gallery(gallery_id):
         gallery = GalleryModel.query.get(gallery_id)
 
@@ -279,8 +276,6 @@ class GalleryService:
         if not delete_user.id == gallery.master_id:
             return jsonify(msg='access denied'), 403
 
-        for post in gallery.posts:
-            post.delete_post()
         gallery.delete_gallery()
 
         db.session.commit()

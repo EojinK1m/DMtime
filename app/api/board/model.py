@@ -9,13 +9,13 @@ class PostModel(db.Model):
     content = db.Column(db.Text(), nullable=True) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
+
+    uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
+
     images = db.relationship('ImageModel')
     postlikes = db.relationship('PostLikeModel')
     posted_gallery = db.relationship('GalleryModel')
-
-    uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=True)
-    gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id'), nullable=False)
-
 
     def delete_post(self):
         db.session.delete(self)
@@ -30,8 +30,8 @@ class PostLikeModel(db.Model):
     __tablename__ = 'postlike'
 
     id = db.Column(db.Integer(), primary_key=True)
-    post_id = db.Column(db.Integer(), db.ForeignKey('post.id'), nullable=False)
-    liker_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
+    liker_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
 
 
@@ -41,7 +41,6 @@ class GalleryModel(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.Text, nullable=True)
-    master_id = db.Column(db.Integer(), db.ForeignKey('user.id'),  nullable=True)
 
     posts = db.relationship('PostModel', backref='gallery')
 
@@ -95,7 +94,6 @@ class GallerySchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     explain = ma.auto_field()
     id = ma.auto_field()
-    master = ma.Nested('UserSchema', only=['username'])
 
 
 gallery_schema  = GallerySchema()

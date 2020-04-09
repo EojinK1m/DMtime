@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
 
@@ -12,6 +12,18 @@ from app.api.user.model import UserModel
 
 def is_correct_length(content_len):
     return content_len <= 100
+
+def check_user_permission(comment, admin_allow):
+    request_user = AccountModel.get_user_by_email(email=get_jwt_identity())
+
+    if admin_allow:
+        roles = get_jwt_claims()['roles']
+        roles = get_jwt_claims()['roles']
+        if roles == 'admin':
+            return True
+
+    return  request_user.id == comment.writer.id
+
 
 
 class CommentService():
@@ -24,9 +36,7 @@ class CommentService():
         if not comment:
             return jsonify(msg='wrong comment_id, comment not found'), 404
 
-        modify_user = AccountModel.get_user_by_email(email=get_jwt_identity())
-
-        if not modify_user.id == comment.writer.id:
+        if not check_user_permission(comment=comment, admin_allow=False):
             return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
 
         new_content = request.json.get('content', None)
@@ -46,13 +56,13 @@ class CommentService():
     @staticmethod
     @jwt_required
     def delete_comment(comment_id):
+
         comment = CommentModel.query.get(comment_id)
         if not comment:
             return jsonify(msg='wrong comment_id, comment not found'), 404
 
-        delete_user = AccountModel.get_user_by_email(get_jwt_identity())
-        if not delete_user.id == comment.writer.id:
-            return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
+        # if not check_user_permission(comment=comment, admin_allow=True):
+        #     return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
 
         comment.delete_comment()
         db.session.commit()
@@ -85,19 +95,24 @@ class CommentListService():
         new_comment = CommentModel(content=content,
                                    wrote_datetime=datetime.now(),
                                    wrote_user_id=writer.id)
+        db.session.add(new_comment)
+        db.session.flush()
 
         upper_comment_id = request.args.get('upper_comment_id', None)
         if upper_comment_id:
             upper_comment = CommentModel.query.get(upper_comment_id)
             if not upper_comment:
                 return jsonify(msg='upper comment is not found'), 404
-            if not upper_comment.wrote_post_id == post_id:
+            if not upper_comment.wrote_post_id == int(post_id):
                 return jsonify(msg='post_id of upper_comment is not same with post_id that received'), 403
 
             new_comment.upper_comment_id = upper_comment_id
+        else:
+            print(new_comment.id)
+            new_comment.upper_comment_id = new_comment.id
         new_comment.wrote_post_id = post_id
 
-        db.session.add(new_comment)
+
         db.session.commit()
 
         return jsonify(msg='comment successfully wrote'), 200

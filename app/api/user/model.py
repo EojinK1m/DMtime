@@ -6,11 +6,10 @@ class UserModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String(16), unique=True, nullable=False)
-    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), unique=True)
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id', ondelete='CASCADE'), unique=True)
     explain = db.Column(db.Text, nullable=True)
 
     posts = db.relationship('PostModel', backref='uploader')
-    galleries = db.relationship('GalleryModel', backref='master')
     profile_image = db.relationship('ImageModel', uselist=False)
 
     def delete_user(self):
