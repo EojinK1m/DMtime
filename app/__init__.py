@@ -25,7 +25,8 @@ def create_app(config):
     jwt.init_app(app)
 
     from app.api.image.model import ImageModel
-    from app.api.board.model import PostModel, GallerySchema
+    from app.api.board.post.model import PostModel
+    from app.api.board.gallery.model import GalleryModel
     from app.api.user.model import UserModel
     from app.api.user.account.model import AccountModel
 

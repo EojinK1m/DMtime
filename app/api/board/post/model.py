@@ -33,20 +33,7 @@ class PostLikeModel(db.Model):
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
     liker_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
-
-
-class GalleryModel(db.Model):
-    __tablename__ = 'gallery'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(30), nullable=False)
-    explain = db.Column(db.Text, nullable=True)
-
-    posts = db.relationship('PostModel', backref='gallery')
-
-    def delete_gallery(self):
-        db.session.delete(self)
-
+from app.api.board.gallery.model import GalleryModel
 
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -85,16 +72,3 @@ class PostSchema(ma.SQLAlchemySchema):
 post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
 posts_schema = PostSchema(many=True, exclude=['posted_gallery', 'image_ids', 'content'])
 posts_schema_user = PostSchema(many=True, exclude=['content', 'image_ids', 'uploader'])
-
-
-class GallerySchema(ma.SQLAlchemySchema):
-    class Meta:
-        model = GalleryModel
-
-    name = ma.auto_field()
-    explain = ma.auto_field()
-    id = ma.auto_field()
-
-
-gallery_schema  = GallerySchema()
-galleries_schema = GallerySchema(many=True, only=('name', 'id'))

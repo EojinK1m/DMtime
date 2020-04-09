@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
 
-from app.api.board.model import PostModel
+from app.api.board.post.model import PostModel
 from app.api.board.comment.model import CommentModel, comments_schema, comments_schema_user
 from app.api.user.account.model import AccountModel
 from app.api.user.model import UserModel

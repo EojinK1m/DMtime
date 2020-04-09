@@ -1,20 +1,21 @@
 from datetime import datetime
 
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
+from flask_jwt_extended import jwt_required,\
+                                get_jwt_identity,\
+                                get_jwt_claims
 
 from app import db
-from app import admin_required
 
-from app.api.board.model import PostModel, post_schema, posts_schema, posts_schema_user,\
-    GalleryModel, gallery_schema, galleries_schema,\
-    PostLikeModel
+from app.api.board.post.model import PostModel,\
+                                    PostLikeModel,\
+                                    posts_schema, post_schema, posts_schema_user
 
+from app.api.board.gallery.model import GalleryModel
 
 from app.api.user.model import UserModel
 from app.api.user.account.model import AccountModel
 from app.api.image.service import ImageService
-
 
 def check_user_permission(post):
     identify = get_jwt_identity()
@@ -27,13 +28,12 @@ def check_user_permission(post):
 
 class PostService():
 
-
     @staticmethod
     def provide_post(post_id):
         post = PostModel.query.get(post_id)
 
         if not post:
-            return jsonify({'msg':'Not found'}), 404
+            return jsonify({'msg': 'Not found'}), 404
 
         post.increase_view()
         return jsonify(post_schema.dump(post)), 200
@@ -44,16 +44,14 @@ class PostService():
         post = PostModel.query.get(post_id)
 
         if not post:
-            return jsonify({'msg':'Not found'}), 404
+            return jsonify({'msg': 'Not found'}), 404
         if not check_user_permission(post):
             return jsonify(msg='access denied'), 403
-
 
         post.delete_post()
 
         db.session.commit()
         return jsonify(msg='post deleted'), 200
-
 
     @staticmethod
     @jwt_required
@@ -70,7 +68,7 @@ class PostService():
         image_ids = json_data.get('image_ids', None)
 
         before_image_ids = [image.id for image in post.images]
-        delete_images_ids= [id for id in before_image_ids if not id in image_ids]
+        delete_images_ids = [id for id in before_image_ids if not id in image_ids]
         new_image_ids = [id for id in image_ids if not id in before_image_ids]
 
         for image_id_to_delete in delete_images_ids:
@@ -87,7 +85,6 @@ class PostService():
         db.session.commit()
         return jsonify(msg='modify succeed'), 200
 
-
     @staticmethod
     @jwt_required
     def post_like(post_id):
@@ -97,10 +94,10 @@ class PostService():
         if not post:
             return 404
 
-        postlikes = PostLikeModel.query.filter_by(post_id = post_id)
+        postlikes = PostLikeModel.query.filter_by(post_id=post_id)
         request_user_postlike = postlikes.filter_by(liker_id=request_user.id).first()
-        
-        if(request_user_postlike):
+
+        if (request_user_postlike):
             db.session.delete(request_user_postlike)
             db.session.commit()
 
@@ -113,16 +110,7 @@ class PostService():
             return jsonify(msg='post like'), 201
 
 
-
-
-
-
-
-
-
-
 class PostListService():
-
 
     @staticmethod
     def provide_post_list():
@@ -144,28 +132,30 @@ class PostListService():
             if username:
                 return jsonify(msg='gallery_id and username cant be given together, u must give one of both'), 400
             if not GalleryModel.query.get(gallery_id):
-                return jsonify({'msg':'Wrong gallery id, gallery not found'}), 404
+                return jsonify({'msg': 'Wrong gallery id, gallery not found'}), 404
             posts = PostModel.query.filter_by(gallery_id=gallery_id)
 
         if page:
-             try: page = int(page)
-             except ValueError: return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
+            try:
+                page = int(page)
+            except ValueError:
+                return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
-        posts = posts.order_by(PostModel.posted_datetime.desc()).\
-               paginate(per_page=3, page=page)
+        posts = posts.order_by(PostModel.posted_datetime.desc()). \
+            paginate(per_page=3, page=page)
         if username:
             dumped_posts = posts_schema_user.dump(posts.items)
         else:
             dumped_posts = posts_schema.dump(posts.items)
 
-        return jsonify({'posts':dumped_posts,
-                       'number_of_pages':posts.pages}), 200
+        return jsonify({'posts': dumped_posts,
+                        'number_of_pages': posts.pages}), 200
 
     @staticmethod
     @jwt_required
     def post_post(gallery_id, data):
-        if(gallery_id == None):
-            return jsonify({'msg':'gallery_id missed'}), 400
+        if (gallery_id == None):
+            return jsonify({'msg': 'gallery_id missed'}), 400
         post_gallery = GalleryModel.query.get(gallery_id)
         if not post_gallery:
             return jsonify({'msg': 'Wrong gallery id, gallery not found'}), 404
@@ -178,8 +168,7 @@ class PostListService():
         uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
 
         if not content or not title:
-            return jsonify({'msg':'missing parameter exist'}), 400
-
+            return jsonify({'msg': 'missing parameter exist'}), 400
 
         new_post = PostModel(content=content,
                              title=title,
@@ -197,86 +186,5 @@ class PostListService():
                     return jsonify(msg='an error occurred while registering images, plz check image ids'), 500
 
         db.session.commit()
-        return jsonify({'msg':'posting succeed'}), 200
+        return jsonify({'msg': 'posting succeed'}), 200
 
-
-class GalleryListService:
-
-
-    @staticmethod
-    def provide_gallery_list():
-        return jsonify(galleries_schema.dump(GalleryModel.query.all())), 200
-
-    @staticmethod
-    @admin_required
-    def create_gallery(data):
-        name = data.get('name', None)
-        explain = data.get('explain', None)
-
-        if not name or not explain:
-            return jsonify({'msg':'missing parameter exist'}), 400
-
-        if GalleryModel.query.filter_by(name=name).first():
-            return jsonify({'msg':'same named gallery exist'}), 403
-
-        try:
-            new_gallery = GalleryModel(name=name,
-                                       explain=explain)
-
-            db.session.add(new_gallery)
-        except:
-            return jsonify(msg='an error occurred while making gallery at db'), 500
-        db.session.commit()
-        return jsonify({'msg':'successfully gallery created'}), 200
-
-
-class GalleryService:
-
-
-    @staticmethod
-    def provide_gallery_info(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-
-        if not gallery:
-            return jsonify({'msg':'gallery not fount'}), 404
-
-        return jsonify(gallery_schema.dump(gallery)), 200
-
-    @staticmethod
-    @admin_required
-    def modify_gallery_info(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-        if not gallery:
-            return jsonify({'msg': 'gallery not fount'}), 404
-        json_info = request.json
-        explain = json_info.get('explain', None)
-        name = json_info.get('name', None)
-        if not name:
-            return jsonify(msg='name parameter missed'), 403
-
-        gallery.explain = explain
-        gallery.name = name
-
-        db.session.commit()
-        return jsonify(msg='modify succeed'), 200
-
-
-
-    @staticmethod
-    @admin_required
-    def delete_gallery(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-
-        if not gallery:
-            return jsonify(msg='gallery not found'), 404
-
-        delete_user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
-        if not delete_user:
-            return jsonify(msg='unknown user, user cant found')
-        if not delete_user.id == gallery.master_id:
-            return jsonify(msg='access denied'), 403
-
-        gallery.delete_gallery()
-
-        db.session.commit()
-        return jsonify(msg='gallery deleted'), 200

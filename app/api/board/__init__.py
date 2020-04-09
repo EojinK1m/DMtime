@@ -1,9 +1,8 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from app.api.board.view import Post, PostList, PostLike,\
-                                Gallery, GalleryList
-
+from app.api.board.post.view import Post, PostList, PostLike
+from app.api.board.gallery.view import Gallery, GalleryList
 from app.api.board.comment.view import Comment, CommentList
 
 board_blueprint = Blueprint('board', 'board_blueprint')
