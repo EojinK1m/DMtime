@@ -31,12 +31,11 @@ class AccountModel(db.Model):
     def hash_password(password):
         return bcrypt.generate_password_hash(password)
 
-    def generate_access_token(self):
-        import datetime
-        return create_access_token(identity=self.email, expires_delta=datetime.timedelta(days=365))
+    def generate_access_token(self, expire=None):
+        return create_access_token(identity=self.email, expires_delta=expire)
 
-    def generate_refresh_token(self):
-        return create_refresh_token(identity=self.email)
+    def generate_refresh_token(self, expire=None):
+        return create_refresh_token(identity=self.email, expires_delta=expire)
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)

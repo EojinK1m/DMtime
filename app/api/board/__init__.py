@@ -18,3 +18,4 @@ board_api.add_resource(GalleryList, '/gallery')
 
 board_api.add_resource(Comment, '/comment/<comment_id>')
 board_api.add_resource(CommentList, '/comment')
+
