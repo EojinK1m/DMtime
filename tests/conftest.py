@@ -112,12 +112,18 @@ def create_temp_account(app, session):
     from app.api.user.model import UserModel
 
 
-    def create_temp_account_(profile_image = None):
+    def create_temp_account_(profile_image = None, is_admin = False):
         email = f'test_account_{create_temp_account_.number}@test.test'
         username = f'test_user_{create_temp_account_.number}'
         password = f'test_password_{create_temp_account_.number}'
         user_explain = f'test_users_explain{create_temp_account_.number}'
 
+        if(is_admin):
+            if not(create_temp_account_.test_admin_exist):
+                create_temp_account_.test_admin_exist = True
+                email = 'test_admin'
+            else:
+                raise Exception('TestAdminOverError', 'Admin account for test cant exist more than one')
 
         temp_account = AccountModel(email=email,
                                     password_hash=AccountModel.hash_password(password))
@@ -138,6 +144,7 @@ def create_temp_account(app, session):
         create_temp_account_.number += 1
         return temp_account
 
+    create_temp_account_.test_admin_exist = False
     create_temp_account_.number = 1
     return create_temp_account_
 
@@ -203,4 +210,5 @@ def create_temp_comment(app, session):
 
     create_temp_comment_.number = 0
     return create_temp_comment
+
 
