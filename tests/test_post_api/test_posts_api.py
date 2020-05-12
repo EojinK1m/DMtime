@@ -1,9 +1,9 @@
 url = '/api/board/post'
 
 def post_post(client, post, gallery_id, access_token=''):
-    return client(url+f'?gallery-id={gallery_id}',
+    return client.post(url+f'?gallery-id={gallery_id}',
                   json=post,
-                  headers={'authorization':access_token})
+                  headers={'authorization':'Bearer '+access_token})
 
 def test_post_post_correct(client, create_temp_account, create_temp_gallery):
     temp_account = create_temp_account()
@@ -32,7 +32,7 @@ def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
 
 def test_post_post_with_unsuitable_post_data(client, create_temp_account, create_temp_gallery):
     temp_account = create_temp_account()
-    access_token_of_temp_account = temp_account.create_access_token()
+    access_token_of_temp_account = temp_account.generate_access_token()
     temp_gallery = create_temp_gallery()
 
 
@@ -54,3 +54,4 @@ def test_post_post_with_unsuitable_post_data(client, create_temp_account, create
     #test over size content
 
 
+#make GET method test
