@@ -77,11 +77,11 @@ class GalleryService:
         if not gallery:
             return jsonify(msg='gallery not found'), 404
 
-        delete_user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
-        if not delete_user:
-            return jsonify(msg='unknown user, user cant found')
-        if not delete_user.id == gallery.master_id:
-            return jsonify(msg='access denied'), 403
+        # delete_user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
+        # if not delete_user:
+        #     return jsonify(msg='unknown user, user cant found')
+        # if not delete_user.id == gallery.master_id:
+        #     return jsonify(msg='access denied'), 403
 
         gallery.delete_gallery()
 
