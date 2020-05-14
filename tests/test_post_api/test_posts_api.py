@@ -136,3 +136,15 @@ def test_posts_get_whether_exist_value_of_post(client, create_temp_post, create_
     post = rv.json['posts'][0]
     assert post['whether_exist_image'] == True
 
+def test_posts_get_without_gallery_id(client, create_temp_post, create_temp_gallery, create_temp_account):
+    temp_galleries = [create_temp_gallery() for i in range(3)]
+    temp_account = create_temp_account()
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id,
+                                   uploader_id=temp_account.id) for temp_gallery in temp_galleries]
+
+    rv = client.get(url)
+
+    assert rv.json
+    posts = rv.json['posts']
+    assert posts
+    assert len(posts) == 3
