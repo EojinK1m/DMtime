@@ -16,6 +16,19 @@ def test_post_post_correct(client, create_temp_account, create_temp_gallery):
 
     assert rv.status_code == 200
 
+def test_post_post_correct_with_image(client, create_temp_account, create_temp_gallery, create_temp_image):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_image = create_temp_image()
+
+    test_post_info = {'title': 'this is test post tile_1',
+                      'content': 'Why dont you recognize. Im so rare?',
+                      'image_ids':[temp_image.id]}
+
+    rv = post_post(client, test_post_info, temp_gallery.id, temp_account.generate_access_token())
+
+    assert rv.status_code == 200
+
 def test_post_post_without_access_token(client, create_temp_gallery):
     temp_gallery = create_temp_gallery()
 
@@ -55,3 +68,71 @@ def test_post_post_with_unsuitable_post_data(client, create_temp_account, create
 
 
 #make GET method test
+
+
+
+def test_posts_get(client, create_temp_post, create_temp_gallery, create_temp_account):
+    temp_gallery = create_temp_gallery()
+    temp_account = create_temp_account()
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}')
+
+    assert rv.status_code == 200
+    assert rv.json['number_of_pages']
+    assert rv.json['posts']
+    expected_keys_of_post = ('id',
+                             'title',
+                             'whether_exist_image',
+                             'posted_datetime',
+                             'uploader',
+                             'likes',
+                             'number_of_comments',
+                             'views'
+                             )
+    for expect_key in expected_keys_of_post:
+        assert expect_key in rv.json['posts'][0].keys()
+
+
+
+def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, create_temp_account):
+    temp_gallery = create_temp_gallery()
+    temp_account = create_temp_account()
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page{5}')
+    assert rv.status_code == 200
+
+    json = rv.json
+    assert json
+    assert json['number_of_pages'] == 2
+    assert json['posts'] != []
+
+
+def test_posts_get_to_no_posts_gallery(client, create_temp_gallery, create_temp_account):
+    temp_gallery = create_temp_gallery()
+    temp_account = create_temp_account()
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page{5}')
+    assert rv.status_code == 200
+
+    assert rv.json
+    assert rv.json['number_of_pages'] == 0
+    assert rv.json['posts'] == []
+
+def test_posts_get_whether_exist_value_of_post(client, create_temp_post, create_temp_gallery,\
+                                               create_temp_account, create_temp_image):
+    temp_gallery = create_temp_gallery()
+    temp_account = create_temp_account()
+    temp_image = create_temp_image()
+    temp_post = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id,
+                                 included_images = [temp_image])
+
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}')
+    assert rv.status_code == 200
+
+    assert rv.json
+    post = rv.json['posts'][0]
+    assert post['whether_exist_image'] == True
+

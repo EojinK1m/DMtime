@@ -172,7 +172,7 @@ def create_temp_gallery(app, session):
 def create_temp_post(app, session):
     from app.api.board.post.model import PostModel
 
-    def create_temp_post_(uploader_id, upload_gallery_id):
+    def create_temp_post_(uploader_id, upload_gallery_id, included_images = None):
         title = f'test_post{create_temp_post_.number}_title'
         content = f'test_post{create_temp_post_.number}_content'+'test\n'*10
 
@@ -181,6 +181,10 @@ def create_temp_post(app, session):
 
         session.add(temp_post)
         session.commit()
+
+        if(included_images):
+            for image in included_images:
+                image.post_id = temp_post.id
 
         create_temp_post_.number += 1
 
