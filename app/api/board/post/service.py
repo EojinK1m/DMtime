@@ -163,7 +163,6 @@ class PostListService():
         content = data.get('content', None)
         title = data.get('title', None)
         image_ids = data.get('image_ids', None)
-        image_ids = data.get('image_ids', None)
 
         uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
 
