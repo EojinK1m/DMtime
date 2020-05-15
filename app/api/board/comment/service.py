@@ -76,7 +76,7 @@ class CommentListService():
     @staticmethod
     @jwt_required
     def write_comment():
-        post_id = request.args.get('post_id', None)
+        post_id = request.args.get('post-id', None)
         if not post_id:
             return jsonify(msg='post_id missed'), 400
         if not PostModel.query.get(post_id):
@@ -121,7 +121,7 @@ class CommentListService():
 
     @staticmethod
     def provide_comments():
-        post_id = request.args.get('post_id', None)
+        post_id = request.args.get('post-id', None)
         username = request.args.get('username', None)
         page = request.args.get('page', None)
 
