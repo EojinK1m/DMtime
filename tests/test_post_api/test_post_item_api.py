@@ -121,3 +121,32 @@ def test_post_put_with_another_account(client, create_temp_account, create_temp_
     assert rv.status_code == 403
 
 
+def test_post_like_post_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_post = create_temp_post(uploader_id = temp_account.id,
+                                 upload_gallery_id = temp_gallery.id)
+    access_token = temp_account.generate_access_token()
+
+    rv = client.post(url+f'{temp_post.id}/like',
+                    headers={'authorization':'Bearer '+access_token})
+
+    assert rv.status_code == 200
+    assert rv.json['likes'] == 1
+
+    rv2 = client.post(url+f'{temp_post.id}/like',
+                    headers={'authorization':'Bearer '+access_token})
+
+    assert rv2.status_code == 200
+    assert rv.json['likes'] == 0
+
+def test_post_like_post_without_access_token(client, create_temp_account, create_temp_gallery, create_temp_post):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_post = create_temp_post(uploader_id = temp_account.id,
+                                 upload_gallery_id = temp_gallery.id)
+
+
+    rv = client.post(url+f'{temp_post.id}/like')
+    assert rv.status_code == 401
+
