@@ -200,10 +200,12 @@ def create_temp_comment(app, session):
     def create_temp_comment_(wrote_user_id, wrote_post_id, upper_comment_id=None):
         content = f'test_post{create_temp_comment_.number}_content' + 'test\n' * 5
 
+        import datetime
         temp_comment = CommentModel(content=content,
                                     wrote_user_id=wrote_user_id,
                                     wrote_post_id=wrote_post_id,
-                                    upper_comment_id=upper_comment_id)
+                                    upper_comment_id=upper_comment_id,
+                                    wrote_datetime=datetime.datetime.now())
 
         session.add(temp_comment)
         session.commit()
@@ -213,6 +215,6 @@ def create_temp_comment(app, session):
         return temp_comment
 
     create_temp_comment_.number = 0
-    return create_temp_comment
+    return create_temp_comment_
 
 
