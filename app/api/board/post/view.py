@@ -22,5 +22,6 @@ class Post(Resource):
         return make_response(PostService.delete_post(post_id))
 
 class PostLike(Resource):
-    def get(self, post_id):
+    def post(self, post_id):
         return make_response(PostService.post_like(post_id))
+
