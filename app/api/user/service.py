@@ -24,7 +24,7 @@ class UserService:
     @jwt_required
     def modify_user_info(username, data):
         from app.api.user.model import UserPatchInputSchema
-        error = UserPatchInputSchema.validate(data)
+        error = UserPatchInputSchema().validate(data)
         if error:
             return jsonify(400, 'Bad request, json body is wrong')
 

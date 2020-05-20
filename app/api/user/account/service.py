@@ -35,6 +35,7 @@ class AccountService:
         errors = AccountInputSchema().validate(data)
         if errors:
             return jsonify({'msg': 'missing parameter exist'}), 400
+
         email = data.get('email', None)
         password = data.get('password', None)
 
@@ -97,7 +98,10 @@ class AuthService:
     @staticmethod
     def login(data):
         from app.api.user.account.model import AccountLoginInputSchema
-        AccountLoginInputSchema.validate(data)
+        error = AccountLoginInputSchema().validate(data)
+        if error:
+            return jsonify(msg='Bad request, wrong json body'), 400
+
         email = data.get('email', None)
         password = data.get('password', None)
 
