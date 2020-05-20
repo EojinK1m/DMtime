@@ -68,9 +68,14 @@ accounts_schema =  AccountSchema(many=True)
 
 
 from marshmallow import validate
-class AccountRegisterInputSchema(ma.Schema):
+class AccountInputSchema(ma.Schema):
     email = ma.Str(requried = True, validate = validate.Email())
     username = ma.Str(requried = True, validate = validate.Length(min = 2, max = 20))
     password = ma.Str(requried = True, validate = validate.Length(min = 8))
     user_explain = ma.Str(requried = False, validate = validate.Length(max = 400))
     profile_image_id = ma.Int(requried = False)
+
+class AccountLoginInputSchema(ma.Schema):
+    password = ma.Str(requried = True, validate = validate.Length(min = 8))
+    email = ma.Str(requried = True, validate = validate.Email())
+

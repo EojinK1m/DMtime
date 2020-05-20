@@ -31,8 +31,8 @@ class AccountService:
 
     @staticmethod
     def register_account(data):
-        from app.api.user.account.model import AccountRegisterInputSchema
-        errors = AccountRegisterInputSchema().validate(data)
+        from app.api.user.account.model import AccountInputSchema
+        errors = AccountInputSchema().validate(data)
         if errors:
             return jsonify({'msg': 'missing parameter exist'}), 400
         email = data.get('email', None)
@@ -96,11 +96,10 @@ class AuthService:
 
     @staticmethod
     def login(data):
+        from app.api.user.account.model import AccountLoginInputSchema
+        AccountLoginInputSchema.validate(data)
         email = data.get('email', None)
         password = data.get('password', None)
-
-        if not email or not password:
-            return jsonify({'msg':'missing parameter exist'}), 400
 
         login_account = AccountModel.get_account_by_email(email)
 
