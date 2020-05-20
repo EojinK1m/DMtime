@@ -20,7 +20,7 @@ class AccountModel(db.Model):
     __tablename__ = 'account'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
+    email = db.Column(db.String(320), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), unique=False, nullable=False)
 
 
@@ -66,3 +66,11 @@ class AccountSchema(ma.SQLAlchemySchema):
 account_schema = AccountSchema()
 accounts_schema =  AccountSchema(many=True)
 
+
+from marshmallow import validate
+class AccountRegisterInputSchema(ma.Schema):
+    email = ma.Str(requried = True, validate = validate.Email())
+    username = ma.Str(requried = True, validate = validate.Length(min = 2, max = 20))
+    password = ma.Str(requried = True, validate = validate.Length(min = 8))
+    user_explain = ma.Str(requried = False, validate = validate.Length(max = 400))
+    profile_image_id = ma.Int(requried = False)

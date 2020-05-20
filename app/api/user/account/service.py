@@ -28,8 +28,13 @@ class AccountService:
 
 
 
+
     @staticmethod
     def register_account(data):
+        from app.api.user.account.model import AccountRegisterInputSchema
+        errors = AccountRegisterInputSchema().validate(data)
+        if errors:
+            return jsonify({'msg': 'missing parameter exist'}), 400
         email = data.get('email', None)
         password = data.get('password', None)
 
@@ -37,9 +42,6 @@ class AccountService:
         user_explain = data.get('user_explain', None)
         profile_image_id = data.get('profile_image_id', None)
 
-
-        if email is None or password is None or username is None:
-            return jsonify({'msg':'missing parameter exist'}), 400
 
         if AccountModel.get_account_by_email(email):
             return jsonify({'msg':'same email exist'}), 400
