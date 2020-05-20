@@ -28,3 +28,15 @@ class UserSchema(ma.SQLAlchemySchema):
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True, only=['username', 'profile_image'])
+
+from marshmallow import validate
+
+class UserPatchInputSchema(ma.Schema):
+    username = ma.Str(requried = False, validate = validate.Length(min = 2, max = 20))
+    user_explain = ma.Str(requried = False, validate = validate.Length(max = 400))
+    profile_image_id = ma.Int(requried = False)
+
+class UserPutInputSchema(ma.Schema):
+    username = ma.Str(requried = True, validate = validate.Length(min = 2, max = 20))
+    user_explain = ma.Str(requried = True, validate = validate.Length(max = 400))
+    profile_image_id = ma.Int(requried = False)
