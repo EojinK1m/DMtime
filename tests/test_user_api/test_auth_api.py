@@ -13,7 +13,7 @@ def test_login_with_correct_data(client, create_temp_account):
     assert 'access_token' in rv.json
 
 def test_login_with_not_exist_account_data(client):
-    rv = login(client, login_data={'email':'not_email',
+    rv = login(client, login_data={'email':'not_email@email.com',
                                    'password':'kissing_strangers'})
     assert rv.status_code == 401
 
