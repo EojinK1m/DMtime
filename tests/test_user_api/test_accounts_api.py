@@ -67,7 +67,7 @@ def test_register_wrong_username(client):
 
 def test_register_wrong_email(client):
     wrong_account_1 = correct_account_1.copy()
-    wrong_account_1['email'] += 'x'*30
+    wrong_account_1['email'] = 'x'*30
     rv = register(client, wrong_account_1)
     assert rv.status_code == 400
 
