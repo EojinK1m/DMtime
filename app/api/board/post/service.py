@@ -67,20 +67,32 @@ class PostService():
         content = json_data.get('content', None)
         image_ids = json_data.get('image_ids', None)
 
-        before_image_ids = [image.id for image in post.images]
-        delete_images_ids = [id for id in before_image_ids if not id in image_ids]
-        new_image_ids = [id for id in image_ids if not id in before_image_ids]
+        delete_images_ids = []
+        new_images_ids = []
+
+        if image_ids:
+            if post.images:
+                before_image_ids = [image.id for image in post.images]
+                new_images_ids = [id for id in image_ids if not id in before_image_ids]
+                delete_images_ids = [id for id in before_image_ids if not id in image_ids]
+            else:
+                new_images_ids = image_ids
+        else:
+            if post.images:
+                delete_images_ids = [image.id for image in post.images]
+
 
         for image_id_to_delete in delete_images_ids:
             ImageService.delete_image(image_id_to_delete)
-        for image_id_to_register in new_image_ids:
+
+        for image_id_to_register in new_images_ids:
             ImageService.set_foreign_key(image_id_to_register, post.id, 'post')
 
-        if not title or not content:
-            return jsonify(msg='parameter missed'), 400
 
-        post.content = content
-        post.title = title
+        if content:
+            post.content = content
+        if title:
+            post.title = title
 
         db.session.commit()
         return jsonify(msg='modify succeed'), 200
