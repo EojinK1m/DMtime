@@ -71,7 +71,7 @@ def test_post_delete_with_another_account(client, create_temp_account, create_te
     assert rv.status_code == 403
 
 
-def test_post_put_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
+def test_post_patch_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(uploader_id = temp_account.id,
@@ -81,14 +81,14 @@ def test_post_put_correct(client, create_temp_account, create_temp_gallery, crea
                         'content':'my name is blurry face and i care what u think'}
 
 
-    rv = client.put(url+f'{temp_post.id}',
+    rv = client.patch(url+f'{temp_post.id}',
                     headers={'authorization':'Bearer '+temp_account.generate_access_token()},
                     json=change_post_info)
 
     assert rv.status_code == 200
 
 
-def test_post_put_with_data_miss(client, create_temp_account, create_temp_gallery, create_temp_post):
+def test_post_patch_with_data_miss(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(uploader_id = temp_account.id,
@@ -97,14 +97,14 @@ def test_post_put_with_data_miss(client, create_temp_account, create_temp_galler
     change_post_info = {'content':'my name is blurry face and i care what u think'}
 
 
-    rv = client.put(url+f'{temp_post.id}',
+    rv = client.patch(url+f'{temp_post.id}',
                     headers={'authorization':'Bearer '+temp_account.generate_access_token()},
                     json=change_post_info)
 
-    assert rv.status_code == 400
+    assert rv.status_code == 200
 
 
-def test_post_put_with_another_account(client, create_temp_account, create_temp_gallery, create_temp_post):
+def test_post_patch_with_another_account(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_account2 = create_temp_account()
     temp_gallery = create_temp_gallery()
@@ -114,7 +114,7 @@ def test_post_put_with_another_account(client, create_temp_account, create_temp_
     change_post_info = {'title':'Nanana Nanana nana kissing strangers',
                         'content':'my name is blurry face and i care what u think'}
 
-    rv = client.put(url + f'{temp_post.id}',
+    rv = client.patch(url + f'{temp_post.id}',
                     headers={'authorization': 'Bearer ' + temp_account2.generate_access_token()},
                     json=change_post_info)
 
