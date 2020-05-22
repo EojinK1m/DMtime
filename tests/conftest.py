@@ -92,10 +92,16 @@ def image(app, session):
 @pytest.fixture()
 def create_temp_image(app, session):
     from app.api.image.model import ImageModel
+    import os
+    import os
 
     def create_temp_image_():
-        temp_image = ImageModel(filename=f'fake_filename{create_temp_image_.number}')
         create_temp_image_.number += 1
+        temp_image = ImageModel(filename=f'fake_filename{create_temp_image_.number}.png')
+
+
+        temp_file = open(app.config['IMAGE_UPLOADS']+f'/fake_filename{create_temp_image_.number}.png', 'w')
+        temp_file.close()
 
         session.add(temp_image)
         session.commit()
@@ -103,7 +109,18 @@ def create_temp_image(app, session):
         return temp_image
 
     create_temp_image_.number = 0
-    return create_temp_image_
+    yield create_temp_image_
+
+    print('aaaaaa')
+    for i in range(create_temp_image_.number):
+        try:
+            os.remove(os.path.join(app.config['IMAGE_UPLOADS'], f'fake_filename{i+1}.png'))
+        except FileNotFoundError:
+            continue
+        except Exception as e:
+            raise e
+
+
 
 
 @pytest.fixture
