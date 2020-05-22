@@ -120,6 +120,36 @@ def test_post_patch_with_another_account(client, create_temp_account, create_tem
 
     assert rv.status_code == 403
 
+def test_post_patch_image_ids_correct(client, create_temp_account, create_temp_gallery, create_temp_post,
+                                      create_temp_image):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_image = create_temp_image()
+    temp_image_2 = create_temp_image()
+
+    temp_post = create_temp_post(uploader_id=temp_account.id,
+                                 upload_gallery_id=temp_gallery.id)
+
+    rv = client.patch(url+f'{temp_post.id}',
+                      json = {'image_ids':[temp_image.id]},
+                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
+    assert rv.status_code == 200
+
+    rv2 = client.patch(url+f'{temp_post.id}',
+                      json = {'image_ids':[temp_image.id, temp_image_2.id]},
+                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
+    assert rv2.status_code == 200
+
+    rv3 = client.patch(url+f'{temp_post.id}',
+                      json = {'image_ids':None},
+                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
+
+    assert rv3.status_code == 200
+
+    rv4 = client.patch(url+f'{temp_post.id}',
+                      json = {'image_ids':[]},
+                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
+    assert rv4.status_code == 200
 
 def test_post_like_post_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
