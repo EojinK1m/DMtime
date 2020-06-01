@@ -26,7 +26,7 @@ class UserService:
         from app.api.user.model import UserPatchInputSchema
         error = UserPatchInputSchema().validate(data)
         if error:
-            return jsonify(400, 'Bad request, json body is wrong')
+            return jsonify(msg= 'Bad request, json body is wrong'), 400
 
         new_username = data.get('username', None)
         new_explain = data.get('user_explain', None)
