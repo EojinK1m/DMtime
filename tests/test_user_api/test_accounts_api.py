@@ -36,7 +36,7 @@ def test_register_same_username(client):
     same_username_account = correct_account_1.copy()
     same_username_account['email'] += 'xxxx'
     rv_2 = register(client, correct_account_1)
-    assert rv_2.status_code == 400
+    assert rv_2.status_code == 403
 
 
 def test_register_same_email(client):
@@ -46,7 +46,7 @@ def test_register_same_email(client):
     same_username_account = correct_account_1.copy()
     same_username_account['username'] += 'xxxx'
     rv_2 = register(client, correct_account_1)
-    assert rv_2.status_code == 400
+    assert rv_2.status_code == 403
 
 
 def test_register_wrong_username(client):
