@@ -44,7 +44,13 @@ class CommentService():
         if not check_user_permission(comment=comment, admin_allow=False):
             return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
 
-        CommentInputSchema().validate(json)
+        validate_error = CommentPatchInputSchema().validate(json)
+        if validate_error:
+            return jsonify(msg='json validate error'), 400
+
+        new_content = json.get('content')
+
+
 
         # new_content = request.json.get('content', None)
         # if not new_content:
@@ -52,8 +58,8 @@ class CommentService():
         #
         # if not is_correct_length(len(new_content)):
         #     return jsonify(msg='content is too long, it must be shorter than 100'), 413
-
-        comment.content = json['content']
+        if new_content:
+            comment.content = json.get('content')
         comment.wrote_datetime = datetime.now()
 
         db.session.commit()
