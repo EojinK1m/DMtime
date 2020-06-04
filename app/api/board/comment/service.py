@@ -116,6 +116,7 @@ class CommentListService():
         new_comment = CommentModel(content=content,
                                    wrote_datetime=datetime.now(),
                                    wrote_user_id=writer.id,
+                                   wrote_post_id=post_id,
                                    upper_comment_id=upper_comment_id)
         db.session.add(new_comment)
         db.session.commit()

@@ -32,7 +32,7 @@ from marshmallow.validate import Length
 
 class CommentInputSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1, max = 100))
-    upper_comment_id = ma.Integer(required = False)
+    upper_comment_id = ma.Integer(required = False, allow_none = True)
 
 
 class CommentPatchInputSchema(ma.Schema):
