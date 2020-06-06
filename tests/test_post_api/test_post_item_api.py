@@ -78,12 +78,13 @@ def test_post_patch_correct(client, create_temp_account, create_temp_gallery, cr
                                  upload_gallery_id = temp_gallery.id)
 
     change_post_info = {'title':'Nanana Nanana nana kissing strangers',
-                        'content':'my name is blurry face and i care what u think'}
+                        'content':'my name is blurry face and i care what u think',
+                        'image_ids':[]}
 
 
     rv = client.patch(url+f'{temp_post.id}',
-                    headers={'authorization':'Bearer '+temp_account.generate_access_token()},
-                    json=change_post_info)
+                      headers={'authorization':'Bearer '+temp_account.generate_access_token()},
+                      json=change_post_info)
 
     assert rv.status_code == 200
 
@@ -140,16 +141,22 @@ def test_post_patch_image_ids_correct(client, create_temp_account, create_temp_g
                       headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
     assert rv2.status_code == 200
 
-    rv3 = client.patch(url+f'{temp_post.id}',
-                      json = {'image_ids':None},
-                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
-
-    assert rv3.status_code == 200
-
     rv4 = client.patch(url+f'{temp_post.id}',
                       json = {'image_ids':[]},
                       headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
     assert rv4.status_code == 200
+
+def test_post_patch_image_id_none(client, create_temp_account, create_temp_gallery, create_temp_post):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_post = create_temp_post(uploader_id=temp_account.id,
+                                 upload_gallery_id=temp_gallery.id)
+
+    rv = client.patch(url+f'{temp_post.id}',
+                      json = {'image_ids':None},
+                      headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
+
+    assert rv.status_code == 400, "image_ids = None"
 
 def test_post_like_post_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()

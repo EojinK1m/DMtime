@@ -9,8 +9,10 @@ def test_post_post_correct(client, create_temp_account, create_temp_gallery):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
 
+
     test_post_info = {'title': 'this is test post tile_1',
-                      'content': 'Why dont you recognize. Im so rare?'}
+                      'content': 'Why dont you recognize. Im so rare?',
+                      'image_ids': []}
 
     rv = post_post(client, test_post_info, temp_gallery.id, temp_account.generate_access_token())
 
