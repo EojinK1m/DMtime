@@ -1,6 +1,8 @@
 from app import db, ma
 from datetime import datetime
 
+from marshmallow.validate import Length
+
 class PostModel(db.Model):
     __tablename__ = 'post'
 
@@ -69,6 +71,18 @@ class PostSchema(ma.SQLAlchemySchema):
         else:
             return True
 
+
+class PostPostInputValidateSchema(ma.Schema):
+    content = ma.Str(required = True, validate = Length(min = 1))
+    title = ma.Str(required = True, validate = Length(min = 1, max = 30))
+    image_ids = ma.List(ma.Integer, required = True)
+
+class PostPatchInputValidateSchema(ma.Schema):
+    content = ma.Str(required = False, validate = Length(min = 1))
+    title = ma.Str(required = False, validate = Length(min = 1, max = 30))
+    image_ids = ma.List(ma.Integer, required = False)
+
 post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
 posts_schema = PostSchema(many=True, exclude=['posted_gallery', 'image_ids', 'content'])
 posts_schema_user = PostSchema(many=True, exclude=['content', 'image_ids', 'uploader'])
+

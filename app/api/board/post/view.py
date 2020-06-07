@@ -11,7 +11,7 @@ class PostList(Resource):
 
     def post(self):
         gallery_id = request.args.get('gallery-id', None)
-        return make_response(PostListService.post_post(gallery_id, request.json))
+        return make_response(PostListService.post_post(gallery_id))
 
 class Post(Resource):
     def get(self, post_id):

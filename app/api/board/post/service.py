@@ -8,8 +8,10 @@ from flask_jwt_extended import jwt_required,\
 from app import db
 
 from app.api.board.post.model import PostModel,\
-                                    PostLikeModel,\
-                                    posts_schema, post_schema, posts_schema_user
+                                     PostLikeModel,\
+                                     posts_schema, post_schema, posts_schema_user,\
+                                     PostPostInputValidateSchema,\
+                                     PostPatchInputValidateSchema
 
 from app.api.board.gallery.model import GalleryModel
 
@@ -62,10 +64,15 @@ class PostService():
         if not check_user_permission(post):
             return jsonify(msg='access denied'), 403
 
-        json_data = request.json
-        title = json_data.get('title', None)
-        content = json_data.get('content', None)
-        image_ids = json_data.get('image_ids', None)
+        json = request.get_json()
+
+        validate_error = PostPatchInputValidateSchema().validate(json)
+        if validate_error:
+            return jsonify(msg='json validate error'), 400
+
+        title = json.get('title', None)
+        content = json.get('content', None)
+        image_ids = json.get('image_ids', None)
 
         delete_images_ids = []
         new_images_ids = []
@@ -165,18 +172,26 @@ class PostListService():
 
     @staticmethod
     @jwt_required
-    def post_post(gallery_id, data):
+    def post_post(gallery_id):
         if (gallery_id == None):
             return jsonify({'msg': 'gallery_id missed'}), 400
+
         post_gallery = GalleryModel.query.get(gallery_id)
         if not post_gallery:
             return jsonify({'msg': 'Wrong gallery id, gallery not found'}), 404
 
-        content = data.get('content', None)
-        title = data.get('title', None)
-        image_ids = data.get('image_ids', None)
-
         uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
+
+
+        json = request.get_json()
+        validate_error =  PostPostInputValidateSchema().validate(json)
+        if validate_error:
+            return jsonify(msg='json validate error'), 400
+
+        content = json.get('content', None)
+        title = json.get('title', None)
+        image_ids = json.get('image_ids', None)
+
 
         if not content or not title:
             return jsonify({'msg': 'missing parameter exist'}), 400
@@ -186,15 +201,13 @@ class PostListService():
                              uploader=uploader_account.user,
                              gallery=post_gallery,
                              posted_datetime=datetime.now())
-
         db.session.add(new_post)
         db.session.flush()
 
-        if image_ids:
-            for image_id in image_ids:
-                if not ImageService.set_foreign_key(image_id=image_id, key=new_post.id, location='post'):
-                    db.session.rollback()
-                    return jsonify(msg='an error occurred while registering images, plz check image ids'), 500
+        for image_id in image_ids:
+            if not ImageService.set_foreign_key(image_id=image_id, key=new_post.id, location='post'):
+                db.session.rollback()
+                return jsonify(msg='an error occurred while registering images, plz check image ids'), 500
 
         db.session.commit()
         return jsonify({'msg': 'posting succeed'}), 200
