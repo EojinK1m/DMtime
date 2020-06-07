@@ -77,16 +77,15 @@ def test_post_patch_correct(client, create_temp_account, create_temp_gallery, cr
     temp_post = create_temp_post(uploader_id = temp_account.id,
                                  upload_gallery_id = temp_gallery.id)
 
-    change_post_info = {'title':'Nanana Nanana nana kissing strangers',
-                        'content':'my name is blurry face and i care what u think',
-                        'image_ids':[]}
+    change_post_info = {'title':'Nanana Nanana nana kissing',
+                        'content':'my name is blurry face and i care what u think'}
 
 
     rv = client.patch(url+f'{temp_post.id}',
                       headers={'authorization':'Bearer '+temp_account.generate_access_token()},
                       json=change_post_info)
 
-    assert rv.status_code == 200
+    assert rv.status_code == 200, rv.json['msg']
 
 
 def test_post_patch_with_data_miss(client, create_temp_account, create_temp_gallery, create_temp_post):
@@ -139,12 +138,12 @@ def test_post_patch_image_ids_correct(client, create_temp_account, create_temp_g
     rv2 = client.patch(url+f'{temp_post.id}',
                       json = {'image_ids':[temp_image.id, temp_image_2.id]},
                       headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
-    assert rv2.status_code == 200
+    assert rv2.status_code == 200, 'image_ids = [temp_image.id, temp_image_2.id]'
 
     rv4 = client.patch(url+f'{temp_post.id}',
                       json = {'image_ids':[]},
                       headers={'authorization': 'Bearer ' + temp_account.generate_access_token()})
-    assert rv4.status_code == 200
+    assert rv4.status_code == 200, 'image_ids = []'
 
 def test_post_patch_image_id_none(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
