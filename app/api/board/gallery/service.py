@@ -3,7 +3,13 @@ from flask_jwt_extended import get_jwt_identity
 from app import admin_required, db
 
 
-from app.api.board.gallery.model import gallery_schema, GalleryModel, galleries_schema
+from app.api.board.gallery.model import gallery_schema,\
+                                        GalleryModel,\
+                                        galleries_schema,\
+                                        GalleryPatchValidateSchema,\
+                                        GalleryPostValidateSchema
+
+
 from app.api.user.account.model import AccountModel
 
 
@@ -12,16 +18,19 @@ class GalleryListService:
 
     @staticmethod
     def provide_gallery_list():
-        return jsonify(galleries_schema.dump(GalleryModel.query.all())), 200
+        return jsonify(msg = 'query succeed',
+                       galleries = galleries_schema.dump(GalleryModel.query.all())), 200
+
 
     @staticmethod
     @admin_required
     def create_gallery(data):
+        e = GalleryPostValidateSchema().validate(data)
+        if e:
+            return jsonify(msg='json validate error') ,400
+
         name = data.get('name', None)
         explain = data.get('explain', None)
-
-        if not name or not explain:
-            return jsonify({'msg':'missing parameter exist'}), 400
 
         if GalleryModel.query.filter_by(name=name).first():
             return jsonify({'msg':'same named gallery exist'}), 403
@@ -47,7 +56,8 @@ class GalleryService:
         if not gallery:
             return jsonify({'msg':'gallery not fount'}), 404
 
-        return jsonify(gallery_schema.dump(gallery)), 200
+        return jsonify(msg = 'query succeed',
+                       gallery = gallery_schema.dump(gallery)), 200
 
     @staticmethod
     @admin_required
@@ -55,14 +65,23 @@ class GalleryService:
         gallery = GalleryModel.query.get(gallery_id)
         if not gallery:
             return jsonify({'msg': 'gallery not fount'}), 404
-        json_info = request.json
-        explain = json_info.get('explain', None)
-        name = json_info.get('name', None)
-        if not name:
-            return jsonify(msg='name parameter missed'), 403
 
-        gallery.explain = explain
-        gallery.name = name
+        json = request.get_json()
+
+        e = GalleryPatchValidateSchema().validate(json)
+        if e:
+            return jsonify(msg='json validate error') ,400
+
+        explain = json.get('explain', None)
+        name = json.get('name', None)
+
+        if GalleryModel.query.filter_by(name=name).first():
+            return jsonify({'msg':'same named gallery exist'}), 403
+
+        if explain:
+            gallery.explain = explain
+        if name:
+            gallery.name = name
 
         db.session.commit()
         return jsonify(msg='modify succeed'), 200
