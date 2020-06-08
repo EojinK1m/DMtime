@@ -59,10 +59,10 @@ def test_comment_patch_without_access_token(client,
     assert rv.status_code == 401
 
 def test_comment_patch_with_another_account(client,
-                                           create_temp_account,
-                                           create_temp_gallery,
-                                           create_temp_post,
-                                           create_temp_comment):
+                                            create_temp_account,
+                                            create_temp_gallery,
+                                            create_temp_post,
+                                            create_temp_comment):
     temp_account = create_temp_account()
     temp_account_2 = create_temp_account()
     temp_gallery = create_temp_gallery()
@@ -80,10 +80,10 @@ def test_comment_patch_with_another_account(client,
     assert rv.status_code == 403
 
 def test_comment_patch_with_oversize_content(client,
-                                         create_temp_account,
-                                         create_temp_gallery,
-                                         create_temp_post,
-                                         create_temp_comment):
+                                             create_temp_account,
+                                             create_temp_gallery,
+                                             create_temp_post,
+                                             create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.id, temp_gallery.id)
