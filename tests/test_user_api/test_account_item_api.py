@@ -18,20 +18,9 @@ def test_account_delete_without_jwt_request_return_422(client, create_temp_accou
 
 def test_get_account_information(client, create_temp_account):
     temp_account = create_temp_account()
-    rv = client.get(account_uri+f'?email={temp_account.email}',
+    rv = client.get(account_uri,
                     headers={'authorization':f'Bearer {temp_account.generate_access_token()}'})
     assert rv.status_code == 200
     account_info = rv.json['account_info']
     assert account_info
     assert account_info['email'] == temp_account.email
-
-def test_get_account_information_with_jwt_of_another_user(client, create_temp_account):
-    temp_account_1 = create_temp_account()
-    temp_account_2 = create_temp_account()
-
-    rv = client.get(account_uri+f'?email={temp_account_1.email}',
-                    headers={'authorization':f'Bearer {temp_account_2.generate_access_token()}'})
-
-    assert rv.status_code == 403
-
-
