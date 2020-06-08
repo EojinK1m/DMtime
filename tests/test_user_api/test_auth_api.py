@@ -31,7 +31,7 @@ def test_login2exist_account_with_wrong_password(client, create_temp_account):
     assert rv.status_code == 401
 
 def refresh(client, refresh_token):
-    return client.post(url+'/refresh', headers={'authorization':'bearer '+refresh_token})
+    return client.get(url+'/refresh', headers={'Authorization':'Bearer '+refresh_token})
 
 def test_token_refresh(client, create_temp_account):
     temp_account = create_temp_account()
@@ -45,7 +45,7 @@ def test_token_refresh_with_expired_refresh_token(client, create_temp_account):
     import datetime
 
     temp_account = create_temp_account()
-    refresh_token = temp_account.generate_refresh_token(expire=datetime.timedelta(0))
+    refresh_token = temp_account.generate_refresh_token(expire=datetime.timedelta(-1))
     rv = refresh(client, refresh_token)
 
     assert rv.status_code == 401
