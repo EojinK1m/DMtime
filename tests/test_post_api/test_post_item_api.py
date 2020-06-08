@@ -174,7 +174,7 @@ def test_post_like_post_correct(client, create_temp_account, create_temp_gallery
                     headers={'authorization':'Bearer '+access_token})
 
     assert rv2.status_code == 200
-    assert rv.json['likes'] == 0
+    assert rv2.json['likes'] == 0
 
 def test_post_like_post_without_access_token(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
