@@ -137,8 +137,8 @@ class PostListService():
         gallery_id = request.args.get('gallery_id', None)
         username = request.args.get('username', None)
         page = request.args.get('page', 1)
-        if not page:
-            page = 1
+        per_page = request.args.get('per-page', 20)
+
 
         if (gallery_id == None):
             if username:
@@ -161,8 +161,15 @@ class PostListService():
             except ValueError:
                 return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
+        if per_page:
+            try:
+                per_page = int(per_page)
+            except ValueError:
+                return jsonify(msg='per-page parameter is wrong, it must be only integer char'), 400
+
+
         posts = posts.order_by(PostModel.posted_datetime.desc()). \
-            paginate(per_page=3, page=page)
+            paginate(per_page=per_page, page=page)
         if username:
             dumped_posts = posts_schema_user.dump(posts.items)
         else:
