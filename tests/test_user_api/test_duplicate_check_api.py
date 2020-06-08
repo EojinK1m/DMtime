@@ -1,4 +1,4 @@
-url = '/api/user/account/duplicate-check/'
+url = '/api/users/accounts/duplicate-check/'
 
 def check_email(client, email):
     return client.get(url+'email?email='+email)

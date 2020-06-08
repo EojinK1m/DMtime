@@ -1,4 +1,4 @@
-url = '/api/board/gallery'
+url = '/api/board/galleries'
 
 def test_create_gallery_correct(client, create_temp_account):
     admin_account = create_temp_account(is_admin = True)

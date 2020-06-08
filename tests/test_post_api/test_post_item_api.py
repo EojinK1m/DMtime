@@ -1,4 +1,4 @@
-url = '/api/board/post/'
+url = '/api/board/posts/'
 
 def test_post_get_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()

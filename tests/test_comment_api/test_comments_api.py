@@ -1,4 +1,4 @@
-url = '/api/board/comment'
+url = '/api/board/comments'
 
 
 def test_comment_post_correct(client, create_temp_account, create_temp_gallery, create_temp_post):

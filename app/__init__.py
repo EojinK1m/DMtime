@@ -41,7 +41,7 @@ def create_app(config):
     from app.api.user import account
 
     app.register_blueprint(board_blueprint, url_prefix='/api/board')
-    app.register_blueprint(user_blueprint, url_prefix='/api/user')
+    app.register_blueprint(user_blueprint, url_prefix='/api/users')
     app.register_blueprint(image_blueprint, url_prefix='/api/image')
 
     return app

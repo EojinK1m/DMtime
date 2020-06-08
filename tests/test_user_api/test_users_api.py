@@ -1,4 +1,4 @@
-url = '/api/user'
+url = '/api/users'
 
 
 pass

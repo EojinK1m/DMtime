@@ -1,4 +1,4 @@
-url = '/api/user'
+url = '/api/users'
 
 
 def test_get_user_information(client, create_temp_account):

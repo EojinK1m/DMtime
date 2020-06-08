@@ -1,4 +1,4 @@
-url = '/api/board/post'
+url = '/api/board/posts'
 
 def post_post(client, post, gallery_id, access_token=''):
     return client.post(url+f'?gallery-id={gallery_id}',
