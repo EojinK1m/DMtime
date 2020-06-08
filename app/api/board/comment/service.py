@@ -136,9 +136,12 @@ class CommentListService():
         post_id = request.args.get('post-id', None)
         username = request.args.get('username', None)
         page = request.args.get('page', None)
+        per_page= request.args.get('per-page', None)
 
         if not page:
             page = 1
+        if not per_page:
+            per_page = 50
 
         if post_id:
             if username:
@@ -159,8 +162,12 @@ class CommentListService():
              try: page = int(page)
              except ValueError: return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
+        if page:
+             try: per_page = int(per_page)
+             except ValueError: return jsonify(msg='per-page parameter is wrong, it must be only integer char'), 400
+
         comments = comments.order_by(CommentModel.wrote_datetime.desc()).\
-               paginate(per_page=3, page=page)
+               paginate(per_page=per_page, page=page)
 
         if username:
             dumped_comments = comments_schema_user.dump(comments.items)
