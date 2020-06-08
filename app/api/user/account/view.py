@@ -6,7 +6,7 @@ from app.api.user.account.service import AccountService, AuthService, DuplicateC
 
 class Account(Resource):
     def get(self):
-        return make_response(AccountService.provide_account_info(request.args.get('email')))
+        return make_response(AccountService.provide_account_info())
 
     def post(self):
         return make_response(AccountService.register_account(request.json))

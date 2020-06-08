@@ -12,16 +12,9 @@ class AccountService:
 
     @staticmethod
     @jwt_required
-    def provide_account_info(email):
-        identity = get_jwt_identity()
+    def provide_account_info():
+        email = get_jwt_identity()
         account = AccountModel.get_account_by_email(email)
-
-        if not account:
-            return jsonify(msg='account not found'), 404
-
-        if (email != identity):
-            return jsonify(msg='access denied'), 403
-
 
         return jsonify(account_info=account_schema.dump(account),
                        msg='query succeed'), 200
