@@ -31,7 +31,7 @@ def test_patch_user_information_with_wrong_data(client, create_temp_account):
                       headers={'authorization':'Bearer '+temp_account.generate_access_token()},
                       json={'wrong_key':'wrong_value'})
 
-    assert rv.status_code == 402
+    assert rv.status_code == 400
 
 
 def test_patch_user_information_without_access_token(client, create_temp_account):
