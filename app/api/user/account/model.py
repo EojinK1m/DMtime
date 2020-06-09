@@ -20,7 +20,7 @@ class AccountModel(db.Model):
     __tablename__ = 'account'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
+    email = db.Column(db.String(320), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), unique=False, nullable=False)
 
 
@@ -31,12 +31,11 @@ class AccountModel(db.Model):
     def hash_password(password):
         return bcrypt.generate_password_hash(password)
 
-    def generate_access_token(self):
-        import datetime
-        return create_access_token(identity=self.email, expires_delta=datetime.timedelta(days=365))
+    def generate_access_token(self, expire=None):
+        return create_access_token(identity=self.email, expires_delta=expire)
 
-    def generate_refresh_token(self):
-        return create_refresh_token(identity=self.email)
+    def generate_refresh_token(self, expire=None):
+        return create_refresh_token(identity=self.email, expires_delta=expire)
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
@@ -66,4 +65,17 @@ class AccountSchema(ma.SQLAlchemySchema):
 
 account_schema = AccountSchema()
 accounts_schema =  AccountSchema(many=True)
+
+
+from marshmallow import validate
+class AccountInputSchema(ma.Schema):
+    email = ma.Str(required = True, validate = validate.Email())
+    username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    user_explain = ma.Str(required = False, validate = validate.Length(max = 400))
+    profile_image_id = ma.Int(required = False)
+
+class AccountLoginInputSchema(ma.Schema):
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    email = ma.Str(required = True, validate = validate.Email())
 

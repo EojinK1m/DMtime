@@ -23,6 +23,11 @@ class UserService:
     @staticmethod
     @jwt_required
     def modify_user_info(username, data):
+        from app.api.user.model import UserPatchInputSchema
+        error = UserPatchInputSchema().validate(data)
+        if error:
+            return jsonify(msg= 'Bad request, json body is wrong'), 400
+
         new_username = data.get('username', None)
         new_explain = data.get('user_explain', None)
         new_profile_image_id = data.get('profile_image', None)

@@ -28,6 +28,18 @@ class CommentSchema(ma.SQLAlchemySchema):
     writer = ma.Nested('UserSchema', only=['username'])
     wrote_post = ma.Nested('PostSchema', only=['id'])
 
+from marshmallow.validate import Length
+
+class CommentInputSchema(ma.Schema):
+    content = ma.Str(required = True, validate = Length(min = 1, max = 100))
+    upper_comment_id = ma.Integer(required = False, allow_none = True)
+
+
+class CommentPatchInputSchema(ma.Schema):
+    content = ma.Str(required = False, validate = Length(min = 1, max = 100))
+
+
+
 
 comments_schema = CommentSchema(many=True, exclude=['wrote_post'])
 comments_schema_user = CommentSchema(many=True, exclude=['writer', 'upper_comment_id'])

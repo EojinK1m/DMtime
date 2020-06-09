@@ -12,24 +12,23 @@ class AccountService:
 
     @staticmethod
     @jwt_required
-    def provide_account_info(email):
-        identity = get_jwt_identity()
+    def provide_account_info():
+        email = get_jwt_identity()
         account = AccountModel.get_account_by_email(email)
-
-        if not account:
-            return jsonify(msg='account not found'), 404
-
-        if (email != identity):
-            return jsonify(msg='access denied'), 403
-
 
         return jsonify(account_info=account_schema.dump(account),
                        msg='query succeed'), 200
 
 
 
+
     @staticmethod
     def register_account(data):
+        from app.api.user.account.model import AccountInputSchema
+        errors = AccountInputSchema().validate(data)
+        if errors:
+            return jsonify({'msg': 'missing parameter exist'}), 400
+
         email = data.get('email', None)
         password = data.get('password', None)
 
@@ -37,9 +36,6 @@ class AccountService:
         user_explain = data.get('user_explain', None)
         profile_image_id = data.get('profile_image_id', None)
 
-
-        if email is None or password is None or username is None:
-            return jsonify({'msg':'missing parameter exist'}), 400
 
         if AccountModel.get_account_by_email(email):
             return jsonify({'msg':'same email exist'}), 400
@@ -94,11 +90,13 @@ class AuthService:
 
     @staticmethod
     def login(data):
+        from app.api.user.account.model import AccountLoginInputSchema
+        error = AccountLoginInputSchema().validate(data)
+        if error:
+            return jsonify(msg='Bad request, wrong json body'), 400
+
         email = data.get('email', None)
         password = data.get('password', None)
-
-        if not email or not password:
-            return jsonify({'msg':'missing parameter exist'}), 400
 
         login_account = AccountModel.get_account_by_email(email)
 
