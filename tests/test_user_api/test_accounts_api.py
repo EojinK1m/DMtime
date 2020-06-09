@@ -12,21 +12,10 @@ def test_register_correct_minimum_information(client):
     rv = register(client, correct_account_1)
     assert rv.status_code == 200
 
-def test_register_correct_full_information(client, create_temp_image):
-    temp_image = create_temp_image()
+def test_register_correct_full_information(client):
     full_information_account = correct_account_1.copy()
-    full_information_account['user_explain'] = 'test_user_explain'
-    full_information_account['profile_image_id'] = temp_image.id
-
     rv = register(client, full_information_account)
     assert rv.status_code == 200
-
-
-def test_register_with_not_exist_image_id(client):
-    not_exist_image_id_account = correct_account_1.copy()
-    not_exist_image_id_account['profile_image_id'] = 1
-    rv = register(client, not_exist_image_id_account)
-    assert rv.status_code == 206
 
 
 def test_register_same_username(client):
