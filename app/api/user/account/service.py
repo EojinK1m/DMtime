@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required, jwt_refresh_token_required,\
     get_jwt_identity
 from app.api.user.model import UserModel, UserSchema
-from app.api.user.account.model import AccountModel, account_schema
+from app.api.user.account.model import AccountModel, account_schema, AccountInputSchema
 from app.api.user.service import UserService
 from app import db
 
@@ -24,18 +24,13 @@ class AccountService:
 
     @staticmethod
     def register_account(data):
-        from app.api.user.account.model import AccountInputSchema
         errors = AccountInputSchema().validate(data)
         if errors:
             return jsonify({'msg': 'missing parameter exist'}), 400
 
         email = data.get('email', None)
         password = data.get('password', None)
-
         username = data.get('username', None)
-        user_explain = data.get('user_explain', None)
-        profile_image_id = data.get('profile_image_id', None)
-
 
         if AccountModel.get_account_by_email(email):
             return jsonify({'msg':'same email exist'}), 400
@@ -48,19 +43,18 @@ class AccountService:
             db.session.add(new_account)
             db.session.flush()
 
-            new_user = UserModel(username=username, account = new_account,\
-                                 explain=user_explain)
+            new_user = UserModel(username=username, account = new_account)
             db.session.add(new_user)
         except:
             db.session.rollback()
             return jsonify(msg='an error occurred while adding infos in db'), 500
         db.session.commit()
 
-        if not UserService.set_profile_image(new_user, profile_image_id):
-            db.session.rollback()
-            return jsonify(msg='register succeed but while registering profile image, an error occurred.\nplz check image_id'), 206
-
-        db.session.commit()
+        # if not UserService.set_profile_image(new_user, profile_image_id):
+        #     db.session.rollback()
+        #     return jsonify(msg='register succeed but while registering profile image, an error occurred.\nplz check image_id'), 206
+        #
+        # db.session.commit()
         return jsonify(msg='register succeed'), 200
 
 
