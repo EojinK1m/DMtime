@@ -102,7 +102,7 @@ def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, 
     temp_account = create_temp_account()
     temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
 
-    rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page{5}')
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page={5}')
     assert rv.status_code == 200
 
     json = rv.json
