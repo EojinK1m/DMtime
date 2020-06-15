@@ -30,7 +30,7 @@ class UserService:
 
         new_username = data.get('username', None)
         new_explain = data.get('user_explain', None)
-        new_profile_image_id = data.get('profile_image', None)
+        new_profile_image_id = data.get('profile_image_id', None)
 
 
         user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user

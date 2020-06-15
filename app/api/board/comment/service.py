@@ -162,7 +162,7 @@ class CommentListService():
              try: page = int(page)
              except ValueError: return jsonify(msg='page parameter is wrong, it must be only integer char'), 400
 
-        if page:
+        if per_page:
              try: per_page = int(per_page)
              except ValueError: return jsonify(msg='per-page parameter is wrong, it must be only integer char'), 400
 

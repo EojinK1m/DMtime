@@ -158,22 +158,20 @@ def test_comment_get_with_paging(client, create_temp_account, create_temp_galler
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.id, temp_gallery.id)
     temp_comments = [create_temp_comment(wrote_user_id = temp_account.user.id,
-                                         wrote_post_id = temp_post.id) for i in range(20)]
+                                         wrote_post_id = temp_post.id) for i in range(2)]
 
-    rv = client.get(url+f'?post-id={temp_post.id}&per-page=5&page=4')
+    rv = client.get(url+f'?post-id={temp_post.id}&per-page=1&page=2')
 
     for i in range(2):
         assert rv.status_code == 200
-        assert rv.json['number_of_pages'] == 4
+        assert rv.json['number_of_pages'] == 2
 
         comments = rv.json['comments']
         assert comments != None
 
+        assert temp_comments[1].id == comments[0]['id']
 
-        for i in range(len(comments)):
-            assert temp_comments[-i-1].content == comments[-i-1]['content']
-
-        rv = client.get(url+f'?username={temp_account.user.username}&per-page=5&page=4')
+        rv = client.get(url+f'?username={temp_account.user.username}&per-page=1&page=2')
 
 
 def test_comment_get_with_username_post_id_together(client, create_temp_account, create_temp_gallery,

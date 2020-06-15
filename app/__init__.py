@@ -42,7 +42,7 @@ def create_app(config):
 
     app.register_blueprint(board_blueprint, url_prefix='/api/board')
     app.register_blueprint(user_blueprint, url_prefix='/api/users')
-    app.register_blueprint(image_blueprint, url_prefix='/api/image')
+    app.register_blueprint(image_blueprint, url_prefix='/api/images')
 
     return app
 
