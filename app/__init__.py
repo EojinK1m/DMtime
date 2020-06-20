@@ -6,6 +6,8 @@ from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 
+
+
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
@@ -30,6 +32,7 @@ def create_app(config):
     from app.api.user.model import UserModel
     from app.api.user.account.model import AccountModel
 
+    wait_db_ready(app)
 
     with app.app_context():
         db.create_all()
@@ -62,3 +65,28 @@ def admin_required(fn):
             return fn(*args, **kwargs)
 
     return wrapper
+
+
+import time
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.sql import text
+
+def wait_db_ready(app):
+    wait_db_ready.num_of_try = 0
+
+    while True:
+        try:
+            with app.app_context():
+                db.session.query("1").from_statement(text("SELECT 1")).all()
+            return True
+        except OperationalError:
+            time.sleep(.5)
+            if wait_db_ready.num_of_try >= 10:
+                raise Exception('db not work!')
+            else:
+                wait_db_ready.num_of_try += 1
+            continue
+        except Exception as e:
+            raise e
+
+
