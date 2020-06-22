@@ -81,7 +81,7 @@ def wait_db_ready(app):
             return True
         except OperationalError:
             time.sleep(.5)
-            if wait_db_ready.num_of_try >= 10:
+            if wait_db_ready.num_of_try >= 20:
                 raise Exception('db not work!')
             else:
                 wait_db_ready.num_of_try += 1
