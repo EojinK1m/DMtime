@@ -6,7 +6,8 @@ required_environment_variables=("DMTIME_DB_URI" "DMTIME_DB_USER" "DMTIME_DB_PW" 
 
 verify_required_env() {
     for require_var_name in "${required_environment_variables[@]}"; do
-        if [[ -z "$"$require_var_name ]]; then
+        
+        if [ -z $(printenv $require_var_name) ]; then
             printf '%s is not found. Check environment.\n' $require_var_name
             exit 1
         fi
@@ -14,4 +15,4 @@ verify_required_env() {
 }       
 
 verify_required_env
-uwsgi -i DMInside.ini
+# uwsgi -i DMInside.ini
