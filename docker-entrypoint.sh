@@ -15,4 +15,4 @@ verify_required_env() {
 }       
 
 verify_required_env
-# uwsgi -i DMInside.ini
+uwsgi -i DMInside.ini
