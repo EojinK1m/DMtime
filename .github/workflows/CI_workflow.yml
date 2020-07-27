@@ -8,6 +8,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        images: mysql:5.7
+        env:
+          MYQSL_ROOT_PASSWORD: mysql_pw
+          MYSQL_DATABASE: dmtime_test
+        ports:
+          - 3306:3306
+
+    env:
+      DMTIME_DB_USER: "root"
+      DMTIME_DB_PW: "mysql_pw"
+      DMTIME_DB_URI: "mysql:3306/dmtime_test"
+      DMTIME_JWT_KEY: "testKey"
+      DMTIME_IMAGE_STORAGE: "/dmtime/images"
+      DMTIME_SERVER_NAME: "localhost:8080"
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +37,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
+      
       - name: Run test
         run: |
           pytest
