@@ -32,6 +32,7 @@ jobs:
       - name: Make image storage directory
         run: |
           sudo mkdir -p $DMTIME_IMAGE_STORAGE
+          sudo chmod 777 $DMTIME_IMAGE_STORAGE
 
       - name: Set up python
         uses: actions/setup-python@v2
