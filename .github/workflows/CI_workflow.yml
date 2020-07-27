@@ -20,7 +20,7 @@ jobs:
     env:
       DMTIME_DB_USER: "root"
       DMTIME_DB_PW: "mysql_pw"
-      DMTIME_DB_URI: "mysql:3306/dmtime_test"
+      DMTIME_DB_URI: "127.0.0.1:3306/dmtime_test"
       DMTIME_JWT_KEY: "testKey"
       DMTIME_IMAGE_STORAGE: "/dmtime/images"
       DMTIME_SERVER_NAME: "localhost:8080"
@@ -30,7 +30,7 @@ jobs:
 
       - name: Set up python
         uses: actions/setup-python@v2
-        with:
+        with:ls
           python-version: 3.8
 
       - name: Set up dependency
