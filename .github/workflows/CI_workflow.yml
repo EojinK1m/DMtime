@@ -12,7 +12,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYQSL_ROOT_PASSWORD: mysql_pw
+          MYSQL_ROOT_PASSWORD: mysql_pw
           MYSQL_DATABASE: dmtime_test
         ports:
           - 3306:3306
