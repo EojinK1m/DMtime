@@ -31,7 +31,7 @@ jobs:
       
       - name: Make image storage directory
         run: |
-          mkdir $DMTIME_IMAGE_STORAGE
+          mkdir -p $DMTIME_IMAGE_STORAGE
 
       - name: Set up python
         uses: actions/setup-python@v2
