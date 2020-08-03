@@ -62,8 +62,8 @@ def test_comment_post_over_size(client, create_temp_account, create_temp_gallery
                      json = test_comment_info)
 
     #assert 'shorter than 100' in rv.json['msg']
-    assert rv.status_code == 413
-
+    #assert rv.status_code == 413
+    assert rv.status_code == 400 
 
 def test_comment_post_lower_correct(client, create_temp_account, create_temp_gallery, create_temp_post,
                                     create_temp_comment):
