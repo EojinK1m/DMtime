@@ -41,9 +41,9 @@ def test_post_post_without_access_token(client, create_temp_gallery):
 
     rv.status_code == 403
 
-def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
-    raise Exception('NotMakeError', 'We didnt think its detail yet')
-    pass
+# def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
+#     raise Exception('NotMakeError', 'We didnt think its detail yet')
+#     pass
 
 def test_post_post_with_unsuitable_post_data(client, create_temp_account, create_temp_gallery):
     temp_account = create_temp_account()
