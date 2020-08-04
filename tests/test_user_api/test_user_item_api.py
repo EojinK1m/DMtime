@@ -33,6 +33,14 @@ def test_patch_user_information_with_wrong_data(client, create_temp_account):
 
     assert rv.status_code == 400
 
+def test_patch_user_information_with_exist_data(client, create_temp_account):
+    temp_account = create_temp_account()
+
+    rv = client.patch(url+'/'+temp_account.user.username,
+                      headers={'authorization':'Bearer '+temp_account.generate_access_token()},
+                      json={'username':temp_account.user.username})
+
+    assert rv.status_code == 400
 
 def test_patch_user_information_without_access_token(client, create_temp_account):
     temp_account = create_temp_account()
@@ -51,3 +59,16 @@ def test_patch_other_user_information(client, create_temp_account):
                       json={'username':change_username})
 
     assert rv.status_code == 403
+
+def test_patch_maintain_information(client, create_temp_account, create_temp_image):
+    temp_image = create_temp_image()
+    temp_account = create_temp_account(profile_image=temp_image)
+
+    rv = client.patch(
+                        url+'/'+temp_account.user.username,
+                        headers={'authorization':'Bearer '+temp_account.generate_access_token()},
+                        json={'username': temp_account.user.username+'t'}
+                    )
+                    
+    assert temp_account.user.profile_image == temp_image
+    assert rv.status_code == 200

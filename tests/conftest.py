@@ -156,7 +156,7 @@ def create_temp_account(app, session):
         session.commit()
 
         if(profile_image):
-            image.user_id = temp_user.id
+            profile_image.user_id = temp_user.id
 
         create_temp_account_.number += 1
         return temp_account

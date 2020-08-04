@@ -28,16 +28,20 @@ class UserService:
         if error:
             return jsonify(msg= 'Bad request, json body is wrong'), 400
 
-        new_username = data.get('username', None)
-        new_explain = data.get('user_explain', None)
-        new_profile_image_id = data.get('profile_image_id', None)
-
-
         user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
         if not user or not UserModel.query.filter_by(username=username).first():
             return jsonify({'msg': 'user not found'}), 404
         elif user.username != username:
-            return jsonify({'msg':f'access denied, you are not {username}'}), 403
+            return jsonify({'msg': f'access denied, you are not {username}'}), 403
+
+        new_username = data.get('username', user.username)
+        new_explain = data.get('user_explain', user.explain)
+        new_profile_image_id = data.get('profile_image_id',
+                                        user.profile_image.id if user.profile_image else None)
+
+        if(UserModel.query.filter_by(username=new_username).first()):
+            return jsonify(msg= 'Bad request, same username exist'), 400
+
 
         user.username = new_username
         user.explain = new_explain
