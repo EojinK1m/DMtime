@@ -39,6 +39,10 @@ class UserService:
         new_profile_image_id = data.get('profile_image_id',
                                         user.profile_image.id if user.profile_image else None)
 
+        if(UserModel.query.filter_by(username=new_username).first()):
+            return jsonify(msg= 'Bad request, same username exist'), 400
+
+
         user.username = new_username
         user.explain = new_explain
         if not UserService.set_profile_image(user, new_profile_image_id):
