@@ -33,6 +33,14 @@ def test_patch_user_information_with_wrong_data(client, create_temp_account):
 
     assert rv.status_code == 400
 
+def test_patch_user_information_with_exist_data(client, create_temp_account):
+    temp_account = create_temp_account()
+
+    rv = client.patch(url+'/'+temp_account.user.username,
+                      headers={'authorization':'Bearer '+temp_account.generate_access_token()},
+                      json={'username':temp_account.user.username})
+
+    assert rv.status_code == 400
 
 def test_patch_user_information_without_access_token(client, create_temp_account):
     temp_account = create_temp_account()
