@@ -63,5 +63,18 @@ jobs:
           repository: eojink1m/dmtime
           tags: latest
 
+  deploy_service:
+    runs-on: ubuntu_lasted
+    needs: [docker_build_push]      
+    steps:
+      - uses: appleboy/ssh-action@master
+      - with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/
+            sh dmtime_deploy.sh
 
 
