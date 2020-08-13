@@ -134,7 +134,7 @@ class PostListService():
 
     @staticmethod
     def provide_post_list():
-        gallery_id = request.args.get('gallery_id', None)
+        gallery_id = request.args.get('gallery-id', None)
         username = request.args.get('username', None)
         page = request.args.get('page', 1)
         per_page = request.args.get('per-page', 20)
