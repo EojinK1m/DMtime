@@ -8,7 +8,7 @@ class GalleryModel(db.Model):
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.String(255), nullable=True)
 
-    posts = db.relationship('PostModel', backref='gallery')
+    posts = db.relationship('PostModel', passive_deletes=True, backref='gallery')
 
     def delete_gallery(self):
         db.session.delete(self)
