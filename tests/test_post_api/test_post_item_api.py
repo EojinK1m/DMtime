@@ -186,3 +186,16 @@ def test_post_like_post_without_access_token(client, create_temp_account, create
     rv = client.post(url+f'{temp_post.id}/like')
     assert rv.status_code == 401
 
+def test_delete_post_have_like(client, create_temp_account, create_temp_gallery, create_temp_post, create_temp_postlike):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_post = create_temp_post(uploader_id = temp_account.id,
+                                 upload_gallery_id = temp_gallery.id)
+    temp_postlike = create_temp_postlike(liker_id=temp_account.user.id, post_id=temp_post.id)
+
+    rv = client.delete(url+f'{temp_post.id}',
+                        headers={'authorization':'Bearer '+temp_account.generate_access_token()})
+
+    assert rv.status_code == 200
+
+    

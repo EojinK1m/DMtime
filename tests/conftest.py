@@ -234,4 +234,19 @@ def create_temp_comment(app, session):
     create_temp_comment_.number = 0
     return create_temp_comment_
 
+@pytest.fixture
+def create_temp_postlike(app, session):
+    from app.api.board.post.model import PostLikeModel
 
+    def create_temp_postlike_(post_id, liker_id):
+        temp_postlike = PostLikeModel(post_id=post_id, liker_id=liker_id)
+
+        session.add(temp_postlike)
+        session.commit()
+
+        create_temp_postlike.number += 1
+
+        return temp_postlike
+
+    create_temp_postlike.number = 0
+    return create_temp_postlike_
