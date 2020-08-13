@@ -64,7 +64,7 @@ jobs:
           tags: latest
 
   deploy_service:
-    runs-on: ubuntu_lasted
+    runs-on: ubuntu-latest
     needs: [docker_build_push]      
     steps:
       - uses: appleboy/ssh-action@master
