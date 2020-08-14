@@ -24,3 +24,20 @@ def test_get_account_information(client, create_temp_account):
     account_info = rv.json['account_info']
     assert account_info
     assert account_info['email'] == temp_account.email
+
+def test_put_account_password(client, create_temp_account):
+    from app.api.user.account.model import AccountModel
+
+    temp_account = create_temp_account()
+    password = temp_account.user.username.replace('user', 'password')
+    new_password = 'this_1s_new_passsword!'
+
+    rv = client.put(account_uri+'/password',
+                    json={
+                        'password':password,
+                        'new_password':new_password
+                        },
+                    headers={'authorization':f'Bearer {temp_account.generate_access_token()}'})
+    
+    assert rv.status_code == 200
+    assert temp_account.verify_password(new_password)
