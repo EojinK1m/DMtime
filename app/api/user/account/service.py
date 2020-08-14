@@ -2,13 +2,12 @@ from flask import jsonify
 from flask_jwt_extended import jwt_required, jwt_refresh_token_required,\
     get_jwt_identity
 from app.api.user.model import UserModel, UserSchema
-from app.api.user.account.model import AccountModel, account_schema, AccountInputSchema
+from app.api.user.account.model import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
 from app.api.user.service import UserService
 from app import db
 
 
 class AccountService:
-
 
     @staticmethod
     @jwt_required
@@ -18,8 +17,6 @@ class AccountService:
 
         return jsonify(account_info=account_schema.dump(account),
                        msg='query succeed'), 200
-
-
 
 
     @staticmethod
@@ -75,9 +72,25 @@ class AccountService:
         db.session.commit()
         return jsonify(msg='account deleted!'), 200
 
+    @staticmethod
+    @jwt_required
+    def change_account_password(data):
+        errors = AccountChangePasswrodInputSchema().validate(data)
+        if errors:
+            return jsonify(msg='missing parameter exist'), 400
+        
+        email = get_jwt_identity()
+        account = AccountModel.get_account_by_email(email)
+        password = data.get('password')
+        new_password = data.get('new_password')
 
-
-
+        if not (account.verify_password(password)):
+            return jsonify(msg='access denied'), 403
+        
+        account.password_hash = AccountModel.hash_password(new_password)
+        
+        db.session.commit()
+        return jsonify(msg='change password succeed!')
 
 
 class AuthService:

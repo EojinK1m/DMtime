@@ -14,6 +14,10 @@ class Account(Resource):
     def delete(self):
         return make_response(AccountService.delete_account(request.args.get('email')))
 
+class AccountPassword(Resource):
+    def put(self):
+        return make_response(AccountService.change_account_password(request.json))
+        
 class Auth(Resource):
     def post(self):
         return make_response(AuthService.login(request.json))

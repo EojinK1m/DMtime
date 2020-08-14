@@ -78,3 +78,6 @@ class AccountLoginInputSchema(ma.Schema):
     password = ma.Str(required = True, validate = validate.Length(min = 8))
     email = ma.Str(required = True, validate = validate.Email())
 
+class AccountChangePasswrodInputSchema(ma.Schema):
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    new_password = ma.Str(required = True, validate = validate.Length(min = 8))
