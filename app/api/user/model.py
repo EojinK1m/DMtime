@@ -11,10 +11,9 @@ class UserModel(db.Model):
 
     posts = db.relationship('PostModel', backref='uploader')
     profile_image = db.relationship('ImageModel', uselist=False)
-
+    managing_gallery = db.relationship('GalleryModel', backref='manager')
     def delete_user(self):
         db.session.delete(self)
-
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
