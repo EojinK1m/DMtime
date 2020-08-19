@@ -166,14 +166,17 @@ def create_temp_account(app, session):
     return create_temp_account_
 
 @pytest.fixture()
-def create_temp_gallery(app, session):
+def create_temp_gallery(app, session, create_temp_account):
     from app.api.board.gallery.model import GalleryModel
 
-    def create_temp_gallery_():
+    def create_temp_gallery_(manager_user=None):
+        if(manager_user==None):
+            manager_user = create_temp_account()
+
         name = f'test_gallery{create_temp_gallery_.number}_name'
         explain = f'test_gallery{create_temp_gallery_.number}_explain'
 
-        temp_gallery = GalleryModel(name=name, explain=explain)
+        temp_gallery = GalleryModel(name=name, explain=explain, manager_user_id=manager_user.id)
 
         session.add(temp_gallery)
         session.commit()
