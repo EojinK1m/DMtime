@@ -4,7 +4,7 @@ from flask_restful import Api
 from app.api.user.view import user
 from app.api.user.account.view import Account, AccountPassword, Auth, Refresh,\
                                     DuplicateCheckEmail, DuplicateCheckUsername
-                                    
+
 
 
 user_blueprint = Blueprint('user_api', 'User api')
