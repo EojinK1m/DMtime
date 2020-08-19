@@ -34,19 +34,20 @@ class UserService:
         elif user.username != username:
             return jsonify({'msg': f'access denied, you are not {username}'}), 403
 
-        new_username = data.get('username', user.username)
-        new_explain = data.get('user_explain', user.explain)
+        new_username = data.get('username', None)
+        new_explain = data.get('user_explain', None)
         new_profile_image_id = data.get('profile_image_id',
                                         user.profile_image.id if user.profile_image else None)
 
-        if(UserModel.query.filter_by(username=new_username).first()):
-            return jsonify(msg= 'Bad request, same username exist'), 400
 
-
-        user.username = new_username
-        user.explain = new_explain
+        if not (new_username == None):
+            if(UserModel.query.filter_by(username=new_username).first()):
+                return jsonify(msg='Bad request, same username exist'), 400
+            user.username = new_username
+        if not (new_explain == None):
+            user.explain = new_explain
         if not UserService.set_profile_image(user, new_profile_image_id):
-            jsonify({'msg': f'image not found, image {new_profile_image_id}is not exist'}), 404
+            return jsonify({'msg': f'image not found, image {new_profile_image_id}is not exist'}), 404
 
         db.session.commit()
 
