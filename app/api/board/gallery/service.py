@@ -1,4 +1,5 @@
-from functools import update_wrapper
+from functools import update_wrapper, partial
+from werkzeug.exceptions import NotFound, Forbidden
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request
 from app import admin_required, db
@@ -59,16 +60,21 @@ class GalleryService:
             update_wrapper(self, fn)
             self.fn = fn
         
+
         def __call__(self, *args, **kargs):
             verify_jwt_in_request()
-
             request_account = AccountModel.get_account_by_email(get_jwt_identity())
-            target_gallery = GalleryService.get_gallery_by_id(kargs.get('gallery_id'))
+            target_gallery = GalleryService.get_gallery_by_id(kargs['gallery_id'])
 
             if(target_gallery.is_manager(request_account.user) or request_account.is_admin()):
                 return self.fn(*args, **kargs)
             else:
-                return jsonify(msg='access denied'), 403
+                raise Forbidden()
+        
+
+        def __get__(self, instance, owner=None):
+            return partial(self.__call__, instance)
+
 
     @staticmethod
     def provide_gallery_info(gallery_id):
@@ -86,7 +92,7 @@ class GalleryService:
         gallery = GalleryModel.query.get(gallery_id)
         if not gallery:
             return jsonify({'msg': 'gallery not fount'}), 404
-
+ 
         json = request.get_json()
 
         e = GalleryPatchValidateSchema().validate(json)
@@ -122,8 +128,14 @@ class GalleryService:
         db.session.commit()
         return jsonify(msg='gallery deleted'), 200
 
+    @staticmethod
+    def raise_exception_if_not_exist_gallery_id(gallery_id):
+        if not GalleryService.is_exist_gallery_id(gallery_id):
+            raise NotFound
 
-
+    @staticmethod
+    def is_exist_gallery_id(gallery_id):
+        return GalleryService.get_gallery_by_id(gallery_id) != None
 
     @staticmethod
     def get_gallery_by_id(gallery_id):

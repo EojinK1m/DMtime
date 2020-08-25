@@ -93,7 +93,6 @@ def image(app, session):
 def create_temp_image(app, session):
     from app.api.image.model import ImageModel
     import os
-    import os
 
     def create_temp_image_():
         create_temp_image_.number += 1
@@ -111,7 +110,6 @@ def create_temp_image(app, session):
     create_temp_image_.number = 0
     yield create_temp_image_
 
-    print('aaaaaa')
     for i in range(create_temp_image_.number):
         try:
             os.remove(os.path.join(app.config['IMAGE_UPLOADS'], f'fake_filename{i+1}.png'))
@@ -253,3 +251,46 @@ def create_temp_postlike(app, session):
 
     create_temp_postlike.number = 0
     return create_temp_postlike_
+
+@pytest.fixture
+def create_temp_report(app, session):
+    from app.api.board.gallery.report.model import ReportModel, ContentType
+
+    def create_temp_report_(
+        reported_user_id,
+        gallery_id,
+        reported_content_type,
+        post_id=None,
+        comment_id=None,
+        reason=1
+        ):
+
+        if(reported_content_type == ContentType.COMMENT.value):
+            if(post_id is not None or comment_id is None):
+                raise Exception()
+        elif(reported_content_type == ContentType.POST.value):
+            if(post_id is None or comment_id is not None):
+                raise Exception()
+
+        detail_reason = f'This is detail reason for temp port {create_temp_report.number}'
+
+        temp_report =\
+            ReportModel(
+                reason=reason,
+                detail_reason=detail_reason,
+                reported_user_id=reported_user_id,
+                gallery_id=gallery_id,
+                reported_content_type=reported_content_type,
+                post_id=post_id,
+                comment_id=comment_id
+            )
+
+        session.add(temp_report)
+        session.commit()
+        create_temp_report.number += 1
+
+        return temp_report
+
+    create_temp_report.number = 0
+    return create_temp_report_
+

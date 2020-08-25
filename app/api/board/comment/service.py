@@ -30,8 +30,7 @@ def check_user_permission(comment, admin_allow):
 
 
 class CommentService():
-
-
+    
     @staticmethod
     @jwt_required
     def modify_comment(comment_id):
