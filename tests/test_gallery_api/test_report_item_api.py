@@ -62,8 +62,7 @@ def test_get_post_report(client, default_ready):
     assert rv.status_code == 200
     assert rv.json['report']
     assert rv.json['report']['reported_post']
-    print(rv.json['report'])
-    assert 1 ==2
+
 
 
 def test_get_comment_report(client, default_ready):
@@ -75,8 +74,7 @@ def test_get_comment_report(client, default_ready):
     assert rv.status_code == 200
     assert rv.json['report']
     assert rv.json['report']['reported_comment']
-    print(rv.json['report'])
-    assert 1 == 2
+
 
 
 def test_get_report_with_non_manager_account(client, default_ready):
