@@ -1,30 +1,31 @@
 from flask import Flask
-from app import config
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_redis import FlaskRedis
 
-
+from app import config
+from app.util.email_sender import EmailSender
 
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
 jwt = JWTManager()
-
-
+redis_client = FlaskRedis()
+email_sender = EmailSender()
 
 
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
 
-
     db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    redis_client.init_app(app)
+    email_sender.init_app(app)
 
     from app.api.image.model import ImageModel
     from app.api.board.post.model import PostModel

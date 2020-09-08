@@ -29,3 +29,7 @@ class DuplicateCheckEmail(Resource):
 class DuplicateCheckUsername(Resource):
     def get(self):
         return make_response(DuplicateCheck.username_check(request.args.get('username')))
+
+class AuthEmailVerificationCode(Resource):
+    def post(self):
+        return make_response(AccountService.verify_email_verification_code(verification_code=request.args.get('verification-code')))

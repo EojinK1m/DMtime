@@ -72,7 +72,7 @@ class AccountInputSchema(ma.Schema):
     email = ma.Str(required = True, validate = validate.Email())
     username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
     password = ma.Str(required = True, validate = validate.Length(min = 8))
-
+    
 
 class AccountLoginInputSchema(ma.Schema):
     password = ma.Str(required = True, validate = validate.Length(min = 8))

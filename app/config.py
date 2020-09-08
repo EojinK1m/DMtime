@@ -16,6 +16,13 @@ class DefaultConfig(object):
     IMAGES_URL = os.environ['DMTIME_SERVER_NAME']+'/images/'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+    EMAIL_SENDER_ADDRESS = os.environ['DMTIME_EMAIL_SENDER_ADDRESS']
+    EMAIL_PASSWORD = os.environ['DMTIME_EMAIL_PASSWORD']
+    EMAIL_SERVER = os.environ['DMTIME_EMAIL_SERVER']
+    EMAIL_PORT = os.environ['DMTIME_EMAIL_PORT']
+    EMAIL_VERIFY_DEADLINE = 300
+
+
 class ProductConfig(DefaultConfig):
     pass
 
