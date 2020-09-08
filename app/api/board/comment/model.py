@@ -10,6 +10,7 @@ class CommentModel(db.Model):
     upper_comment_id = db.Column(db.Integer(), db.ForeignKey('comment.id', ondelete="SET NULL"), nullable=True)
     content = db.Column(db.String(100), nullable=False)
     wrote_datetime = db.Column(db.DateTime(), nullable=False)
+    is_anonymous = db.Column(db.Boolean, nullable=False)
 
     writer = db.relationship('UserModel', backref='comments')
     wrote_post = db.relationship('PostModel', backref='comments')

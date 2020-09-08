@@ -101,6 +101,7 @@ class CommentListService():
             return jsonify(msg='json validate error'), 400
 
         content = json.get('content', None)
+        is_anonymous = json.get('is_anonymous')
         upper_comment_id = json.get('upper_comment_id')
 
         if upper_comment_id:
@@ -120,6 +121,7 @@ class CommentListService():
         writer = AccountModel.query.filter_by(email = get_jwt_identity()).first().user
 
         new_comment = CommentModel(content=content,
+                                   is_anonymous=is_anonymous,
                                    wrote_datetime=datetime.now(),
                                    wrote_user_id=writer.id,
                                    wrote_post_id=post_id,
