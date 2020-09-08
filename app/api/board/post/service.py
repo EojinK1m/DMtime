@@ -199,6 +199,7 @@ class PostListService():
         content = json.get('content', None)
         title = json.get('title', None)
         image_ids = json.get('image_ids', None)
+        is_anonymous = json.get('is_anonymous', None)
 
 
         if not content or not title:
@@ -208,6 +209,7 @@ class PostListService():
                              title=title,
                              uploader=uploader_account.user,
                              gallery=post_gallery,
+                             is_anonymous=is_anonymous,
                              posted_datetime=datetime.now())
         db.session.add(new_post)
         db.session.flush()

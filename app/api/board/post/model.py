@@ -11,6 +11,8 @@ class PostModel(db.Model):
     content = db.Column(db.Text(), nullable=True) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
+    is_anonymous = db.Column(db.Boolean, nullable=False)
+
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
@@ -76,6 +78,7 @@ class PostPostInputValidateSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1))
     title = ma.Str(required = True, validate = Length(min = 1, max = 30))
     image_ids = ma.List(ma.Integer, required = True)
+    is_anonymous = ma.Boolean(required=True)
 
 class PostPatchInputValidateSchema(ma.Schema):
     content = ma.Str(required = False, validate = Length(min = 1))
