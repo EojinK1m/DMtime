@@ -13,17 +13,6 @@ def test_create_gallery_correct(client, create_temp_account):
 
     assert rv.status_code == 200
 
-def test_create_gallery_with_not_admin_account(client, create_temp_account):
-    temp_account = create_temp_account()
-    test_gallery_1 = {
-        'name':'test_gallery_1',
-        'explain':'this is explain of test_gallery1.'
-    }
-
-    rv = client.post(url, json=test_gallery_1,
-                    headers={'authorization':'Bearer '+temp_account.generate_access_token()})
-
-    assert rv.status_code == 403
 
 def test_create_gallery_with_wrong_json_data(client, create_temp_account):
     admin_account = create_temp_account(is_admin = True)

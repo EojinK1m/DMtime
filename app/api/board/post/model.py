@@ -18,7 +18,7 @@ class PostModel(db.Model):
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
 
     images = db.relationship('ImageModel')
-    postlikes = db.relationship('PostLikeModel')
+    postlikes = db.relationship('PostLikeModel', passive_deletes=True)
     posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):

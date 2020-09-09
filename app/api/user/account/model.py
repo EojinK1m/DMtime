@@ -42,6 +42,9 @@ class AccountModel(db.Model):
 
     def delete_account(self):
         db.session.delete(self)
+    
+    def is_admin(self):
+        return self.email in current_app.config['ADMIN_LIST']
 
     @staticmethod
     def get_user_by_email(email):
@@ -54,6 +57,7 @@ class AccountModel(db.Model):
     @staticmethod
     def get_account_by_email(email):
         return AccountModel.query.filter_by(email=email).first()
+
 
 from app.api.user.model import UserSchema
 

@@ -7,12 +7,14 @@ class GalleryModel(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.String(255), nullable=True)
+    manager_user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
 
-    posts = db.relationship('PostModel', backref='gallery')
-
+    posts = db.relationship('PostModel', passive_deletes=True, backref='gallery')
     def delete_gallery(self):
         db.session.delete(self)
 
+    def is_manager(self, user):
+        return user.id == self.manager_user_id
 
 
 class GallerySchema(ma.SQLAlchemySchema):

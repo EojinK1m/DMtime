@@ -13,10 +13,10 @@ class GalleryList(Resource):
 
 class Gallery(Resource):
     def get(self, gallery_id):
-        return make_response(GalleryService.provide_gallery_info(gallery_id))
+        return make_response(GalleryService.provide_gallery_info(gallery_id=gallery_id))
 
     def patch(self, gallery_id):
-        return make_response(GalleryService.modify_gallery_info(gallery_id))
+        return make_response(GalleryService.modify_gallery_info(gallery_id=gallery_id))
 
     def delete(self, gallery_id):
-        return make_response(GalleryService.delete_gallery(gallery_id))
+        return make_response(GalleryService.delete_gallery(gallery_id=gallery_id))

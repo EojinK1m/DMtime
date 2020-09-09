@@ -15,6 +15,8 @@ class CommentModel(db.Model):
     writer = db.relationship('UserModel', backref='comments')
     wrote_post = db.relationship('PostModel', backref='comments')
 
+    report = db.relationship('ReportModel', backref='reported_comment')
+
     def delete_comment(self):
         db.session.delete(self)
 
@@ -42,7 +44,7 @@ from marshmallow.validate import Length
 class CommentInputSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1, max = 100))
     upper_comment_id = ma.Integer(required = False, allow_none = True)
-
+    
 
 class CommentPatchInputSchema(ma.Schema):
     content = ma.Str(required = False, validate = Length(min = 1, max = 100))
