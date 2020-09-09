@@ -30,7 +30,7 @@ class DevelopConfig(DefaultConfig):
     DEBUG = True
     TESTING = True
 
-    ADMIN_LIST = ['eojin.dev@gmail.net', 'vjslzhs6@naver.com']
+    ADMIN_LIST = ['eojin.dev@gmail.com', 'vjslzhs6@naver.com']
 
 class TestConfig(DefaultConfig):
     DEBUG = True
