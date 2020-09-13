@@ -13,13 +13,22 @@ class PostList(Resource):
         gallery_id = request.args.get('gallery-id', None)
         return make_response(PostListService.post_post(gallery_id))
 
+
+class HotPostList(Resource):
+    def get(self):
+        return make_response(PostListService.provide_hot_post_list())
+
+
 class Post(Resource):
     def get(self, post_id):
         return make_response(PostService.provide_post(post_id))
+
     def patch(self, post_id):
         return make_response(PostService.modify_post(post_id))
+
     def delete(self, post_id):
         return make_response(PostService.delete_post(post_id))
+
 
 class PostLike(Resource):
     def post(self, post_id):
