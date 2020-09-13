@@ -1,7 +1,7 @@
 from app import db, ma
 from datetime import datetime
 
-from marshmallow.validate import Length
+from marshmallow.validate import Length, Range
 
 class PostModel(db.Model):
     __tablename__ = 'post'
@@ -12,7 +12,6 @@ class PostModel(db.Model):
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
     is_anonymous = db.Column(db.Boolean, nullable=False)
-
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
@@ -95,12 +94,22 @@ class PostPostInputValidateSchema(ma.Schema):
     is_anonymous = ma.Boolean(required=True)
 
 
+class PostGetQueryParameterValidateSchema(ma.Schema):
+    page = ma.Integer(required = False, validate = Range(min=1))
+    per_page = ma.Integer(required = False, validate = Range(min=1), data_key = 'per-page')
+    username = ma.Str(required = False, validate = Length(min = 2, max = 20))
+    gallery_id = ma.Integer(required = False, validate = Range(min=1), data_key = 'gallery-id')
+
+
+class HotPostGetQueryParameterValidateSchema(ma.Schema):
+    page = ma.Integer(required = False, validate = Range(min=1))
+    per_page = ma.Integer(required = False, validate = Range(min=1), data_key = 'per-page')
+
 
 class PostPatchInputValidateSchema(ma.Schema):
     content = ma.Str(required = False, validate = Length(min = 1))
     title = ma.Str(required = False, validate = Length(min = 1, max = 30))
     image_ids = ma.List(ma.Integer, required = False)
-
 
 
 post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
