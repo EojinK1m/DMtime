@@ -10,6 +10,8 @@ class DefaultConfig(object):
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{DB_USER}:{DB_PW}@{DB_URI}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    REDIS_URL = os.environ['DMTIME_REDIS_URL']
+
     JWT_SECRET_KEY = os.environ['DMTIME_JWT_KEY']
 
     IMAGE_UPLOADS = os.environ['DMTIME_IMAGE_STORAGE']
