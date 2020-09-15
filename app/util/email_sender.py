@@ -21,10 +21,14 @@ class EmailSender():
         self.password=app.config['EMAIL_PASSWORD']
         self.smtp_server_address=app.config['EMAIL_SERVER']
         self.port=app.config.get('EMAIL_PORT', 587)
+        self.testing = app.config['TESTING']
         self.check_connection()
 
 
     def check_connection(self):
+        if(self.testing):
+            return
+
         try:
             with smtplib.SMTP(self.smtp_server_address, self.port) as smtp:
                 smtp.ehlo()
@@ -33,6 +37,9 @@ class EmailSender():
 
 
     def send_mail(self, to_email, message):
+        if(self.testing):
+            return
+
         context = ssl.create_default_context()
 
         try:
