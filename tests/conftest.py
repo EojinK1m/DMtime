@@ -136,7 +136,7 @@ def create_temp_account(app, session):
 
 
     def create_temp_account_(profile_image = None, is_admin = False):
-        email = f'test_account_{create_temp_account_.number}@test.test'
+        email = f'test_account_{create_temp_account_.number}@dsm.hs.kr'
         username = f'test_user_{create_temp_account_.number}'
         password = f'test_password_{create_temp_account_.number}'
         user_explain = f'test_users_explain{create_temp_account_.number}'
@@ -310,7 +310,7 @@ def create_temp_register_account(app, session, redis_client):
     from app.util import verification_code_generater
 
     def create_temp_register_account_():
-        email = f'test_account_{create_temp_register_account_.number}@test.test'
+        email = f'test_account_{create_temp_register_account_.number}@dsm.hs.kr'
         username = f'test_user_{create_temp_register_account_.number}'
         password = f'test_password_{create_temp_register_account_.number}'
 
