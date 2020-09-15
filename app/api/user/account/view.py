@@ -16,7 +16,7 @@ class Account(Resource):
 
 class AccountPassword(Resource):
     def put(self):
-        return make_response(AccountService.change_account_password())
+        return make_response(AccountService.change_account_password(request.json))
 
 class Auth(Resource):
     def post(self):
