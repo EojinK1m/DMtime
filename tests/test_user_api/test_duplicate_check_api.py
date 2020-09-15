@@ -20,7 +20,7 @@ def test_email_duplicate_check_without_email_parameter(client):
     rv = client.get(url+'email')
 
     assert rv.status_code == 400
-    assert 'miss' in rv.json['msg']
+    assert 'miss' in rv.json['message']
 
 
 def check_username(client, username):
@@ -43,5 +43,5 @@ def test_email_duplicate_check_without_username_parameter(client):
     rv = client.get(url+'username')
 
     assert rv.status_code == 400
-    assert 'miss' in rv.json['msg']
+    assert 'miss' in rv.json['message']
 
