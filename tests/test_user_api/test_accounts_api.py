@@ -64,4 +64,4 @@ def test_register_not_school_email(client):
     wrong_email_account = correct_account_1.copy()
     wrong_email_account['email'] = 'vjslzhs6@naver.com'
     rv = register(client, wrong_email_account)
-    assert  rv.status_code == 403
+    assert  rv.status_code == 400
