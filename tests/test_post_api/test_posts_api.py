@@ -168,3 +168,21 @@ def test_posts_get_without_gallery_id(client, create_temp_post, create_temp_gall
     posts = rv.json['posts']
     assert posts
     assert len(posts) == 3
+
+
+def test_get_hot_posts(client,
+                       create_temp_account,
+                       create_temp_gallery,
+                       create_temp_post,
+                       create_temp_postlike):
+    temp_gallery = create_temp_gallery()
+    temp_account_1 = create_temp_account()
+    temp_account_2 = create_temp_account()
+    temp_post_1 = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account_1.id)
+    temp_post_2 = create_temp_post(upload_gallery_id=temp_gallery.id, uploader_id=temp_account_2.id)
+    temp_postlilke = create_temp_postlike(post_id=temp_post_1.id, liker_id=temp_account_2.user.id)
+
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}')
+    assert rv.status_code == 200
+    assert rv.json['posts'][0]['title'] == temp_post_1.title
