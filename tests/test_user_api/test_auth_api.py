@@ -49,3 +49,10 @@ def test_token_refresh_with_expired_refresh_token(client, create_temp_account):
     rv = refresh(client, refresh_token)
 
     assert rv.status_code == 401
+
+
+def test_authorize_email_verification_code(client, create_temp_register_account):
+    register_data = create_temp_register_account()
+
+    rv = client.post(url+f"/verification-code?verification-code={register_data['verification_code']}")
+    assert rv.status_code == 200
