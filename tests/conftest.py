@@ -19,6 +19,7 @@ import pytest
 from app import create_app
 from app.config import TestConfig
 from app import db as _db
+from app import redis_client as _redis_client
 from sqlalchemy import event
 from sqlalchemy.orm import sessionmaker
 
@@ -78,6 +79,14 @@ def session(app, db, request):
 def client(app):
     return app.test_client()
 
+
+@pytest.fixture(scope='function', autouse=True)
+def redis_client():
+    _redis_client.flushall()
+    yield _redis_client
+
+    _redis_client.flushall()
+
 @pytest.fixture(scope='function')
 def image(app, session):
     from app.api.image.model import ImageModel
@@ -117,7 +126,6 @@ def create_temp_image(app, session):
             continue
         except Exception as e:
             raise e
-
 
 
 
@@ -190,12 +198,12 @@ def create_temp_gallery(app, session, create_temp_account):
 def create_temp_post(app, session):
     from app.api.board.post.model import PostModel
 
-    def create_temp_post_(uploader_id, upload_gallery_id, included_images = None):
+    def create_temp_post_(uploader_id, upload_gallery_id, is_anonymous=False, included_images = None):
         title = f'test_post{create_temp_post_.number}_title'
         content = f'test_post{create_temp_post_.number}_content'+'test\n'*10
 
         temp_post = PostModel(uploader_id = uploader_id, gallery_id = upload_gallery_id,
-                              title=title, content=content)
+                              title=title, content=content, is_anonymous=is_anonymous)
 
         session.add(temp_post)
         session.commit()
@@ -215,7 +223,7 @@ def create_temp_post(app, session):
 def create_temp_comment(app, session):
     from app.api.board.comment.model import CommentModel
 
-    def create_temp_comment_(wrote_user_id, wrote_post_id, upper_comment_id=None):
+    def create_temp_comment_(wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None):
         content = f'test_post{create_temp_comment_.number}_content' + 'test\n' * 5
 
         import datetime
@@ -223,7 +231,8 @@ def create_temp_comment(app, session):
                                     wrote_user_id=wrote_user_id,
                                     wrote_post_id=wrote_post_id,
                                     upper_comment_id=upper_comment_id,
-                                    wrote_datetime=datetime.datetime.now())
+                                    wrote_datetime=datetime.datetime.now(),
+                                    is_anonymous=is_anonymous)
 
         session.add(temp_comment)
         session.commit()
@@ -293,4 +302,31 @@ def create_temp_report(app, session):
 
     create_temp_report.number = 0
     return create_temp_report_
+
+
+@pytest.fixture
+def create_temp_register_account(app, session, redis_client):
+    import json
+    from app.util import verification_code_generater
+
+    def create_temp_register_account_():
+        email = f'test_account_{create_temp_register_account_.number}@test.test'
+        username = f'test_user_{create_temp_register_account_.number}'
+        password = f'test_password_{create_temp_register_account_.number}'
+
+        verification_code = verification_code_generater.generate_verification_code()
+        registry_data = {
+            'email':email,
+            'username':username,
+            'password':password
+        }
+        redis_client.mset({verification_code:json.dumps(registry_data)})
+
+        registry_data['verification_code']=verification_code
+
+        create_temp_register_account_.number += 1
+        return registry_data
+
+    create_temp_register_account_.number = 1
+    return create_temp_register_account_
 
