@@ -1,3 +1,4 @@
+import re
 from flask import current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
 
@@ -73,8 +74,17 @@ accounts_schema =  AccountSchema(many=True)
 
 from marshmallow import validate
 class AccountInputSchema(ma.Schema):
-    email = ma.Str(required = True, validate = validate.Email())
-    username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
+    email = ma.Str(
+        required = True,
+        validate = [validate.Email(error='Email is not email'),
+                    validate.Regexp('.*@dsm.hs.kr', error='Email is not email of dsm')])
+    username = ma.Str(
+        required = True,
+        validate = [
+            validate.Length(min = 2, max = 20),
+            validate.Regexp(re.compile('^[가-힣\w]+$'))
+        ]
+    )
     password = ma.Str(required = True, validate = validate.Length(min = 8))
 
 

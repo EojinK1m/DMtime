@@ -1,7 +1,7 @@
 from app import db, ma
 from datetime import datetime
 
-from marshmallow.validate import Length
+from marshmallow.validate import Length, Range
 
 class PostModel(db.Model):
     __tablename__ = 'post'
@@ -11,6 +11,7 @@ class PostModel(db.Model):
     content = db.Column(db.Text(), nullable=True) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
+    is_anonymous = db.Column(db.Boolean, nullable=False)
 
     uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
@@ -43,15 +44,25 @@ class PostSchema(ma.SQLAlchemySchema):
 
     image_ids = ma.Method(serialize='get_image_ids', deserialize='get_image_ids')
     id = ma.auto_field()
-    uploader = ma.Nested('UserSchema', only=['username'], uselist=False)
+    uploader = ma.Method('get_uploader_with_check_anonymous')
     content = ma.auto_field()
     title = ma.auto_field()
     views = ma.auto_field()
     posted_datetime = ma.auto_field()
+    is_anonymous = ma.auto_field()
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
     posted_gallery = ma.Nested('GallerySchema', only=['name', 'id'])
     number_of_comments = ma.Method(serialize='get_number_of_comments')
     whether_exist_image = ma.Method(serialize = 'get_whether_image_exist')
+
+
+    def get_uploader_with_check_anonymous(self, obj):
+        if(obj.is_anonymous):
+            return '!anonymous'
+        else:
+            from app.api.user.model import UserSchema
+            return UserSchema(only=['username']).dump(obj.uploader)
+
 
     def get_image_ids(self, obj):
         list = []
@@ -59,11 +70,14 @@ class PostSchema(ma.SQLAlchemySchema):
             list.append(image.id)
         return list
 
+
     def get_number_of_postlikes(self, obj):
         return len(obj.postlikes)
 
+
     def get_number_of_comments(self, obj):
         return len(obj.comments)
+
 
     def get_whether_image_exist(self, obj):
         if not obj.images:
@@ -72,15 +86,31 @@ class PostSchema(ma.SQLAlchemySchema):
             return True
 
 
+
 class PostPostInputValidateSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1))
     title = ma.Str(required = True, validate = Length(min = 1, max = 30))
     image_ids = ma.List(ma.Integer, required = True)
+    is_anonymous = ma.Boolean(required=True)
+
+
+class PostGetQueryParameterValidateSchema(ma.Schema):
+    page = ma.Integer(required = False, validate = Range(min=1))
+    per_page = ma.Integer(required = False, validate = Range(min=1), data_key = 'per-page')
+    username = ma.Str(required = False, validate = Length(min = 2, max = 20))
+    gallery_id = ma.Integer(required = False, validate = Range(min=1), data_key = 'gallery-id')
+
+
+class HotPostGetQueryParameterValidateSchema(ma.Schema):
+    page = ma.Integer(required = False, validate = Range(min=1))
+    per_page = ma.Integer(required = False, validate = Range(min=1), data_key = 'per-page')
+
 
 class PostPatchInputValidateSchema(ma.Schema):
     content = ma.Str(required = False, validate = Length(min = 1))
     title = ma.Str(required = False, validate = Length(min = 1, max = 30))
     image_ids = ma.List(ma.Integer, required = False)
+
 
 post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
 posts_schema = PostSchema(many=True, exclude=['posted_gallery', 'image_ids', 'content'])

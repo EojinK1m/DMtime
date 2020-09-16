@@ -1,5 +1,6 @@
-from app import db, ma
+from marshmallow.validate import Length
 
+from app import db, ma
 
 class CommentModel(db.Model):
     __tablename__ = 'comment'
@@ -10,6 +11,7 @@ class CommentModel(db.Model):
     upper_comment_id = db.Column(db.Integer(), db.ForeignKey('comment.id', ondelete="SET NULL"), nullable=True)
     content = db.Column(db.String(100), nullable=False)
     wrote_datetime = db.Column(db.DateTime(), nullable=False)
+    is_anonymous = db.Column(db.Boolean, nullable=False)
 
     writer = db.relationship('UserModel', backref='comments')
     wrote_post = db.relationship('PostModel', backref='comments')
@@ -27,14 +29,22 @@ class CommentSchema(ma.SQLAlchemySchema):
     content = ma.auto_field()
     wrote_datetime = ma.auto_field()
     upper_comment_id = ma.auto_field()
-    writer = ma.Nested('UserSchema', only=['username'])
+    writer = ma.Method('get_writer_username_with_check_anonymous')
+    is_anonymous = ma.auto_field()
     wrote_post = ma.Nested('PostSchema', only=['id'])
 
-from marshmallow.validate import Length
+    def get_writer_username_with_check_anonymous(self, obj):
+        if(obj.is_anonymous):
+            return '!anonymous'
+        else:
+            from app.api.user.model import UserSchema
+            return UserSchema(only=['username']).dump(obj.writer)
+
 
 class CommentInputSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1, max = 100))
     upper_comment_id = ma.Integer(required = False, allow_none = True)
+    is_anonymous = ma.Boolean(required=True)
     
 
 class CommentPatchInputSchema(ma.Schema):

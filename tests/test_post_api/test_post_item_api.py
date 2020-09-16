@@ -18,7 +18,8 @@ def test_post_get_correct(client, create_temp_account, create_temp_gallery, crea
                              'posted_datetime',
                              'uploader',
                              'likes',
-                             'views'
+                             'views',
+                             'is_anonymous'
                              )
     for expect_key in expected_keys_of_post:
         assert expect_key in rv.json.keys()
@@ -26,6 +27,17 @@ def test_post_get_correct(client, create_temp_account, create_temp_gallery, crea
     assert rv.json['posted_gallery']['name'] == temp_gallery.name
     assert rv.json['uploader']['username'] == temp_account.user.username
 
+def test_anonymous_post_get_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
+    temp_account = create_temp_account()
+    temp_gallery = create_temp_gallery()
+    temp_post = create_temp_post(uploader_id = temp_account.id,
+                                 upload_gallery_id = temp_gallery.id,
+                                 is_anonymous=True)
+
+    rv = client.get(url+f'{temp_post.id}')
+
+    assert rv.status_code == 200
+    assert rv.json['uploader'] == "!anonymous"
 
 def test_post_get_not_exist(client):
     rv = client.get(url + '1')
@@ -197,5 +209,3 @@ def test_delete_post_have_like(client, create_temp_account, create_temp_gallery,
                         headers={'authorization':'Bearer '+temp_account.generate_access_token()})
 
     assert rv.status_code == 200
-
-    

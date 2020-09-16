@@ -1,30 +1,32 @@
 from flask import Flask
-from app import config
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_redis import FlaskRedis
+from redis import ConnectionError
 
-
+from app import config
+from app.util.email_sender import EmailSender
 
 db = SQLAlchemy()
 ma = Marshmallow()
 bcrypt = Bcrypt()
 jwt = JWTManager()
-
-
+redis_client = FlaskRedis()
+email_sender = EmailSender()
 
 
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
 
-
     db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    redis_client.init_app(app)
+    email_sender.init_app(app)
 
     from app.api.image.model import ImageModel
     from app.api.board.post.model import PostModel
@@ -33,6 +35,7 @@ def create_app(config):
     from app.api.user.account.model import AccountModel
 
     wait_db_ready(app)
+    wait_redis_ready(app)
 
     with app.app_context():
         db.create_all()
@@ -83,6 +86,25 @@ def wait_db_ready(app):
             time.sleep(.5)
             if wait_db_ready.num_of_try >= 20:
                 raise Exception('db not work!')
+            else:
+                wait_db_ready.num_of_try += 1
+            continue
+        except Exception as e:
+            raise e
+
+
+def wait_redis_ready(app):
+    wait_db_ready.num_of_try = 0
+
+    while True:
+        try:
+            with app.app_context():
+                redis_client.ping()
+            return True
+        except ConnectionError:
+            time.sleep(.5)
+            if wait_db_ready.num_of_try >= 20:
+                raise Exception('redis not work!')
             else:
                 wait_db_ready.num_of_try += 1
             continue

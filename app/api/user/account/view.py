@@ -17,7 +17,7 @@ class Account(Resource):
 class AccountPassword(Resource):
     def put(self):
         return make_response(AccountService.change_account_password(request.json))
-        
+
 class Auth(Resource):
     def post(self):
         return make_response(AuthService.login(request.json))
@@ -33,3 +33,7 @@ class DuplicateCheckEmail(Resource):
 class DuplicateCheckUsername(Resource):
     def get(self):
         return make_response(DuplicateCheck.username_check(request.args.get('username')))
+
+class AuthEmailVerificationCode(Resource):
+    def post(self):
+        return make_response(AccountService.verify_email_verification_code(verification_code=request.args.get('verification-code')))

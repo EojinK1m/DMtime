@@ -1,6 +1,7 @@
-from datetime import datetime
+import math
+from datetime import datetime, timedelta
 
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required,\
                                 get_jwt_identity,\
                                 get_jwt_claims
@@ -11,10 +12,10 @@ from app.api.board.post.model import PostModel,\
                                      PostLikeModel,\
                                      posts_schema, post_schema, posts_schema_user,\
                                      PostPostInputValidateSchema,\
-                                     PostPatchInputValidateSchema
+                                     PostPatchInputValidateSchema,\
+                                     PostGetQueryParameterValidateSchema
 
 from app.api.board.gallery.model import GalleryModel
-
 from app.api.user.model import UserModel
 from app.api.user.account.model import AccountModel
 from app.api.image.service import ImageService
@@ -116,7 +117,6 @@ class PostService():
         postlikes = PostLikeModel.query.filter_by(post_id=post_id)
         request_user_postlike = postlikes.filter_by(liker_id=request_user.id).first()
 
-
         if (request_user_postlike):
             db.session.delete(request_user_postlike)
             db.session.commit()
@@ -199,6 +199,7 @@ class PostListService():
         content = json.get('content', None)
         title = json.get('title', None)
         image_ids = json.get('image_ids', None)
+        is_anonymous = json.get('is_anonymous', None)
 
 
         if not content or not title:
@@ -208,6 +209,7 @@ class PostListService():
                              title=title,
                              uploader=uploader_account.user,
                              gallery=post_gallery,
+                             is_anonymous=is_anonymous,
                              posted_datetime=datetime.now())
         db.session.add(new_post)
         db.session.flush()
@@ -220,3 +222,66 @@ class PostListService():
         db.session.commit()
         return jsonify({'msg': 'posting succeed'}), 200
 
+
+    @staticmethod
+    def provide_hot_post_list():
+        PostListService.validate_query_parameters_of_provide_hot_post(request.args)
+
+        page = request.args.get('page', 1)
+        per_page = request.args.get('per_page', 20)
+
+        posts = PostListService.get_posts_for_days(7)
+        PostListService.sort_posts_by_hot_score(posts)
+        posts, number_of_pages = PostListService.paging_posts(posts=posts, page=page, per_page=per_page)
+
+        return jsonify(
+            posts=posts_schema.dump(posts),
+            number_of_page = number_of_pages        ), 200
+
+
+    @staticmethod
+    def  validate_query_parameters_of_provide_hot_post(query_parameters):
+        error = PostGetQueryParameterValidateSchema().validate(query_parameters)
+        if(error):
+            abort(400, str(error))
+
+
+    @staticmethod
+    def get_posts_for_days(days):
+        post_deadline = datetime.now() - timedelta(days=days)
+
+        return PostModel.query\
+            .filter(PostModel.posted_datetime >= post_deadline)\
+            .all()
+
+
+    @staticmethod
+    def sort_posts_by_hot_score(posts):
+        posts.sort(key=lambda p: (PostListService.get_hot_score_of_post(p), p.posted_datetime), reverse=True)
+
+
+    @staticmethod
+    def paging_posts(posts, page, per_page):
+        if not posts:
+            return posts, 0
+
+        number_of_pages = math.ceil(len(posts) / per_page)
+
+        if (page > number_of_pages):
+            abort(404, f'Page not found, maybe over range... number of page is {number_of_pages}')
+
+        return posts[per_page*(page-1) : per_page*page], number_of_pages
+
+
+    @staticmethod
+    def get_hot_score_of_post(post):
+        G = 1.25
+        D = PostListService.get_day_difference(post.posted_datetime)
+        L = len(post.postlikes)
+
+        return (L - 1) / pow((D + 2), G)
+
+
+    @staticmethod
+    def get_day_difference(date):
+        return datetime.now().day - date.day

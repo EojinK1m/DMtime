@@ -41,3 +41,20 @@ def test_put_account_password(client, create_temp_account):
     
     assert rv.status_code == 200
     assert temp_account.verify_password(new_password)
+
+
+def test_put_account_incorrect_password(client, create_temp_account):
+    from app.api.user.account.model import AccountModel
+
+    temp_account = create_temp_account()
+    password = temp_account.user.username.replace('user', 'password')
+    new_password = 'this_1s_new_passsword!'
+
+    rv = client.put(account_uri + '/password',
+                    json={
+                        'password': password+'1',
+                        'new_password': new_password
+                    },
+                    headers={'authorization': f'Bearer {temp_account.generate_access_token()}'})
+
+    assert rv.status_code == 403
