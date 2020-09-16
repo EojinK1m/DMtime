@@ -30,7 +30,7 @@ class ProductConfig(DefaultConfig):
 
 class DevelopConfig(DefaultConfig):
     DEBUG = True
-    TESTING = True
+    TESTING = False
 
     ADMIN_LIST = ['eojin.dev@gmail.com', 'vjslzhs6@naver.com']
 
