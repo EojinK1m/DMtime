@@ -18,6 +18,18 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+        redis:
+          image: redis
+          ports:
+            - 6379:6379
+          # Set health checks to wait until redis has started
+          options: >-
+            --health-cmd "redis-cli ping"
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
+
     env:
       DMTIME_DB_USER: "root"
       DMTIME_DB_PW: "mysql_pw"
@@ -25,6 +37,11 @@ jobs:
       DMTIME_JWT_KEY: "testKey"
       DMTIME_IMAGE_STORAGE: "/dmtime/images"
       DMTIME_SERVER_NAME: "localhost:8080"
+      DMTIME_REDIS_URL: "redis://@redis:6379"
+      DMTIME_EMAIL_PASSWORD: "test"
+      DMTIME_EMAIL_SERVER: "test"
+      DMTIME_EMAIL_PORT: "test"
+      DMTIME_EMAIL_SENDER_ADDRESS: "test"
 
     steps:
       - uses: actions/checkout@v2
