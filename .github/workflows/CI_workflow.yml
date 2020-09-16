@@ -9,19 +9,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      mysql:
-        image: mysql
-        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-        env:
-          MYSQL_ROOT_PASSWORD: mysql_pw
-          MYSQL_DATABASE: dmtime_test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+#      mysql:
+#        image: mysql
+#
+#        env:
+#          MYSQL_ROOT_PASSWORD: mysql_pw
+#          MYSQL_DATABASE: dmtime_test
+#        ports:
+#          - 3306:3306
+#        options: >-
+#          --health-cmd="mysqladmin ping"
+#          --health-interval=10s
+#          --health-timeout=5s
+#          --health-retries=3
+#          --character-set-server=utf8mb4
+#          --collation-server=utf8mb4_unicode_ci
 
       redis:
         image: redis
@@ -48,7 +50,18 @@ jobs:
       DMTIME_EMAIL_PORT: "test"
       DMTIME_EMAIL_SENDER_ADDRESS: "test"
 
+
+
     steps:
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          mysql database: 'dmtime' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 'mysql_pw' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: 'mysql_pw' # Required if "mysql user" exists. The password for the "mysql user"
+
       - uses: actions/checkout@v2
       
       - name: Make image storage directory
