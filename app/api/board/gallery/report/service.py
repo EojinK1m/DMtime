@@ -1,5 +1,5 @@
 from werkzeug import exceptions
-from flask import jsonify
+from flask import jsonify, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import db
@@ -14,6 +14,8 @@ from app.api.board.gallery.report.model import\
     ContentType
 from app.api.user.account.model import AccountModel
 from app.api.board.gallery.service import GalleryService
+from app.api.board.comment.service import CommentService
+from app.api.board.post.service import PostService
 
 
 
@@ -61,6 +63,7 @@ class ReportListService:
     def create_report(json, gallery_id):
         validate_json_body(json)
         GalleryService.raise_exception_if_not_exist_gallery_id(gallery_id)
+        check_reported_write_is_exist(json)
 
         ReportModel(
             reported_content_type=json.get('reported_content_type'),
@@ -93,9 +96,9 @@ class ReportListService:
 
 
 def validate_json_body(json):
-    error = ReportInputSchema().validate(json)
-    if (error):
-        raise Exception()
+    errors = ReportInputSchema().validate(json)
+    if (errors):
+        abort(400, str(errors))
 
     content_type = json.get('reported_content_type')
     if(content_type == ContentType.POST.value):
@@ -105,7 +108,17 @@ def validate_json_body(json):
 
     error = validate_schema.validate(json)
     if (error):
-        raise Exception()  
+        abort(400, str(error))
+
+    if(json['comment_id'] and json['post_id']):
+        abort(400, 'comment id and post id can be together')
+
+
+def check_reported_write_is_exist(json):
+    if (json['reported_content_type'] == ContentType.POST.value):
+        PostService.abort_if_not_exist_post_id(json['post_id'])
+    elif (json['reported_content_type'] == ContentType.COMMENT.value):
+        CommentService.abort_if_not_exist_comment_id(json['comment_id'])
 
 
 def dump_report(report):

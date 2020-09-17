@@ -129,6 +129,11 @@ class PostService():
 
             return jsonify(msg='post like', likes = len(postlikes.all())), 200
 
+    @staticmethod
+    def abort_if_not_exist_post_id(post_id):
+        if (PostModel.query.get(post_id) == None):
+            abort(404, 'post not found')
+
 
 class PostListService():
 

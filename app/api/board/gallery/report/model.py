@@ -54,8 +54,8 @@ class ReportInputSchema(ma.Schema):
     reason = ma.Integer(required=True, validate=Range(min=1, max=10))
     detail_reason = ma.Str(required=True, validate=Length(max=500))
     reported_content_type = ma.Integer(required=True, validate=Range(min=1, max=2))
-    post_id = ma.Integer(required=True, allow_none=True)
-    comment_id = ma.Integer(required=True, allow_none=True)
+    post_id = ma.Integer(required=False, allow_none=True)
+    comment_id = ma.Integer(required=False, allow_none=True)
 
 
 class ReportPostInputSchema(ma.Schema):
@@ -63,14 +63,14 @@ class ReportPostInputSchema(ma.Schema):
     detail_reason = ma.Str(required=True, validate=Length(max=500))
     reported_content_type = ma.Integer(required=True, validate=Range(min=1, max=2))
     post_id = ma.Integer(required=True, allow_none=False)
-    comment_id = ma.Integer(required=True, allow_none=True)
+    comment_id = ma.Integer(required=False, allow_none=True)
 
 
 class ReportCommentInputSchema(ma.Schema):
     reason = ma.Integer(required=True, validate=Range(min=1, max=10))
     detail_reason = ma.Str(required=True, validate=Length(max=500))
     reported_content_type = ma.Integer(required=True, validate=Range(min=1, max=2))
-    post_id = ma.Integer(required=True, allow_none=True)
+    post_id = ma.Integer(required=False, allow_none=True)
     comment_id = ma.Integer(required=True)
 
 

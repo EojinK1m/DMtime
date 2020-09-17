@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
@@ -80,6 +80,11 @@ class CommentService():
         db.session.commit()
 
         return jsonify(msg='delete succeed'), 200
+
+    @staticmethod
+    def abort_if_not_exist_comment_id(comment_id):
+        if (CommentModel.query.get(comment_id) == None):
+            abort(404, 'comment not found')
 
 
 class CommentListService():

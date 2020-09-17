@@ -9,6 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
+#      안씀, character set 설정하기 번거로움
 #      mysql:
 #        image: mysql
 #

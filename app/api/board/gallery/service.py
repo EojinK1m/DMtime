@@ -1,6 +1,6 @@
 from functools import update_wrapper, partial
 from werkzeug.exceptions import NotFound, Forbidden
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request
 from app import admin_required, db
 
@@ -131,7 +131,8 @@ class GalleryService:
     @staticmethod
     def raise_exception_if_not_exist_gallery_id(gallery_id):
         if not GalleryService.is_exist_gallery_id(gallery_id):
-            raise NotFound
+            abort(404, 'gallery not found')
+
 
     @staticmethod
     def is_exist_gallery_id(gallery_id):
