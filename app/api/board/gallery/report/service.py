@@ -1,5 +1,5 @@
 from werkzeug import exceptions
-from flask import jsonify
+from flask import jsonify, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import db
@@ -93,9 +93,9 @@ class ReportListService:
 
 
 def validate_json_body(json):
-    error = ReportInputSchema().validate(json)
-    if (error):
-        raise Exception()
+    errors = ReportInputSchema().validate(json)
+    if (errors):
+        abort(400, str(errors))
 
     content_type = json.get('reported_content_type')
     if(content_type == ContentType.POST.value):
