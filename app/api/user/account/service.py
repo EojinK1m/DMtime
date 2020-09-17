@@ -43,7 +43,7 @@ class AccountService:
     def validate_account_register_data(data):
         errors = AccountInputSchema().validate(data)
         if errors:
-            abort(400, 'missing parameter exist')
+            abort(400, str(errors))
 
 
     @staticmethod

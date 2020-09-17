@@ -76,8 +76,8 @@ from marshmallow import validate
 class AccountInputSchema(ma.Schema):
     email = ma.Str(
         required = True,
-        validate = [validate.Email(error='Email is not email'),
-                    validate.Regexp('.*@dsm.hs.kr', error='Email is not email of dsm')])
+        validate = [validate.Email(error='Email parameter is not email'),
+                    validate.Regexp('.*@dsm.hs.kr', error='Email is not of dsm')])
     username = ma.Str(
         required = True,
         validate = [
