@@ -35,7 +35,7 @@ class CommentSchema(ma.SQLAlchemySchema):
 
     def get_writer_username_with_check_anonymous(self, obj):
         if(obj.is_anonymous):
-            return '!anonymous'
+            return {'username':'익명의 대마인'}
         else:
             from app.api.user.model import UserSchema
             return UserSchema(only=['username']).dump(obj.writer)

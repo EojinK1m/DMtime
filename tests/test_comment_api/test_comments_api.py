@@ -202,5 +202,5 @@ def test_get_anonymous_comment(client, create_temp_account, create_temp_gallery,
     rv = client.get(url+f'?post-id={temp_post.id}')
 
     assert rv.status_code == 200
-    assert rv.json['comments'][0]['writer'] == '!anonymous'
+    assert rv.json['comments'][0]['writer']['username'] == '익명의 대마인'
     assert rv.json['comments'][0]['is_anonymous'] == True
