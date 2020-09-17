@@ -37,7 +37,6 @@ def default_ready(
                 'reason':Reason.PRONOGRAPHY.value,
                 'detail_reason':'This is default detail reason for test',
                 'reported_content_type':ContentType.COMMENT.value,
-                'post_id':None,
                 'comment_id':self.temp_comment.id,
             }
             self.default_post_report_json = {
@@ -45,7 +44,6 @@ def default_ready(
                 'detail_reason':'This is default detail reason for test',
                 'reported_content_type':ContentType.POST.value,
                 'post_id':self.temp_post.id,
-                'comment_id':None,
             }
 
     return DefaultReady()

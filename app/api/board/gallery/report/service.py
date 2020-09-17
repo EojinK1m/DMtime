@@ -110,7 +110,7 @@ def validate_json_body(json):
     if (error):
         abort(400, str(error))
 
-    if(json['comment_id'] and json['post_id']):
+    if(json.get('comment_id') and json.get('post_id')):
         abort(400, 'comment id and post id can be together')
 
 
