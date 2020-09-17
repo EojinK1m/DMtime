@@ -73,6 +73,17 @@ def test_create_post_report(client, default_ready):
     assert rv.status_code == 201
 
 
+def test_create_post_report(client, default_ready):
+    default_ready.default_comment_report_json['post_id'] = default_ready.temp_post.id
+
+    rv = client.post(
+        default_ready.url,
+        json=default_ready.default_comment_report_json,
+        headers=default_ready.auth_header
+    )
+
+    assert rv.status_code == 400
+
 #GET TEST
 
 
@@ -93,5 +104,3 @@ def test_get_report_list_with_non_manager_account(client, default_ready):
     )
 
     assert rv.status_code == 403
-
-
