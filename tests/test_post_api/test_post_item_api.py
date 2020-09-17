@@ -37,7 +37,7 @@ def test_anonymous_post_get_correct(client, create_temp_account, create_temp_gal
     rv = client.get(url+f'{temp_post.id}')
 
     assert rv.status_code == 200
-    assert rv.json['uploader'] == "!anonymous"
+    assert rv.json['uploader']['username'] == "익명의 대마인"
 
 def test_post_get_not_exist(client):
     rv = client.get(url + '1')

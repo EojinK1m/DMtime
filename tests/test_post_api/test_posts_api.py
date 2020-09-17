@@ -113,7 +113,7 @@ def test_posts_get_anonymous_correct(client, create_temp_account, create_temp_ga
     rv = client.get(url+f'?gallery-id={temp_gallery.id}')
 
     assert rv.status_code == 200
-    assert rv.json['posts'][0]['uploader'] == "!anonymous"
+    assert rv.json['posts'][0]['uploader']['username'] == "익명의 대마인"
 
 def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, create_temp_account):
     temp_gallery = create_temp_gallery()
