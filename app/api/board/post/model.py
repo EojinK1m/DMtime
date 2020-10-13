@@ -8,7 +8,7 @@ class PostModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(30), nullable=False)
-    content = db.Column(db.Text(), nullable=True) #sould be false
+    content = db.Column(db.Text(), nullable=False) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
     is_anonymous = db.Column(db.Boolean, nullable=False)
