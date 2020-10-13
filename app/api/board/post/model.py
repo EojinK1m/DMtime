@@ -48,12 +48,27 @@ class PostSchema(ma.SQLAlchemySchema):
     content = ma.auto_field()
     title = ma.auto_field()
     views = ma.auto_field()
-    posted_datetime = ma.auto_field()
+    posted_datetime = ma.Method(serialize='get_abbreviated_datetime_as_string')
     is_anonymous = ma.auto_field()
     likes = ma.Method(serialize='get_number_of_postlikes', deserialize='get_number_of_postlikes')
     posted_gallery = ma.Nested('GallerySchema', only=['name', 'id'])
     number_of_comments = ma.Method(serialize='get_number_of_comments')
     whether_exist_image = ma.Method(serialize = 'get_whether_image_exist')
+
+    def get_abbreviated_datetime_as_string(self, obj):
+
+        def _get_abbreviated_datetime_as_string(dt):
+            if not isinstance(dt, datetime):
+                raise AttributeError()
+
+            diff_from_now = datetime.now() - dt
+
+            if diff_from_now.days >= 1:
+                return f'{dt.year:04d}.{dt.month:02d}.{dt.day:02d}.'
+            else:
+                return f'{dt.hour:02d}:{dt.minute:02d}'
+
+        return _get_abbreviated_datetime_as_string(obj.posted_datetime)
 
 
     def get_uploader_with_check_anonymous(self, obj):

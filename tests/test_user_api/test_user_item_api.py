@@ -1,8 +1,9 @@
 url = '/api/users'
 
 
-def test_get_user_information(client, create_temp_account):
-    temp_account = create_temp_account()
+def test_get_user_information(client, create_temp_account, create_temp_image):
+    temp_image = create_temp_image()
+    temp_account = create_temp_account(profile_image=temp_image)
 
     rv = client.get(url+'/'+temp_account.user.username)
 
@@ -11,7 +12,7 @@ def test_get_user_information(client, create_temp_account):
     assert user_info
     assert user_info['username'] == temp_account.user.username
     assert user_info['explain'] == temp_account.user.explain
-
+    assert user_info['profile_image']['id'] == temp_image.id
 
 def test_patch_user_information(client, create_temp_account):
     temp_account = create_temp_account()
