@@ -22,7 +22,7 @@ class UserSchema(ma.SQLAlchemySchema):
 
     username = ma.auto_field()
     explain = ma.auto_field()
-    profile_image = ma.Nested('ImageSchema', only=["url"])
+    profile_image = ma.Nested('ImageSchema', only=["url", "id"])
 
 
 user_schema = UserSchema()
