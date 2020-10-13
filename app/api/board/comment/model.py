@@ -1,4 +1,5 @@
 from marshmallow.validate import Length
+from datetime import datetime
 
 from app import db, ma
 
@@ -27,11 +28,26 @@ class CommentSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     content = ma.auto_field()
-    wrote_datetime = ma.auto_field()
+    wrote_datetime = ma.Method('get_abbreviated_datetime_as_string')
     upper_comment_id = ma.auto_field()
     writer = ma.Method('get_writer_username_with_check_anonymous')
     is_anonymous = ma.auto_field()
     wrote_post = ma.Nested('PostSchema', only=['id'])
+
+    def get_abbreviated_datetime_as_string(self, obj):
+
+        def _get_abbreviated_datetime_as_string(dt):
+            if not isinstance(dt, datetime):
+                raise AttributeError()
+
+            diff_from_now = datetime.now() - dt
+
+            if diff_from_now.days >= 1:
+                return f'{dt.year:04d}.{dt.month:02d}.{dt.day:02d}.'
+            else:
+                return f'{dt.hour:02d}:{dt.minute:02d}'
+
+        return _get_abbreviated_datetime_as_string(obj.wrote_datetime)
 
     def get_writer_username_with_check_anonymous(self, obj):
         if(obj.is_anonymous):
