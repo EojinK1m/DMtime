@@ -198,8 +198,7 @@ class AuthService:
 
                 return jsonify({'access_token':access_token,
                                 'refresh_token':refresh_token,
-                                'msg':'login succeed',
-                                'user':UserSchema(only=['username', 'profile_image']).dump(login_account.user)}), 200
+                                'msg':'login succeed'}), 200
 
         return jsonify({'msg':'incorrect username or password'}), 401
 

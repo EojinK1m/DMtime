@@ -65,7 +65,7 @@ from app.api.user.model import UserSchema
 class AccountSchema(ma.SQLAlchemySchema):
     class Meta:
         model = AccountModel
-    user = ma.Nested(UserSchema)
+    user_info = ma.Nested(UserSchema)
     email = ma.auto_field()
 
 account_schema = AccountSchema()
