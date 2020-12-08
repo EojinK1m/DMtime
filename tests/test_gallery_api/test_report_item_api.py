@@ -8,7 +8,7 @@ def default_ready(
     create_temp_post,
     create_temp_report
     ):
-    from app.api.board.gallery.report.model import Reason, ContentType
+    from app.api.v1.board.gallery import Reason, ContentType
 
     class DefaultReady:
         def __init__(self):

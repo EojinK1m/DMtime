@@ -28,12 +28,6 @@ def create_app(config):
     redis_client.init_app(app)
     email_sender.init_app(app)
 
-    from app.api.image.model import ImageModel
-    from app.api.board.post.model import PostModel
-    from app.api.board.gallery.model import GalleryModel
-    from app.api.user.model import UserModel
-    from app.api.user.account.model import AccountModel
-
     wait_db_ready(app)
     wait_redis_ready(app)
 
@@ -41,10 +35,10 @@ def create_app(config):
         db.create_all()
 
 
-    from app.api.image import image_blueprint
-    from app.api.board import board_blueprint
-    from app.api.user import user_blueprint
-    from app.api.user import account
+    from app.api.v1.image import image_blueprint
+    from app.api.v1.board import board_blueprint
+    from app.api.v1.user import user_blueprint
+    from app.api.v1.user import account
 
     app.register_blueprint(board_blueprint, url_prefix='/api/board')
     app.register_blueprint(user_blueprint, url_prefix='/api/users')
