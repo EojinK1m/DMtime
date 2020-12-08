@@ -1,7 +1,7 @@
 from flask import request, make_response, jsonify
 from flask_restful import Resource
 
-from app.api.image.service import ImageService
+from app.api.v1.image import ImageService
 
 
 class ImageUpload(Resource):

@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import make_response, request
 
-from app.api.user.service import UserService
+from app.api.v1.user import UserService
 
 class user(Resource):
     def get(self, username):

@@ -6,9 +6,9 @@ from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt
 from app import db, redis_client, email_sender
 from app.util import verification_code_generater
 
-from app.api.user.model import UserModel, UserSchema
-from app.api.user.account.model import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
-from app.api.user.service import UserService
+from app.api.v1.user.model import UserModel
+from app.api.v1.user.account import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
+from app.api.v1.user import UserService
 
 
 class AccountService:
@@ -181,7 +181,7 @@ class AuthService:
 
     @staticmethod
     def login(data):
-        from app.api.user.account.model import AccountLoginInputSchema
+        from app.api.v1.user.account import AccountLoginInputSchema
         error = AccountLoginInputSchema().validate(data)
         if error:
             return jsonify(msg='Bad request, wrong json body'), 400

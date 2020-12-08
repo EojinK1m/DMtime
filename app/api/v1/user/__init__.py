@@ -1,8 +1,8 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from app.api.user.view import user
-from app.api.user.account.view import Account, AccountPassword, Auth, Refresh,\
+from app.api.v1.user import user
+from app.api.v1.user.account import Account, AccountPassword, Auth, Refresh,\
                                     DuplicateCheckEmail, DuplicateCheckUsername,\
                                     AuthEmailVerificationCode
 

@@ -1,10 +1,10 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from app.api.board.post.view import Post, PostList, HotPostList, PostLike
-from app.api.board.gallery.view import Gallery, GalleryList
-from app.api.board.gallery.report.view import Report, ReportList
-from app.api.board.comment.view import Comment, CommentList
+from app.api.v1.board.post.view import Post, PostList, HotPostList, PostLike
+from app.api.v1.board.gallery import Gallery, GalleryList
+from app.api.v1.board.gallery import Report, ReportList
+from app.api.v1.board.comment.view import Comment, CommentList
 
 board_blueprint = Blueprint('board', 'board_blueprint')
 board_api = Api(board_blueprint)

@@ -1,18 +1,18 @@
 from functools import update_wrapper, partial
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import Forbidden
 from flask import jsonify, request, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request
-from app import admin_required, db
+from app import db
 
 
-from app.api.board.gallery.model import gallery_schema,\
+from app.api.v1.board.gallery import gallery_schema,\
                                         GalleryModel,\
                                         galleries_schema,\
                                         GalleryPatchValidateSchema,\
                                         GalleryPostValidateSchema
 
 
-from app.api.user.account.model import AccountModel
+from app.api.v1.user.account import AccountModel
 
 
 class GalleryListService:

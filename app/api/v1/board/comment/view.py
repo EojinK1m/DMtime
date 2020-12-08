@@ -1,6 +1,6 @@
 from flask import make_response
 from flask_restful import Resource
-from app.api.board.comment.service import CommentService, CommentListService
+from app.api.v1.board.comment.service import CommentService, CommentListService
 
 
 

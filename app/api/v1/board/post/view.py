@@ -1,7 +1,7 @@
 from flask import make_response, request
 from flask_restful import Resource
 
-from app.api.board.post.service import PostService, PostListService
+from app.api.v1.board.post.service import PostService, PostListService
 
 
 

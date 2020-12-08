@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from app.api.image.view import ImageUpload, Image
+from app.api.v1.image.view import ImageUpload, Image
 
 image_blueprint = Blueprint('image api', 'image api')
 image_api = Api(image_blueprint)

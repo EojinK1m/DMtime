@@ -2,8 +2,8 @@ from flask import make_response, request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 
-from app.api.board.gallery.report.service import ReportService, ReportListService
-from app.api.board.gallery.service import GalleryService
+from app.api.v1.board.gallery.report.service import ReportService, ReportListService
+from app.api.v1.board.gallery.service import GalleryService
 
 class Report(Resource):
     @GalleryService.gallery_manager_required
