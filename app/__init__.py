@@ -35,14 +35,18 @@ def create_app(config):
         db.create_all()
 
 
-    from app.api.v1.image import image_blueprint
-    from app.api.v1.board import board_blueprint
-    from app.api.v1.user import user_blueprint
-    from app.api.v1.user import account
+    from app.api.v1 import v1_blueprint
 
-    app.register_blueprint(board_blueprint, url_prefix='/api/board')
-    app.register_blueprint(user_blueprint, url_prefix='/api/users')
-    app.register_blueprint(image_blueprint, url_prefix='/api/images')
+    app.register_blueprint(v1_blueprint, url_prefix='/api/v1')
+
+    # from app.api.v1.image import image_blueprint
+    # from app.api.v1.board import board_blueprint
+    # from app.api.v1.user import user_blueprint
+    # from app.api.v1.user import account
+    #
+    # app.register_blueprint(board_blueprint, url_prefix='/api/board')
+    # app.register_blueprint(user_blueprint, url_prefix='/api/users')
+    # app.register_blueprint(image_blueprint, url_prefix='/api/images')
 
     return app
 

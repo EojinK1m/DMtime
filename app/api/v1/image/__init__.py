@@ -1,11 +1,10 @@
-from flask import Blueprint
+from app.api.v1 import v1_blueprint
 from flask_restful import Api
 
 from app.api.v1.image.view import ImageUpload, Image
 
-image_blueprint = Blueprint('image api', 'image api')
-image_api = Api(image_blueprint)
-image_api.add_resource(ImageUpload, '')
-image_api.add_resource(Image, '/<id>')
+image_api = Api(v1_blueprint)
+image_api.add_resource(ImageUpload, '/images')
+image_api.add_resource(Image, '/images/<id>')
 
 

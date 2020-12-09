@@ -1,3 +1,3 @@
 from flask.blueprints import Blueprint
 
-blueprint = Blueprint('api_v1', 'api_v1')
+v1_blueprint = Blueprint('api_v1', 'api_v1')
