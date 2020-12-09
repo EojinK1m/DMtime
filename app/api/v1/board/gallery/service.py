@@ -5,14 +5,14 @@ from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_req
 from app import db
 
 
-from app.api.v1.board.gallery import gallery_schema,\
+from app.api.v1.board.gallery.model import gallery_schema,\
                                         GalleryModel,\
                                         galleries_schema,\
                                         GalleryPatchValidateSchema,\
                                         GalleryPostValidateSchema
 
 
-from app.api.v1.user.account import AccountModel
+from app.api.v1.user.account.model import AccountModel
 
 
 class GalleryListService:

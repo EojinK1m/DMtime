@@ -15,10 +15,10 @@ from app.api.v1.board.post.model import PostModel,\
                                      PostPatchInputValidateSchema,\
                                      PostGetQueryParameterValidateSchema
 
-from app.api.v1.board.gallery import GalleryModel
+from app.api.v1.board.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
-from app.api.v1.user.account import AccountModel
-from app.api.v1.image import ImageService
+from app.api.v1.user.account.model import AccountModel
+from app.api.v1.image.service import ImageService
 
 def check_user_permission(post):
     identify = get_jwt_identity()

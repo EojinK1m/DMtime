@@ -3,7 +3,7 @@ from flask import jsonify, abort
 from flask_jwt_extended import get_jwt_identity
 
 from app import db
-from app.api.v1.board.gallery import\
+from app.api.v1.board.gallery.report.model import\
     ReportModel,\
     reports_schema,\
     comment_report_schema,\
@@ -12,7 +12,7 @@ from app.api.v1.board.gallery import\
     ReportCommentInputSchema,\
     ReportPostInputSchema,\
     ContentType
-from app.api.v1.user.account import AccountModel
+from app.api.v1.user.account.model import AccountModel
 from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.board.comment.service import CommentService
 from app.api.v1.board.post.service import PostService

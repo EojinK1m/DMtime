@@ -11,7 +11,7 @@ from app.api.v1.board.comment.model import CommentModel,\
                                         comments_schema_user,\
                                         CommentInputSchema,\
                                         CommentPatchInputSchema
-from app.api.v1.user.account import AccountModel
+from app.api.v1.user.account.model import AccountModel
 from app.api.v1.user.model import UserModel
 
 def is_correct_length(content_len):

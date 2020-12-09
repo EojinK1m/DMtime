@@ -7,8 +7,8 @@ from app import db, redis_client, email_sender
 from app.util import verification_code_generater
 
 from app.api.v1.user.model import UserModel
-from app.api.v1.user.account import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
-from app.api.v1.user import UserService
+from app.api.v1.user.account.model import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
+from app.api.v1.user.service import UserService
 
 
 class AccountService:
