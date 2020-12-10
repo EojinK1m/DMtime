@@ -181,7 +181,7 @@ class AuthService:
 
     @staticmethod
     def login(data):
-        from app.api.v1.user.account import AccountLoginInputSchema
+        from app.api.v1.user.account.model import AccountLoginInputSchema
         error = AccountLoginInputSchema().validate(data)
         if error:
             return jsonify(msg='Bad request, wrong json body'), 400

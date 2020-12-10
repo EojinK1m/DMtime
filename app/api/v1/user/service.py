@@ -3,9 +3,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
 from app.api.v1.user.model import UserModel, user_schema
-from app.api.v1.user.account import AccountModel
+from app.api.v1.user.account.model import AccountModel
 
-from app.api.v1.image import ImageService
+from app.api.v1.image.service import ImageService
 
 class UserService:
 
