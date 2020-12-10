@@ -213,7 +213,7 @@ class PostListService():
         new_post = PostModel(content=content,
                              title=title,
                              uploader=uploader_account.user,
-                             gallery=post_gallery,
+                             posted_gallery=post_gallery,
                              is_anonymous=is_anonymous,
                              posted_datetime=datetime.now())
         db.session.add(new_post)

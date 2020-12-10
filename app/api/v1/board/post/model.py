@@ -18,7 +18,7 @@ class PostModel(db.Model):
 
     images = db.relationship('ImageModel')
     postlikes = db.relationship('PostLikeModel', passive_deletes=True)
-    posted_gallery = db.relationship('GalleryModel')
+    # posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):
         db.session.delete(self)
