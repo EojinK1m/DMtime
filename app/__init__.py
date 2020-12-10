@@ -21,6 +21,10 @@ def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
 
+    from app.api.v1 import v1_blueprint
+    app.register_blueprint(v1_blueprint, url_prefix='/api/v1')
+
+
     db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
@@ -35,9 +39,6 @@ def create_app(config):
         db.create_all()
 
 
-    from app.api.v1 import v1_blueprint
-
-    app.register_blueprint(v1_blueprint, url_prefix='/api/v1')
 
     # from app.api.v1.image import image_blueprint
     # from app.api.v1.board import board_blueprint

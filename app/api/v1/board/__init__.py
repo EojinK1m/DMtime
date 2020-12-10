@@ -1,21 +1,17 @@
 from flask_restful import Api
 
-from app.api.v1 import v1_blueprint
-
 from app.api.v1.board.post.view import Post, PostList, HotPostList, PostLike
 from app.api.v1.board.gallery.view import Gallery, GalleryList
 from app.api.v1.board.gallery.report.view import Report, ReportList
 from app.api.v1.board.comment.view import Comment, CommentList
 
-board_blueprint = v1_blueprint('board', 'board_blueprint')
-board_api = Api(board_blueprint)
 
+board_api = Api()
 
 board_api.add_resource(Post, '/board/posts/<post_id>')
 board_api.add_resource(PostLike, '/board/posts/<post_id>/like')
 board_api.add_resource(PostList, '/board/posts')
 board_api.add_resource(HotPostList, '/board/posts/hot')
-
 
 board_api.add_resource(Gallery, '/board/galleries/<gallery_id>')
 board_api.add_resource(GalleryList, '/board/galleries')

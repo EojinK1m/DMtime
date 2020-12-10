@@ -1,19 +1,17 @@
 from flask_restful import Api
 
-from app.api.v1 import v1_blueprint
-
 from app.api.v1.user.view import user
 from app.api.v1.user.account.view import Account, AccountPassword, Auth, Refresh,\
                                     DuplicateCheckEmail, DuplicateCheckUsername,\
                                     AuthEmailVerificationCode
 
 
-user_api = Api(v1_blueprint)
+user_api = Api()
 
 user_api.add_resource(user, '/users/<username>')
 
 
-account_api = Api(v1_blueprint)
+account_api = Api()
 
 account_api.add_resource(Account, '/users/accounts')
 account_api.add_resource(AccountPassword, '/users/accounts/password')
