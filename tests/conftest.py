@@ -131,7 +131,7 @@ def create_temp_image(app, session):
 
 @pytest.fixture
 def create_temp_account(app, session):
-    from app.api.v1.user.account import AccountModel
+    from app.api.v1.user.account.model import AccountModel
     from app.api.v1.user.model import UserModel
 
 
@@ -173,7 +173,7 @@ def create_temp_account(app, session):
 
 @pytest.fixture()
 def create_temp_gallery(app, session, create_temp_account):
-    from app.api.v1.board.gallery import GalleryModel
+    from app.api.v1.board.gallery.model import GalleryModel
 
     def create_temp_gallery_(manager_user=None):
         if(manager_user==None):
@@ -263,7 +263,7 @@ def create_temp_postlike(app, session):
 
 @pytest.fixture
 def create_temp_report(app, session):
-    from app.api.v1.board.gallery import ReportModel, ContentType
+    from app.api.v1.board.gallery.report.model import ReportModel, ContentType
 
     def create_temp_report_(
         reported_user_id,

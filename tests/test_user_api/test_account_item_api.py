@@ -1,4 +1,4 @@
-account_uri = '/api/users/accounts'
+account_uri = '/api/v1/users/accounts'
 
 
 def delete_account(client, email, jwt = ''):

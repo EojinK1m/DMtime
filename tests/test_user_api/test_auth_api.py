@@ -1,4 +1,4 @@
-url = '/api/users/accounts/auth'
+url = '/api/v1/users/accounts/auth'
 
 def login(client, login_data):
     return client.post(url, json=login_data)
