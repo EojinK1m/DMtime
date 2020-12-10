@@ -176,6 +176,15 @@ class AccountService:
         db.session.commit()
         return jsonify(msg='change password succeed!')
 
+    @staticmethod
+    def find_account_by_email(email):
+        found_account = AccountModel.get_account_by_email(email)
+
+        if found_account is None:
+            abort(404, 'Account not found, there is no account include the email.')
+
+        return found_account
+
 
 class AuthService:
 
