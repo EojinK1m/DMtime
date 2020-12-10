@@ -38,7 +38,7 @@ def test_get_gallery_list_correct(client, create_temp_gallery):
     temp_galleries = [create_temp_gallery() for i in range(10)]
 
     rv = client.get(url)
-    galleries_list = rv.json['galleries']
+    galleries_list = rv.json
 
     assert galleries_list
     for i in range(10):
@@ -47,6 +47,6 @@ def test_get_gallery_list_correct(client, create_temp_gallery):
 
 def test_get_gallery_list_when_exist_any_gallery(client):
     rv = client.get(url)
-    galleries_list = rv.json['galleries']
+    galleries_list = rv.json
 
     assert galleries_list == []
