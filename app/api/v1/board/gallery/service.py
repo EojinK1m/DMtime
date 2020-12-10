@@ -50,6 +50,36 @@ class GalleryListService:
         return jsonify({'msg':'successfully gallery created'}), 200
 
 
+    @staticmethod
+    def get_galleries():
+        return GalleryModel.query.all()
+
+    @staticmethod
+    def create_new_gallery(name, explain, manager_user):
+        GalleryListService.abort_if_gallery_name_exist(name)
+
+        try:
+            new_gallery = GalleryModel(name=name,
+                                       explain=explain,
+                                       manager_user_id=manager_user.id)
+
+            db.session.add(new_gallery)
+            db.session.commit()
+        except:
+            abort (500, 'An error occurred while making gallery at db.')
+
+        return new_gallery.id
+
+    @staticmethod
+    def abort_if_gallery_name_exist(name):
+        if(GalleryListService.is_gallery_name_exist(name)):
+            abort(409, 'Same named gallery exist.')
+
+    @staticmethod
+    def is_gallery_name_exist(name):
+        return GalleryModel.query.filter_by(name=name).first() is not None
+
+
 class GalleryService:
     
     class gallery_manager_required:
