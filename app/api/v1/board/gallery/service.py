@@ -170,4 +170,9 @@ class GalleryService:
 
     @staticmethod
     def get_gallery_by_id(gallery_id):
-        return GalleryModel.query.get(gallery_id)
+        gallery = GalleryModel.query.filter_by(id=gallery_id).first()
+
+        if gallery is None:
+            abort(404, '')
+
+        return gallery
