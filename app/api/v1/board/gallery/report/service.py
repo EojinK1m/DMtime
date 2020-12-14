@@ -34,8 +34,9 @@ class ReportService:
     def get_report_by_id(report_id):
         report = ReportModel.query.get(report_id)
         
-        if(report is None):
-            raise exceptions.NotFound()
+        if report is None:
+            abort(404)
+
         return report
 
     @staticmethod
