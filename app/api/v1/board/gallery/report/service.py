@@ -59,25 +59,33 @@ class ReportService:
 
 
 class ReportListService:
+
     @staticmethod
-    def create_report(json, gallery_id):
-        validate_json_body(json)
-        GalleryService.raise_exception_if_not_exist_gallery_id(gallery_id)
-        check_reported_write_is_exist(json)
+    def create_new_report(
+            gallery_id,
+            reported_content_type,
+            comment_id,
+            post_id,
+            reason,
+            detail_reason,
+            reporter
+    ):
+        try:
+            new_report = ReportModel(
+                reported_content_type=reported_content_type,
+                comment_id=comment_id,
+                post_id=post_id,
+                reason=reason,
+                detail_reason=detail_reason,
+                gallery_id=gallery_id,
+                reporter=reporter
+            )
+            new_report.add_report()
+            db.session.commit()
 
-        ReportModel(
-            reported_content_type=json.get('reported_content_type'),
-            comment_id=json.get('comment_id', None),
-            post_id=json.get('post_id', None),
-            reason=json.get('reason'),
-            detail_reason=json.get('detail_reason'),
-            gallery_id=gallery_id,
-            reporter=AccountModel.get_user_by_email(get_jwt_identity())
-        ).add_report()
-        db.session.commit()
-
-        return jsonify(msg='report succeed!'), 201
-
+            return new_report
+        except:
+            abort(500, 'An error occurred in server')
 
     @staticmethod
     def provide_report_list(gallery_id):
