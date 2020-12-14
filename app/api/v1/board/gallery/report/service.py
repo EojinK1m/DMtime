@@ -22,26 +22,13 @@ from app.api.v1.board.post.service import PostService
 class ReportService:
 
     @staticmethod
-    def delete_report(report_id, gallery_id):
+    def delete_report(report_id):
         target_report = ReportService.get_report_by_id(report_id)
-        ReportService.raise_if_not_report_of_gallery(target_report, gallery_id)
 
-        target_report.delete_report()
-
-        return jsonify(msg='report deleted'), 200
-
-
-    @staticmethod
-    def provide_report(report_id, gallery_id):
-        target_report = ReportService.get_report_by_id(report_id)
-        ReportService.raise_if_not_report_of_gallery(target_report, gallery_id)
-
-        return\
-            jsonify(
-                msg='query succeed',
-                report=dump_report(target_report)
-            ), 200
-
+        try:
+            target_report.delete_report()
+        except:
+            abort(500)
 
     @staticmethod
     def get_report_by_id(report_id):
@@ -95,7 +82,6 @@ class ReportListService:
                 msg='query_succceed',
                 reports=reports_schema.dumps(reports)
             ), 200
-
 
     @staticmethod
     def get_reports_by_gallery_id(gallery_id):
