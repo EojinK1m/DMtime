@@ -146,23 +146,12 @@ class GalleryService:
 
 
     @staticmethod
-    @gallery_manager_required
-    def delete_gallery(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-
-        if not gallery:
-            return jsonify(msg='gallery not found'), 404
-
-        gallery.delete_gallery()
-
-        db.session.commit()
-        return jsonify(msg='gallery deleted'), 200
-
-    @staticmethod
-    def raise_exception_if_not_exist_gallery_id(gallery_id):
-        if not GalleryService.is_exist_gallery_id(gallery_id):
-            abort(404, 'gallery not found')
-
+    def delete_gallery(gallery):
+        try:
+            gallery.delete_gallery()
+            db.session.commit()
+        except:
+            abort(500)
 
     @staticmethod
     def is_exist_gallery_id(gallery_id):
