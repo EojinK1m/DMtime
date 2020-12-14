@@ -191,4 +191,9 @@ class CommentListService():
             .order_by(CommentModel.wrote_datetime.desc())\
             .paginate(per_page=per_page, page=page)
 
-
+    @staticmethod
+    def get_comments_by_user_id_and_paging_order_by_latest(user_id, per_page, page):
+        return CommentModel.query\
+            .filter_by(wrote_user_id = user_id)\
+            .order_by(CommentModel.wrote_datetime.desc())\
+            .paginate(per_page=per_page, page=page)
