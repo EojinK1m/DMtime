@@ -92,7 +92,7 @@ def test_get_report_list(client, default_ready):
     )
 
     assert rv.status_code == 200
-    assert rv.json['reports']
+    assert isinstance(rv.json, list)
 
 
 def test_get_report_list_with_non_manager_account(client, default_ready):
