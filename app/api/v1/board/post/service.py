@@ -42,6 +42,13 @@ class PostService():
         return jsonify(post_schema.dump(post)), 200
 
     @staticmethod
+    def get_post_by_post_id(post_id):
+        find_post = PostModel.query.filter_by(id=post_id).first()
+
+        if find_post is None:
+            abort(404, f'Post {post_id} is not found')
+
+    @staticmethod
     @jwt_required
     def delete_post(post_id):
         post = PostModel.query.get(post_id)
