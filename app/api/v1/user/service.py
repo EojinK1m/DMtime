@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
@@ -19,6 +19,13 @@ class UserService:
         return jsonify({'msg':'query succeed',\
                         'user_info':user_schema.dump(find_user)})
 
+    @staticmethod
+    def get_user_by_username(username):
+        find_user = UserModel.query.filter_by(username=username).first()
+        if find_user is None:
+            abort(404, 'User not found')
+
+        return find_user
 
     @staticmethod
     @jwt_required
