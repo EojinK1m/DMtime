@@ -86,8 +86,10 @@ class ReportListService:
 
     @staticmethod
     def get_reports_by_gallery_id(gallery_id):
-        return ReportModel.query.filter_by(gallery_id=gallery_id)
-
+        try:
+            return ReportModel.query.filter_by(gallery_id=gallery_id)
+        except:
+            abort(500, 'An error occurred ')
 
 
 def validate_json_body(json):
