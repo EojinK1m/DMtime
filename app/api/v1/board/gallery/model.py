@@ -17,6 +17,12 @@ class GalleryModel(db.Model):
     def is_manager(self, user):
         return user.id == self.manager_user_id
 
+    def patch(self, name, explain):
+        self.name = name if name is not None else self.name
+        self.explain = explain if explain is not None else self.explain
+
+        db.session.commit()
+
 
 class GallerySchema(ma.SQLAlchemySchema):
     class Meta:
