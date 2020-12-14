@@ -24,14 +24,14 @@ class GalleryListService:
             db.session.add(new_gallery)
             db.session.commit()
         except:
-            abort (500, 'An error occurred while making gallery at db.')
+            abort(500, 'An error occurred while making gallery at db.')
 
         return new_gallery.id
 
     @staticmethod
     def abort_if_gallery_name_exist(name):
         if(GalleryListService.is_gallery_name_exist(name)):
-            abort(409, 'Same named gallery exist.')
+            abort(409, 'Same named gallery already exists.')
 
     @staticmethod
     def is_gallery_name_exist(name):
@@ -47,7 +47,6 @@ class GalleryService:
         def __init__(self, fn):
             update_wrapper(self, fn)
             self.fn = fn
-        
 
         def __call__(self, *args, **kargs):
             verify_jwt_in_request()
@@ -57,8 +56,7 @@ class GalleryService:
             if(target_gallery.is_manager(request_account.user) or request_account.is_admin()):
                 return self.fn(*args, **kargs)
             else:
-                raise Forbidden()
-        
+                abort(403)
 
         def __get__(self, instance, owner=None):
             return partial(self.__call__, instance)
