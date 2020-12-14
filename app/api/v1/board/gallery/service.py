@@ -17,39 +17,6 @@ from app.api.v1.user.account.model import AccountModel
 
 class GalleryListService:
 
-
-    @staticmethod
-    def provide_gallery_list():
-        return jsonify(msg = 'query succeed',
-                       galleries = galleries_schema.dump(GalleryModel.query.all())), 200
-
-
-    @staticmethod
-    @jwt_required
-    def create_gallery(data):
-        e = GalleryPostValidateSchema().validate(data)
-        if e:
-            return jsonify(msg='json validate error'), 400
-
-        name = data.get('name', None)
-        explain = data.get('explain', None)
-        creating_user = AccountModel.get_user_by_email(get_jwt_identity())
-
-        if GalleryModel.query.filter_by(name=name).first():
-            return jsonify({'msg':'same named gallery exist'}), 403
-
-        try:
-            new_gallery = GalleryModel(name=name,
-                                       explain=explain,
-                                       manager_user_id=creating_user.id)
-
-            db.session.add(new_gallery)
-        except:
-            return jsonify(msg='an error occurred while making gallery at db'), 500
-        db.session.commit()
-        return jsonify({'msg':'successfully gallery created'}), 200
-
-
     @staticmethod
     def get_galleries():
         return GalleryModel.query.all()
@@ -62,7 +29,6 @@ class GalleryListService:
             new_gallery = GalleryModel(name=name,
                                        explain=explain,
                                        manager_user_id=manager_user.id)
-
             db.session.add(new_gallery)
             db.session.commit()
         except:
@@ -104,17 +70,6 @@ class GalleryService:
 
         def __get__(self, instance, owner=None):
             return partial(self.__call__, instance)
-
-
-    @staticmethod
-    def provide_gallery_info(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-
-        if not gallery:
-            return jsonify({'msg':'gallery not fount'}), 404
-
-        return jsonify(msg = 'query succeed',
-                       gallery = gallery_schema.dump(gallery)), 200
 
     @staticmethod
     @gallery_manager_required
