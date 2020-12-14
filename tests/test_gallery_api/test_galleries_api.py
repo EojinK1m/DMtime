@@ -7,11 +7,10 @@ def test_create_gallery_correct(client, create_temp_account):
         'explain':'this is explain of test_gallery1.'
     }
 
-
     rv = client.post(url, json=test_gallery_1,
                     headers={'authorization':'Bearer '+admin_account.generate_access_token()})
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 
 def test_create_gallery_with_wrong_json_data(client, create_temp_account):
