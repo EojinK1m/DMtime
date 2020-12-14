@@ -121,12 +121,3 @@ def check_reported_write_is_exist(json):
         CommentService.abort_if_not_exist_comment_id(json['comment_id'])
 
 
-def dump_report(report):
-    content_type = report.reported_content_type
-    
-    if(content_type == ContentType.COMMENT.value):
-        return comment_report_schema.dump(report)
-    elif(content_type == ContentType.POST.value):
-        return post_report_schema.dump(report)
-    else:
-        raise Exception()
