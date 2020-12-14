@@ -1,4 +1,4 @@
-url = '/api/board/comments/'
+url = '/api/v1/board/comments/'
 
 def test_comment_patch_correct(client,
                                create_temp_account,

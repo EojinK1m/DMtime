@@ -60,7 +60,7 @@ class AccountModel(db.Model):
         return AccountModel.query.filter_by(email=email).first()
 
 
-from app.api.user.model import UserSchema
+from app.api.v1.user.model import UserSchema
 
 class AccountSchema(ma.SQLAlchemySchema):
     class Meta:

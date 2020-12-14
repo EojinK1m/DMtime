@@ -1,4 +1,4 @@
-account_uri = '/api/users/accounts'
+account_uri = '/api/v1/users/accounts'
 
 def register(client, new_account):
     return client.post(account_uri, json=new_account)

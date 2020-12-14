@@ -8,17 +8,17 @@ from flask_jwt_extended import jwt_required,\
 
 from app import db
 
-from app.api.board.post.model import PostModel,\
+from app.api.v1.board.post.model import PostModel,\
                                      PostLikeModel,\
                                      posts_schema, post_schema, posts_schema_user,\
                                      PostPostInputValidateSchema,\
                                      PostPatchInputValidateSchema,\
                                      PostGetQueryParameterValidateSchema
 
-from app.api.board.gallery.model import GalleryModel
-from app.api.user.model import UserModel
-from app.api.user.account.model import AccountModel
-from app.api.image.service import ImageService
+from app.api.v1.board.gallery.model import GalleryModel
+from app.api.v1.user.model import UserModel
+from app.api.v1.user.account.model import AccountModel
+from app.api.v1.image.service import ImageService
 
 def check_user_permission(post):
     identify = get_jwt_identity()
@@ -213,7 +213,7 @@ class PostListService():
         new_post = PostModel(content=content,
                              title=title,
                              uploader=uploader_account.user,
-                             gallery=post_gallery,
+                             posted_gallery=post_gallery,
                              is_anonymous=is_anonymous,
                              posted_datetime=datetime.now())
         db.session.add(new_post)

@@ -53,7 +53,7 @@ class CommentSchema(ma.SQLAlchemySchema):
         if(obj.is_anonymous):
             return {'username':'익명의 대마인'}
         else:
-            from app.api.user.model import UserSchema
+            from app.api.v1.user.model import UserSchema
             return UserSchema(only=['username']).dump(obj.writer)
 
 

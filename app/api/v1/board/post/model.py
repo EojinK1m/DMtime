@@ -18,7 +18,7 @@ class PostModel(db.Model):
 
     images = db.relationship('ImageModel')
     postlikes = db.relationship('PostLikeModel', passive_deletes=True)
-    posted_gallery = db.relationship('GalleryModel')
+    # posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):
         db.session.delete(self)
@@ -36,7 +36,6 @@ class PostLikeModel(db.Model):
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
     liker_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
-from app.api.board.gallery.model import GalleryModel
 
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -75,7 +74,7 @@ class PostSchema(ma.SQLAlchemySchema):
         if(obj.is_anonymous):
             return {'username': '익명의 대마인'}
         else:
-            from app.api.user.model import UserSchema
+            from app.api.v1.user.model import UserSchema
             return UserSchema(only=['username']).dump(obj.uploader)
 
 

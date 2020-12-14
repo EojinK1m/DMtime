@@ -1,6 +1,6 @@
 from pytest import fixture
 
-url = '/api/board/comments'
+url = '/api/v1/board/comments'
 
 
 @fixture(scope='function')

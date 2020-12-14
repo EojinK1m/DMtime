@@ -1,5 +1,4 @@
-url = '/api/board/galleries/'
-
+url = '/api/v1/board/galleries/'
 
 def test_gallery_delete_correct(client, create_temp_account, create_temp_gallery):
     temp_account = create_temp_account()

@@ -8,7 +8,7 @@ def default_ready(
     create_temp_post,
     create_temp_report
     ):
-    from app.api.board.gallery.report.model import Reason, ContentType
+    from app.api.v1.board.gallery.report.model import Reason, ContentType
 
     class DefaultReady:
         def __init__(self):
@@ -31,7 +31,7 @@ def default_ready(
             )
             self.auth_header = {'authorization':'Bearer '+self.temp_account.generate_access_token()}
             self.non_manager_auth_header = {'authorization':'Bearer '+self.temp_non_manager_account.generate_access_token()}
-            self.url = f'api/board/galleries/{self.temp_gallery.id}/reports'
+            self.url = f'api/v1/board/galleries/{self.temp_gallery.id}/reports'
             self.comment_report_uri = self.url+f'/{self.temp_comment_report.id}'
             self.post_report_uri = self.url+f'/{self.temp_post_report.id}'
 
@@ -60,8 +60,8 @@ def test_get_post_report(client, default_ready):
     )
 
     assert rv.status_code == 200
-    assert rv.json['report']
-    assert rv.json['report']['reported_post']
+    assert rv.json
+    assert rv.json['reported_post']
 
 
 
@@ -72,8 +72,8 @@ def test_get_comment_report(client, default_ready):
     )
 
     assert rv.status_code == 200
-    assert rv.json['report']
-    assert rv.json['report']['reported_comment']
+    assert rv.json
+    assert rv.json['reported_comment']
 
 
 

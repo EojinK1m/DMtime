@@ -9,12 +9,19 @@ class GalleryModel(db.Model):
     explain = db.Column(db.String(255), nullable=True)
     manager_user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
 
-    posts = db.relationship('PostModel', passive_deletes=True, backref='gallery')
+    posts = db.relationship('PostModel', passive_deletes=True, backref = 'posted_gallery')
+
     def delete_gallery(self):
         db.session.delete(self)
 
     def is_manager(self, user):
         return user.id == self.manager_user_id
+
+    def patch(self, name, explain):
+        self.name = name if name is not None else self.name
+        self.explain = explain if explain is not None else self.explain
+
+        db.session.commit()
 
 
 class GallerySchema(ma.SQLAlchemySchema):

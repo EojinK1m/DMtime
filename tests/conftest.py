@@ -21,7 +21,7 @@ from app.config import TestConfig
 from app import db as _db
 from app import redis_client as _redis_client
 from sqlalchemy import event
-from sqlalchemy.orm import sessionmaker
+
 
 @pytest.fixture(scope="session")
 def app(request):
@@ -89,7 +89,7 @@ def redis_client():
 
 @pytest.fixture(scope='function')
 def image(app, session):
-    from app.api.image.model import ImageModel
+    from app.api.v1.image.model import ImageModel
 
     temp_image = ImageModel(filename='temp_image_1')
 
@@ -100,7 +100,7 @@ def image(app, session):
 
 @pytest.fixture()
 def create_temp_image(app, session):
-    from app.api.image.model import ImageModel
+    from app.api.v1.image.model import ImageModel
     import os
 
     def create_temp_image_():
@@ -131,8 +131,8 @@ def create_temp_image(app, session):
 
 @pytest.fixture
 def create_temp_account(app, session):
-    from app.api.user.account.model import AccountModel
-    from app.api.user.model import UserModel
+    from app.api.v1.user.account.model import AccountModel
+    from app.api.v1.user.model import UserModel
 
 
     def create_temp_account_(profile_image = None, is_admin = False):
@@ -173,7 +173,7 @@ def create_temp_account(app, session):
 
 @pytest.fixture()
 def create_temp_gallery(app, session, create_temp_account):
-    from app.api.board.gallery.model import GalleryModel
+    from app.api.v1.board.gallery.model import GalleryModel
 
     def create_temp_gallery_(manager_user=None):
         if(manager_user==None):
@@ -196,7 +196,7 @@ def create_temp_gallery(app, session, create_temp_account):
 
 @pytest.fixture()
 def create_temp_post(app, session):
-    from app.api.board.post.model import PostModel
+    from app.api.v1.board.post.model import PostModel
 
     def create_temp_post_(uploader_id, upload_gallery_id, is_anonymous=False, included_images = None):
         title = f'test_post{create_temp_post_.number}_title'
@@ -221,7 +221,7 @@ def create_temp_post(app, session):
 
 @pytest.fixture()
 def create_temp_comment(app, session):
-    from app.api.board.comment.model import CommentModel
+    from app.api.v1.board.comment.model import CommentModel
 
     def create_temp_comment_(wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None):
         content = f'test_post{create_temp_comment_.number}_content' + 'test\n' * 5
@@ -246,7 +246,7 @@ def create_temp_comment(app, session):
 
 @pytest.fixture
 def create_temp_postlike(app, session):
-    from app.api.board.post.model import PostLikeModel
+    from app.api.v1.board.post.model import PostLikeModel
 
     def create_temp_postlike_(post_id, liker_id):
         temp_postlike = PostLikeModel(post_id=post_id, liker_id=liker_id)
@@ -263,7 +263,7 @@ def create_temp_postlike(app, session):
 
 @pytest.fixture
 def create_temp_report(app, session):
-    from app.api.board.gallery.report.model import ReportModel, ContentType
+    from app.api.v1.board.gallery.report.model import ReportModel, ContentType
 
     def create_temp_report_(
         reported_user_id,

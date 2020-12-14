@@ -2,7 +2,7 @@ import os
 from flask import jsonify, current_app as app
 
 from app import db
-from app.api.image.model import ImageModel, ImageSchema
+from app.api.v1.image.model import ImageModel, ImageSchema
 
 
 

@@ -1,7 +1,7 @@
 from flask import make_response, request
 from flask_restful import Resource
 
-from app.api.user.account.service import AccountService, AuthService, DuplicateCheck
+from app.api.v1.user.account.service import AccountService, AuthService, DuplicateCheck
 
 
 class Account(Resource):

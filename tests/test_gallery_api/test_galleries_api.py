@@ -1,4 +1,4 @@
-url = '/api/board/galleries'
+url = '/api/v1/board/galleries'
 
 def test_create_gallery_correct(client, create_temp_account):
     admin_account = create_temp_account(is_admin = True)
@@ -7,11 +7,10 @@ def test_create_gallery_correct(client, create_temp_account):
         'explain':'this is explain of test_gallery1.'
     }
 
-
     rv = client.post(url, json=test_gallery_1,
                     headers={'authorization':'Bearer '+admin_account.generate_access_token()})
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 
 def test_create_gallery_with_wrong_json_data(client, create_temp_account):
@@ -38,7 +37,7 @@ def test_get_gallery_list_correct(client, create_temp_gallery):
     temp_galleries = [create_temp_gallery() for i in range(10)]
 
     rv = client.get(url)
-    galleries_list = rv.json['galleries']
+    galleries_list = rv.json
 
     assert galleries_list
     for i in range(10):
@@ -47,6 +46,6 @@ def test_get_gallery_list_correct(client, create_temp_gallery):
 
 def test_get_gallery_list_when_exist_any_gallery(client):
     rv = client.get(url)
-    galleries_list = rv.json['galleries']
+    galleries_list = rv.json
 
     assert galleries_list == []

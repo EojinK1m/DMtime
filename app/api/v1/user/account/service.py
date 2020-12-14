@@ -6,9 +6,9 @@ from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt
 from app import db, redis_client, email_sender
 from app.util import verification_code_generater
 
-from app.api.user.model import UserModel, UserSchema
-from app.api.user.account.model import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
-from app.api.user.service import UserService
+from app.api.v1.user.model import UserModel
+from app.api.v1.user.account.model import AccountModel, account_schema, AccountInputSchema, AccountChangePasswrodInputSchema
+from app.api.v1.user.service import UserService
 
 
 class AccountService:
@@ -176,12 +176,21 @@ class AccountService:
         db.session.commit()
         return jsonify(msg='change password succeed!')
 
+    @staticmethod
+    def find_account_by_email(email):
+        found_account = AccountModel.get_account_by_email(email)
+
+        if found_account is None:
+            abort(404, 'Account not found, there is no account include the email.')
+
+        return found_account
+
 
 class AuthService:
 
     @staticmethod
     def login(data):
-        from app.api.user.account.model import AccountLoginInputSchema
+        from app.api.v1.user.account.model import AccountLoginInputSchema
         error = AccountLoginInputSchema().validate(data)
         if error:
             return jsonify(msg='Bad request, wrong json body'), 400

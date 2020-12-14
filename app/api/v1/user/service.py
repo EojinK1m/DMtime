@@ -2,10 +2,10 @@ from flask import jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
-from app.api.user.model import UserModel, user_schema
-from app.api.user.account.model import AccountModel
+from app.api.v1.user.model import UserModel, user_schema
+from app.api.v1.user.account.model import AccountModel
 
-from app.api.image.service import ImageService
+from app.api.v1.image.service import ImageService
 
 class UserService:
 
@@ -23,7 +23,7 @@ class UserService:
     @staticmethod
     @jwt_required
     def modify_user_info(username, data):
-        from app.api.user.model import UserPatchInputSchema
+        from app.api.v1.user.model import UserPatchInputSchema
         error = UserPatchInputSchema().validate(data)
         if error:
             return jsonify(msg= 'Bad request, json body is wrong'), 400

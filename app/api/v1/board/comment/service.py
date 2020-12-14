@@ -5,14 +5,14 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
 
-from app.api.board.post.model import PostModel
-from app.api.board.comment.model import CommentModel,\
+from app.api.v1.board.post.model import PostModel
+from app.api.v1.board.comment.model import CommentModel,\
                                         comments_schema,\
                                         comments_schema_user,\
                                         CommentInputSchema,\
                                         CommentPatchInputSchema
-from app.api.user.account.model import AccountModel
-from app.api.user.model import UserModel
+from app.api.v1.user.account.model import AccountModel
+from app.api.v1.user.model import UserModel
 
 def is_correct_length(content_len):
     return content_len <= 100

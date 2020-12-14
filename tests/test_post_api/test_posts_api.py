@@ -1,6 +1,6 @@
 from pytest import fixture
 
-url = '/api/board/posts'
+url = '/api/v1/board/posts'
 
 @fixture()
 def default_post_data():

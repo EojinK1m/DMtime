@@ -1,4 +1,4 @@
-account_uri = '/api/users/accounts'
+account_uri = '/api/v1/users/accounts'
 
 
 def delete_account(client, email, jwt = ''):
@@ -26,8 +26,6 @@ def test_get_account_information(client, create_temp_account):
     assert account_info['email'] == temp_account.email
 
 def test_put_account_password(client, create_temp_account):
-    from app.api.user.account.model import AccountModel
-
     temp_account = create_temp_account()
     password = temp_account.user.username.replace('user', 'password')
     new_password = 'this_1s_new_passsword!'
@@ -44,8 +42,6 @@ def test_put_account_password(client, create_temp_account):
 
 
 def test_put_account_incorrect_password(client, create_temp_account):
-    from app.api.user.account.model import AccountModel
-
     temp_account = create_temp_account()
     password = temp_account.user.username.replace('user', 'password')
     new_password = 'this_1s_new_passsword!'
