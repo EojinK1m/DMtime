@@ -14,6 +14,7 @@ from app.api.v1.board.comment.model import CommentModel,\
 from app.api.v1.user.account.model import AccountModel
 from app.api.v1.user.model import UserModel
 
+
 def is_correct_length(content_len):
     return content_len <= 100
 
@@ -26,7 +27,6 @@ def check_user_permission(comment, admin_allow):
             return True
 
     return  request_user.id == comment.writer.id
-
 
 
 class CommentService():
@@ -183,3 +183,12 @@ class CommentListService():
         return jsonify(comments=dumped_comments,
                        msg='query_succeed',
                        number_of_pages=comments.pages), 200
+
+    @staticmethod
+    def get_comments_by_post_id_and_paging_order_by_latest(post_id, per_page, page):
+        return CommentModel.query\
+            .filter_by(wrote_post_id = post_id)\
+            .order_by(CommentModel.wrote_datetime.desc())\
+            .paginate(per_page=per_page, page=page)
+
+
