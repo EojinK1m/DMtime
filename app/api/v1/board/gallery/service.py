@@ -72,33 +72,9 @@ class GalleryService:
             return partial(self.__call__, instance)
 
     @staticmethod
-    @gallery_manager_required
-    def modify_gallery_info(gallery_id):
-        gallery = GalleryModel.query.get(gallery_id)
-        if not gallery:
-            return jsonify({'msg': 'gallery not fount'}), 404
- 
-        json = request.get_json()
-
-        e = GalleryPatchValidateSchema().validate(json)
-        if e:
-            return jsonify(msg='json validate error'), 400
-
-        explain = json.get('explain', None)
-        name = json.get('name', None)
-
-        if GalleryModel.query.filter_by(name=name).first():
-            return jsonify({'msg':'same named gallery exist'}), 409
-
-        if explain:
-            gallery.explain = explain
-        if name:
-            gallery.name = name
-
-        db.session.commit()
-        return jsonify(msg='modify succeed'), 200
-
-
+    def modify_gallery_info(gallery, name, explain):
+        GalleryListService.abort_if_gallery_name_exist(name)
+        gallery.patch(name=name, explain=explain)
 
     @staticmethod
     def delete_gallery(gallery):
