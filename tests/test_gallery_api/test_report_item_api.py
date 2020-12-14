@@ -60,8 +60,8 @@ def test_get_post_report(client, default_ready):
     )
 
     assert rv.status_code == 200
-    assert rv.json['report']
-    assert rv.json['report']['reported_post']
+    assert rv.json
+    assert rv.json['reported_post']
 
 
 
@@ -72,8 +72,8 @@ def test_get_comment_report(client, default_ready):
     )
 
     assert rv.status_code == 200
-    assert rv.json['report']
-    assert rv.json['report']['reported_comment']
+    assert rv.json
+    assert rv.json['reported_comment']
 
 
 
