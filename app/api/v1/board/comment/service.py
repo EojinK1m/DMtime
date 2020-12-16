@@ -86,6 +86,13 @@ class CommentService():
         if (CommentModel.query.get(comment_id) == None):
             abort(404, 'comment not found')
 
+    @staticmethod
+    def get_comment_by_id(comment_id):
+        comment = CommentModel.query.filter_by(id=comment_id).first()
+        if comment is None:
+            abort(404, f'Comment{comment_id} Not Found.')
+
+        return comment
 
 class CommentListService():
 
