@@ -204,3 +204,25 @@ class CommentListService():
             .filter_by(wrote_user_id = user_id)\
             .order_by(CommentModel.wrote_datetime.desc())\
             .paginate(per_page=per_page, page=page)
+
+    @staticmethod
+    def create_comment(content,
+                       is_anonymous,
+                       wrote_datetime,
+                       wrote_user_id,
+                       wrote_post_id,
+                       upper_comment_id):
+        try:
+            new_comment = CommentModel(
+                content=content,
+                is_anonymous=is_anonymous,
+                wrote_datetime=wrote_datetime,
+                wrote_user_id=wrote_user_id,
+                wrote_post_id=wrote_post_id,
+                upper_comment_id=upper_comment_id
+            )
+
+            db.session.add(new_comment)
+            db.session.commit()
+        except:
+            abort(500, "An error occur while create comment on db.")
