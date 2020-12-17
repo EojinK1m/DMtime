@@ -75,7 +75,7 @@ class GetCommentParameterSchema(ma.Schema):
 
 
 class PostCommentParameterSchema(ma.Schema):
-    post_id = ma.Integer(data_key="post-id", required = True)
+    post_id = ma.Integer(data_key="post-id", required = True, validate=Range(min=0))
 
 
 comments_schema = CommentSchema(many=True, exclude=['wrote_post'])
