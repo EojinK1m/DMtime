@@ -19,40 +19,11 @@ def is_correct_length(content_len):
     return content_len <= 100
 
 class CommentService():
-    
+
     @staticmethod
-    @jwt_required
-    def modify_comment(comment_id):
-        comment = CommentModel.query.get(comment_id)
-        json = request.get_json()
-
-        if not comment:
-            return jsonify(msg='wrong comment_id, comment not found'), 404
-
-        if not check_user_permission(comment=comment, admin_allow=False):
-            return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
-
-        validate_error = CommentPatchInputSchema().validate(json)
-        if validate_error:
-            return jsonify(msg='json validate error'), 400
-
-        new_content = json.get('content')
-
-
-
-        # new_content = request.json.get('content', None)
-        # if not new_content:
-        #     return jsonify(msg='content parameter missed'), 400
-        #
-        # if not is_correct_length(len(new_content)):
-        #     return jsonify(msg='content is too long, it must be shorter than 100'), 413
-        if new_content:
-            comment.content = json.get('content')
-        comment.wrote_datetime = datetime.now()
-
+    def modify_comment(comment, new_content):
+        comment.content = new_content
         db.session.commit()
-
-        return jsonify(msg='comment modify succeed'), 200
 
     @staticmethod
     @jwt_required
