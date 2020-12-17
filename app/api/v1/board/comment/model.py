@@ -1,4 +1,4 @@
-from marshmallow.validate import Length
+from marshmallow.validate import Length, Range
 from datetime import datetime
 
 from app import db, ma
@@ -67,6 +67,15 @@ class CommentPatchInputSchema(ma.Schema):
     content = ma.Str(required = False, validate = Length(min = 1, max = 100))
 
 
+class GetCommentParameterSchema(ma.Schema):
+   post_id = ma.Integer(data_key="post-id", required=False)
+   username = ma.Str(required=False)
+   page = ma.Integer(required=False, validate=Range(min=0))
+   per_page = ma.Integer(data_key="per-page", required=False, validate=Range(min=1))
+
+
+class PostCommentParameterSchema(ma.Schema):
+    post_id = ma.Integer(data_key="post-id", required = True)
 
 
 comments_schema = CommentSchema(many=True, exclude=['wrote_post'])
