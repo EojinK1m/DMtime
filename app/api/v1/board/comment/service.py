@@ -26,20 +26,9 @@ class CommentService():
         db.session.commit()
 
     @staticmethod
-    @jwt_required
-    def delete_comment(comment_id):
-
-        comment = CommentModel.query.get(comment_id)
-        if not comment:
-            return jsonify(msg='wrong comment_id, comment not found'), 404
-
-        if not check_user_permission(comment=comment, admin_allow=True):
-            return jsonify(msg=f'access denied, u r not {comment.writer.username}'), 403
-
+    def delete_comment(comment):
         comment.delete_comment()
         db.session.commit()
-
-        return jsonify(msg='delete succeed'), 200
 
     @staticmethod
     def abort_if_not_exist_comment_id(comment_id):
