@@ -1,9 +1,15 @@
+from datetime import datetime
+
 from flask import make_response, abort, request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app.util.request_validator import RequestValidator
 from app.api.v1.board.comment.service import CommentService, CommentListService
-from app.api.v1.board.comment.model import comments_schema_user, comments_schema
+from app.api.v1.board.comment.model import comments_schema_user, comments_schema, CommentInputSchema, PostCommentParameterSchema
 from app.api.v1.user.service import UserService
 from app.api.v1.board.post.service import PostService
+from app.api.v1.user.account.service import AccountService
 
 class CommentList(Resource):
     def get(self):
@@ -29,10 +35,43 @@ class CommentList(Resource):
         return {'comments':dumped_comments,
                 'number_of_pages':comments.pages}, 200
 
-
-
+    @jwt_required
     def post(self):
-        return make_response(CommentListService.write_comment())
+
+        def validate_request():
+            RequestValidator.validate_request(PostCommentParameterSchema(), request.args)
+            RequestValidator.validate_request(CommentInputSchema(), request.json)
+
+        def check_comment_belonging_to_this_post(comment, post):
+            if comment.wrote_post_id != post.id:
+                abort(400, 'Comment is not belonging to post.')
+
+        validate_request()
+
+        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+        json = request.json
+        upper_comment_id = json.get('upper_comment_id', None)
+        is_anonymous = json.get('is_anonymous')
+        content = json.get('content')
+        post_id = request.args.get('post-id')
+
+        target_post = PostService.get_post_by_post_id(post_id=post_id)
+
+        if upper_comment_id is not None:
+            upper_comment = CommentService.get_comment_by_id(upper_comment_id)
+            check_comment_belonging_to_this_post(comment=upper_comment, post=target_post)
+
+        CommentListService.create_comment(
+            wrote_post_id=target_post.id,
+            wrote_datetime=datetime.now(),
+            wrote_user_id=request_account.user.id,
+            content=content,
+            upper_comment_id=upper_comment_id,
+            is_anonymous=is_anonymous
+        )
+
+        return {}, 200
+
 
 class Comment(Resource):
     def patch(self, comment_id):
