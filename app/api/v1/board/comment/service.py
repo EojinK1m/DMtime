@@ -18,17 +18,6 @@ from app.api.v1.user.model import UserModel
 def is_correct_length(content_len):
     return content_len <= 100
 
-def check_user_permission(comment, admin_allow):
-    request_user = AccountModel.get_user_by_email(email=get_jwt_identity())
-
-    if admin_allow:
-        roles = get_jwt_claims()['roles']
-        if roles == 'admin':
-            return True
-
-    return  request_user.id == comment.writer.id
-
-
 class CommentService():
     
     @staticmethod
