@@ -48,6 +48,8 @@ class PostService():
         if find_post is None:
             abort(404, f'Post {post_id} is not found')
 
+        return find_post
+
     @staticmethod
     @jwt_required
     def delete_post(post_id):
