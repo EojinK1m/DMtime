@@ -94,6 +94,15 @@ class CommentService():
 
         return comment
 
+    @staticmethod
+    def check_account_permission(comment, account, admin_allow):
+        if admin_allow:
+            if account.is_admin():
+                return True
+
+        return account.user.id == comment.writer.id
+
+
 class CommentListService():
     @staticmethod
     def get_comments_by_post_id_and_paging_order_by_latest(post_id, per_page, page):
