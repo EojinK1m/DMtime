@@ -6,7 +6,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 from app.api.v1.board.comment.service import CommentService, CommentListService
-from app.api.v1.board.comment.model import comments_schema_user, comments_schema, CommentInputSchema, PostCommentParameterSchema
+from app.api.v1.board.comment.model import \
+    comments_schema_user,\
+    comments_schema,\
+    CommentInputSchema,\
+    PostCommentParameterSchema,\
+    CommentPatchInputSchema
 from app.api.v1.user.service import UserService
 from app.api.v1.board.post.service import PostService
 from app.api.v1.user.account.service import AccountService
@@ -74,7 +79,26 @@ class CommentList(Resource):
 
 
 class Comment(Resource):
+    @jwt_required
     def patch(self, comment_id):
-        return make_response(CommentService.modify_comment(comment_id))
+        json = request.json
+        RequestValidator.validate_request(CommentPatchInputSchema(), json)
+
+        comment = CommentService.get_comment_by_id(comment_id)
+        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+
+        CommentService.check_comment_access_permission_of_account(comment=comment, account=request_account)
+
+        new_content = json.get('content', None)
+        if new_content is None:
+            new_content = comment.content
+
+        CommentService.modify_comment(
+            comment=comment,
+            new_content=new_content
+        )
+
+        return {}, 200
+
     def delete(self, comment_id):
         return make_response(CommentService.delete_comment(comment_id))
