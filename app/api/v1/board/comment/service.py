@@ -4,9 +4,6 @@ from app import db
 
 from app.api.v1.board.comment.model import CommentModel
 
-def is_correct_length(content_len):
-    return content_len <= 100
-
 class CommentService():
 
     @staticmethod
