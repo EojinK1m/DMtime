@@ -100,5 +100,18 @@ class Comment(Resource):
 
         return {}, 200
 
+    @jwt_required
     def delete(self, comment_id):
-        return make_response(CommentService.delete_comment(comment_id))
+
+        comment = CommentService.get_comment_by_id(comment_id)
+        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+
+        CommentService.check_comment_access_permission_of_account(
+            comment=comment,
+            account=request_account,
+            admin_allow=True
+        )
+
+        CommentService.delete_comment(comment)
+
+        return {}, 200
