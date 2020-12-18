@@ -316,6 +316,15 @@ class PostListService():
         # return posts
 
     @staticmethod
+    def get_posts_by_user_with_paging(user, per_page, page):
+        posts = \
+            PostListService.order_post_query_from_latest(
+                PostModel.query.filter_by(wrote_user_id = user.id)
+            ).paginame(page=page, per_page=per_page)
+
+        return posts
+
+    @staticmethod
     def order_post_query_from_latest(posts, reverse=False):
         o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
 
