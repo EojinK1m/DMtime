@@ -299,3 +299,25 @@ class PostListService():
     @staticmethod
     def get_day_difference(date):
         return datetime.now().day - date.day
+
+    @staticmethod
+    def get_posts_by_gallery_with_paging(gallery, per_page, page):
+        posts = \
+            PostListService.order_post_query_from_latest(
+                PostModel.query.filter_by(wrote_gallery_id=gallery.id)
+            ).paginate(page=page, per_page=per_page)
+
+        return posts
+
+
+        #     .order_by(PostModel.posted_datetime.desc())\
+        #     .paginate(page=page, per_page=per_page)
+        #
+        # return posts
+
+    @staticmethod
+    def order_post_query_from_latest(posts, reverse=False):
+        o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
+
+        return posts.order_by(o)
+
