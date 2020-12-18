@@ -320,7 +320,7 @@ class PostListService():
         posts = \
             PostListService.order_post_query_from_latest(
                 PostModel.query.filter_by(wrote_user_id = user.id)
-            ).paginame(page=page, per_page=per_page)
+            ).paginate(page=page, per_page=per_page)
 
         return posts
 
@@ -329,4 +329,3 @@ class PostListService():
         o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
 
         return posts.order_by(o)
-
