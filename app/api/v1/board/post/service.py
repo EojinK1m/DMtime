@@ -304,7 +304,7 @@ class PostListService():
     def get_posts_by_gallery_with_paging(gallery, per_page, page):
         posts = \
             PostListService.order_post_query_from_latest(
-                PostModel.query.filter_by(wrote_gallery_id=gallery.id)
+                PostModel.query.filter_by(gallery_id=gallery.id)
             ).paginate(page=page, per_page=per_page)
 
         return posts
@@ -319,7 +319,7 @@ class PostListService():
     def get_posts_by_user_with_paging(user, per_page, page):
         posts = \
             PostListService.order_post_query_from_latest(
-                PostModel.query.filter_by(wrote_user_id = user.id)
+                PostModel.query.filter_by(user_id = user.id)
             ).paginate(page=page, per_page=per_page)
 
         return posts
