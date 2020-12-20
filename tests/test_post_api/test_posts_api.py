@@ -49,6 +49,7 @@ def test_post_post_without_access_token(client, create_temp_gallery):
 
     rv.status_code == 403
 
+#Todo
 # def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
 #     raise Exception('NotMakeError', 'We didnt think its detail yet')
 #     pass
@@ -74,10 +75,10 @@ def test_post_post_with_unsuitable_post_data(client, create_temp_account, create
     rv3 = post_post(client, empty_content_post, temp_gallery.id, access_token_of_temp_account)
     assert rv3.status_code == 400
 
-    #test over size content
+    #Todo test over size content
 
 
-#make GET method test
+#Todo make GET method test
 
 
 
