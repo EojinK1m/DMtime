@@ -93,5 +93,11 @@ class ImageService:
         except:
             return False
 
-        return True
+    @classmethod
+    def __get_image_by_id(cls, image_id):
+        image = ImageModel.query.filter_by(id=image_id).first()
 
+        if image is None:
+            abort(404, f'Image{image_id} s not found.')
+
+        return image
