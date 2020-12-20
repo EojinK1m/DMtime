@@ -83,6 +83,6 @@ class GalleryService:
         gallery = GalleryModel.query.filter_by(id=gallery_id).first()
 
         if gallery is None:
-            abort(404, '')
+            abort(404, f'Gallery{gallery_id} is not found.')
 
         return gallery
