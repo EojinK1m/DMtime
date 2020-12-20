@@ -1,5 +1,5 @@
 import os
-from flask import jsonify, current_app as app
+from flask import jsonify, current_app as app, abort
 
 from app import db
 from app.api.v1.image.model import ImageModel, ImageSchema
@@ -54,15 +54,9 @@ class ImageService:
         else:
             return find_image_column.filename
 
-
-
-
-    @staticmethod
-    def delete_image(id):
-        delete_image_column = ImageModel.query.filter_by(id=id).first()
-
-        if not delete_image_column:
-            return False
+    @classmethod
+    def delete_image(cls, id):
+        delete_image_column = cls.__get_image_by_id(id)
 
         file_name = delete_image_column.filename
 
@@ -71,15 +65,12 @@ class ImageService:
 
         return True
 
+    @classmethod
+    def set_foreign_key(cls, image_id, key, location):
+        image = cls.__get_image_by_id(image_id)
 
-    @staticmethod
-    def set_foreign_key(image_id, key, location):
-        image = ImageModel.query.filter_by(id=image_id).first()
-
-        if not image:
-            return False
-        if image.post_id or image.user_id:
-            return False
+        if image.post_id or image.user_id or image.gallery_id:
+            abort(409, 'Image is included in other content.')
 
         try:
             if location == 'user':
@@ -89,9 +80,9 @@ class ImageService:
             elif location == 'post':
                 image.post_id = key
             else:
-                return False
+                raise ValueError()
         except:
-            return False
+            abort(500, 'Exception while set image')
 
     @classmethod
     def __get_image_by_id(cls, image_id):
