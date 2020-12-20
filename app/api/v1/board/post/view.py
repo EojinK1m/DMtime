@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from flask import make_response, request, abort
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
@@ -7,10 +10,13 @@ from app.api.v1.board.post.service import PostService, PostListService
 from app.api.v1.board.post.model import \
     posts_schema,\
     posts_schema_user,\
-    PostGetQueryParameterValidateSchema
+    PostGetQueryParameterValidateSchema, \
+    PostPostInputValidateSchema, \
+    PostResourceQueryParameterValidateSchema
 from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.user.account.service import AccountService
 from app.api.v1.user.service import UserService
+from app.api.v1.image.service import ImageService
 
 class PostList(Resource):
     def get(self):
@@ -51,9 +57,30 @@ class PostList(Resource):
                    'number_of_pages': posts.pages
                }, 200
 
+    @jwt_required
     def post(self):
-        gallery_id = request.args.get('gallery-id', None)
-        return make_response(PostListService.post_post(gallery_id))
+        json = request.get_json()
+        args = request.args
+
+        RequestValidator.validate_request(PostResourceQueryParameterValidateSchema(), args)
+        RequestValidator.validate_request(PostPostInputValidateSchema(), json)
+
+        post_gallery = GalleryService.get_gallery_by_id(args.get(key='gallery-id', type=int))
+        uploader_account = AccountService.find_account_by_email(get_jwt_identity())
+
+        created_post = PostListService.create_post(
+            content=json['content'],
+            title=json['title'],
+            is_anonymous=json['is_anonymous'],
+            upload_user=uploader_account.user,
+            post_gallery=post_gallery,
+            posted_datetime=datetime.now()
+        )
+
+        for image_id in json['image_ids']:
+            ImageService.set_foreign_key(image_id=image_id, key=created_post.id, location='post')
+
+        return {}, 200
 
 
 class HotPostList(Resource):
