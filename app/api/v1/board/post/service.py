@@ -286,7 +286,6 @@ class PostListService():
 
         return posts[per_page*(page-1) : per_page*page], number_of_pages
 
-
     @staticmethod
     def get_hot_score_of_post(post):
         G = 1.25
@@ -295,10 +294,15 @@ class PostListService():
 
         return (L - 1) / pow((D + 2), G)
 
-
     @staticmethod
     def get_day_difference(date):
         return datetime.now().day - date.day
+
+    @staticmethod
+    def get_posts_with_paging(per_page, page):
+        return PostListService.order_post_query_from_latest(
+            PostModel.query.all()
+        ).paginame(page=page, per_page=per_page)
 
     @staticmethod
     def get_posts_by_gallery_with_paging(gallery, per_page, page):
@@ -329,9 +333,3 @@ class PostListService():
         o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
 
         return posts.order_by(o)
-
-    @staticmethod
-    def get_posts_with_paging(per_page, page):
-        return PostListService.order_post_query_from_latest(
-            PostModel.query.all()
-        ).paginame(page=page, per_page=per_page)
