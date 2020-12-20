@@ -147,6 +147,23 @@ class PostService():
 class PostListService():
 
     @staticmethod
+    def create_post(content, title, upload_user, post_gallery, is_anonymous, posted_datetime):
+        new_post = PostModel(
+            content=content,
+            title=title,
+            uploader=upload_user,
+            posted_gallery=post_gallery,
+            is_anonymous=is_anonymous,
+            posted_datetime=posted_datetime
+        )
+
+        db.session.add(new_post)
+        db.session.flush()
+
+        return new_post
+
+
+    @staticmethod
     def provide_post_list():
         gallery_id = request.args.get('gallery-id', None)
         username = request.args.get('username', None)
