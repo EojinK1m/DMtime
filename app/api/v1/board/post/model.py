@@ -100,12 +100,15 @@ class PostSchema(ma.SQLAlchemySchema):
             return True
 
 
-
 class PostPostInputValidateSchema(ma.Schema):
     content = ma.Str(required = True, validate = Length(min = 1))
     title = ma.Str(required = True, validate = Length(min = 1, max = 30))
     image_ids = ma.List(ma.Integer, required = True)
     is_anonymous = ma.Boolean(required=True)
+
+
+class PostResourceQueryParameterValidateSchema(ma.Schema):
+    gallery_id = ma.Integer(data_key='gallery-id',required = True)
 
 
 class PostGetQueryParameterValidateSchema(ma.Schema):
