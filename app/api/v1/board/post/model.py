@@ -6,7 +6,7 @@ from marshmallow.validate import Length, Range
 class PostModel(db.Model):
     __tablename__ = 'post'
 
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     title = db.Column(db.String(30), nullable=False)
     content = db.Column(db.Text(), nullable=False) #sould be false
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
