@@ -329,3 +329,9 @@ class PostListService():
         o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
 
         return posts.order_by(o)
+
+    @staticmethod
+    def get_posts_with_paging(per_page, page):
+        return PostListService.order_post_query_from_latest(
+            PostModel.query.all()
+        ).paginame(page=page, per_page=per_page)
