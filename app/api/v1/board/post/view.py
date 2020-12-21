@@ -133,8 +133,17 @@ class Post(Resource):
         db.session.commit()
         return {}, 200
 
+    @jwt_required
     def delete(self, post_id):
-        return make_response(PostService.delete_post(post_id))
+        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        post = PostService.get_post_by_post_id(post_id)
+
+        PostService.check_post_access_permission_of_account(post=post, account=request_account, admin_allow=True)
+
+        PostService.delete_post(post)
+
+        db.session.commit()
+        return {}, 200
 
 
 class PostLike(Resource):
