@@ -51,19 +51,9 @@ class PostService():
         return find_post
 
     @staticmethod
-    @jwt_required
-    def delete_post(post_id):
-        post = PostModel.query.get(post_id)
-
-        if not post:
-            return jsonify({'msg': 'Not found'}), 404
-        if not check_user_permission(post):
-            return jsonify(msg='access denied'), 403
-
+    def delete_post(post):
         post.delete_post()
-
-        db.session.commit()
-        return jsonify(msg='post deleted'), 200
+        db.session.flush()
 
     @staticmethod
     def update_post(post, title, content):
