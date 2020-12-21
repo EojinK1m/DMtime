@@ -97,7 +97,7 @@ def test_post_patch_correct(client, create_temp_account, create_temp_gallery, cr
                       headers={'authorization':'Bearer '+temp_account.generate_access_token()},
                       json=change_post_info)
 
-    assert rv.status_code == 200, rv.json['msg']
+    assert rv.status_code == 200
 
 
 def test_post_patch_with_data_miss(client, create_temp_account, create_temp_gallery, create_temp_post):
