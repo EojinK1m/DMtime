@@ -84,6 +84,8 @@ class ImageService:
         except:
             abort(500, 'Exception while set image')
 
+        db.session.flush()
+
     @classmethod
     def __get_image_by_id(cls, image_id):
         image = ImageModel.query.filter_by(id=image_id).first()
