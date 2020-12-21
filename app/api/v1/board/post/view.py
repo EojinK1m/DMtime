@@ -29,8 +29,7 @@ class PostList(Resource):
 
         if gallery_id and username:
             abort(400)
-
-        if gallery_id is None and username is None:
+        elif gallery_id is None and username is None:
           posts = PostListService.get_posts_with_paging(
               per_page=per_page,
               page=page
@@ -44,7 +43,6 @@ class PostList(Resource):
             )
             convert_schema = posts_schema
         elif username is not None:
-
             posts = PostListService.get_posts_by_user_with_paging(
                 user=UserService.get_user_by_username(username),
                 per_page=per_page,
@@ -85,7 +83,18 @@ class PostList(Resource):
 
 class HotPostList(Resource):
     def get(self):
-        return make_response(PostListService.provide_hot_post_list())
+        RequestValidator.validate_request(PostGetQueryParameterValidateSchema(), request.args)
+        page = request.args.get(key='page', default=1, type=int)
+        per_page = request.args.get(key='per_page', default=20, type=int)
+
+        posts = PostListService.get_posts_for_days(7)
+        PostListService.sort_posts_by_hot_score(posts)
+        posts, number_of_pages = PostListService.paging_posts(posts=posts, page=page, per_page=per_page)
+
+        return {
+            'posts':posts_schema.dump(posts),
+            'number_of_page':number_of_pages
+        }, 200
 
 
 class Post(Resource):
