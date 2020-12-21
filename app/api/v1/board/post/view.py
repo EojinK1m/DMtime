@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
+from app import db
 from app.api.v1.board.post.service import PostService, PostListService
 from app.api.v1.board.post.model import \
     posts_schema, \
@@ -13,7 +14,8 @@ from app.api.v1.board.post.model import \
     posts_schema_user,\
     PostGetQueryParameterValidateSchema, \
     PostPostInputValidateSchema, \
-    PostResourceQueryParameterValidateSchema
+    PostResourceQueryParameterValidateSchema,\
+    PostPatchInputValidateSchema
 from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.user.account.service import AccountService
 from app.api.v1.user.service import UserService
@@ -106,9 +108,30 @@ class Post(Resource):
 
         return post_schema.dump(post), 200
 
-
+    @jwt_required
     def patch(self, post_id):
-        return make_response(PostService.modify_post(post_id))
+        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        post = PostService.get_post_by_post_id(post_id)
+        json = request.json
+
+        PostService.check_post_access_permission_of_account(post=post, account=request_account)
+        RequestValidator.validate_request(PostPatchInputValidateSchema(), json)
+
+        PostService.update_post(
+            post=post,
+            content=json.get('content', post.content),
+            title=json.get('title', post.title)
+        )
+
+        new_images_ids, delete_images_ids = PostService.get_diff_of_images(post, json.get('image_ids', []))
+
+        for image_id_to_delete in delete_images_ids:
+            ImageService.delete_image(image_id_to_delete)
+        for image_id_to_register in new_images_ids:
+            ImageService.set_foreign_key(image_id_to_register, post.id, 'post')
+
+        db.session.commit()
+        return {}, 200
 
     def delete(self, post_id):
         return make_response(PostService.delete_post(post_id))
