@@ -130,6 +130,15 @@ def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, 
     assert json['number_of_pages'] == 2
     assert json['posts'] != []
 
+def test_posts_get_with_not_exist_page(client, create_temp_account, create_temp_gallery, create_temp_post):
+    temp_gallery = create_temp_gallery()
+    temp_account = create_temp_account()
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+
+    rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page={5}&page=10')
+
+    json = rv.json
+    assert rv.status_code == 404
 
 def test_posts_get_to_no_posts_gallery(client, create_temp_gallery, create_temp_account):
     temp_gallery = create_temp_gallery()
