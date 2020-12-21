@@ -115,6 +115,17 @@ class PostService():
         return jsonify(msg='modify succeed'), 200
 
     @staticmethod
+    def check_post_access_permission_of_account(post, account, admin_allow=False):
+        permission = account.user.id == post.uploader_id
+
+        if admin_allow:
+            if account.is_admin():
+                permission = True
+
+        if permission is False:
+            abort(403, 'Access denied.')
+
+    @staticmethod
     @jwt_required
     def post_like(post_id):
         post = PostModel.query.get(post_id)
