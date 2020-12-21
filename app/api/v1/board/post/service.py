@@ -66,6 +66,13 @@ class PostService():
         return jsonify(msg='post deleted'), 200
 
     @staticmethod
+    def update_post(post, title, content):
+        post.title=title
+        post.content=content
+
+        db.session.flush()
+
+    @staticmethod
     @jwt_required
     def modify_post(post_id):
         post = PostModel.query.get(post_id)
