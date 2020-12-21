@@ -8,7 +8,8 @@ from app.util.request_validator import RequestValidator
 
 from app.api.v1.board.post.service import PostService, PostListService
 from app.api.v1.board.post.model import \
-    posts_schema,\
+    posts_schema, \
+    post_schema, \
     posts_schema_user,\
     PostGetQueryParameterValidateSchema, \
     PostPostInputValidateSchema, \
@@ -99,7 +100,12 @@ class HotPostList(Resource):
 
 class Post(Resource):
     def get(self, post_id):
-        return make_response(PostService.provide_post(post_id))
+        post = PostService.get_post_by_post_id(post_id)
+
+        post.increase_view()
+
+        return post_schema.dump(post), 200
+
 
     def patch(self, post_id):
         return make_response(PostService.modify_post(post_id))
