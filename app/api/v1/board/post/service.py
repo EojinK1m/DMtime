@@ -385,3 +385,9 @@ class PostLikeService:
     @classmethod
     def get_postlike_by_post_and_account(cls, post, account):
         return  PostLikeModel.query.filter_by(post_id=post.id, liker_id=account.user.id).first()
+
+    @classmethod
+    def delete_postlike(cls, postlike):
+        PostLikeModel.delete(postlike)
+
+        db.session.flush()
