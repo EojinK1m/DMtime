@@ -379,3 +379,9 @@ class PostListService():
         o = PostModel.posted_datetime.desc() if reverse is False else PostModel.posted_datetime.asc()
 
         return posts.order_by(o)
+
+
+class PostLikeService:
+    @classmethod
+    def get_postlikes_by_post_and_account(cls, post, account):
+        return  PostLikeModel.query.filter_by(post_id=post.id, liker_id=account.user.id).first()
