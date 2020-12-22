@@ -25,7 +25,7 @@ class PostModel(db.Model):
 
     def increase_view(self):
         self.views = self.views + 1
-        db.session.commit()
+        db.session.flush()
 
 
 
