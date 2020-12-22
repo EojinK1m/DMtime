@@ -391,3 +391,10 @@ class PostLikeService:
         PostLikeModel.delete(postlike)
 
         db.session.flush()
+
+    @classmethod
+    def create_postlike(cls, post, account):
+        new_postlike = PostLikeModel(liker_id=account.user.model, post_id=post.id)
+
+        db.session.add(new_postlike)
+        db.session.flush()
