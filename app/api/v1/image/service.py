@@ -6,7 +6,6 @@ from app.api.v1.image.model import ImageModel, ImageSchema
 
 
 
-
 def is_correct_image(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -45,6 +44,20 @@ class ImageService:
 
         return jsonify({'msg':'Upload succeed',\
                         'image_info':ImageSchema(exclude=['filename']).dump(image_column)}), 200
+
+    @classmethod
+    def create_image(cls, file_name='', user_id=None, post_id=None, gallery_id=None):
+        image = ImageModel(
+            filename = file_name,
+            user_id = user_id,
+            post_id = post_id,
+            gallery_id = gallery_id
+        )
+
+        db.session.add(image)
+        db.session.flush()
+
+        return image
 
     @staticmethod
     def get_filename_by_id(id):
