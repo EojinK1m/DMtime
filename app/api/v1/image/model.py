@@ -26,6 +26,16 @@ class ImageSchema(ma.SQLAlchemySchema):
 
 class PostImageValidateSchema(ma.Schema):
 
+    # class validate_is_image_allowed_extension:
+    #     def __call__(self, image):
+    #         try:
+    #             extension = image.filename.rsplit('.', 1)[-1].lower()
+    #         except IndexError:
+    #             raise ValidationError('Server can not parse extension from filename.')
+    #
+    #         if not extension in current_app.config['ALLOWED_EXTENSIONS']:
+    #             raise ValidationError(f'.{extension} is not allowed extension.')
+
     @staticmethod
     def validate_is_image_allowed_extension(image):
         try:
@@ -37,4 +47,4 @@ class PostImageValidateSchema(ma.Schema):
             raise ValidationError(f'.{extension} is not allowed extension.')
 
 
-    image = ma.Raw(required=True, validate=validate_is_image_allowed_extension)
+    image = ma.Raw(required=True, validate=validate_is_image_allowed_extension.__func__)
