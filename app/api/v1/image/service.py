@@ -59,6 +59,15 @@ class ImageService:
 
         return image
 
+    @classmethod
+    def update_image(cls, image, file_name='', user_id=None, post_id=None, gallery_id=None):
+        image.filename = file_name
+        image.user_id = user_id
+        image.post_id = post_id
+        image.gallery_id = gallery_id
+
+        db.session.flush()
+
     @staticmethod
     def get_filename_by_id(id):
         find_image_column = ImageModel.query.filter_by(id=id).first
