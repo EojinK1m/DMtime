@@ -1,3 +1,5 @@
+import imghdr
+
 from app import db, ma
 from flask import current_app
 from marshmallow import ValidationError
@@ -26,25 +28,23 @@ class ImageSchema(ma.SQLAlchemySchema):
 
 class PostImageValidateSchema(ma.Schema):
 
-    # class validate_is_image_allowed_extension:
-    #     def __call__(self, image):
-    #         try:
-    #             extension = image.filename.rsplit('.', 1)[-1].lower()
-    #         except IndexError:
-    #             raise ValidationError('Server can not parse extension from filename.')
-    #
-    #         if not extension in current_app.config['ALLOWED_EXTENSIONS']:
-    #             raise ValidationError(f'.{extension} is not allowed extension.')
-
     @staticmethod
-    def validate_is_image_allowed_extension(image):
-        try:
-            extension = image.filename.rsplit('.', 1)[-1].lower()
-        except IndexError:
-            raise ValidationError('Server can not parse extension from filename.')
+    def validate_image(image):
+        type_of_image = imghdr.what(image.stream)
 
-        if not extension in current_app.config['ALLOWED_EXTENSIONS']:
-            raise ValidationError(f'.{extension} is not allowed extension.')
+        error = ''
+        if type_of_image is None:
+            error = 'Requested file is not image file.'
+        elif not type_of_image in current_app.config['ALLOWED_EXTENSIONS']:
+            error = f'.{type_of_image} is not allowed extension.'
 
+        if error:
+            raise ValidationError(error)
 
-    image = ma.Raw(required=True, validate=validate_is_image_allowed_extension.__func__)
+    image = ma.Raw(
+        required=True,
+        validate=validate_image.__func__,
+        error_messages={
+            "null": "This request must include image file.",
+        }
+    )
