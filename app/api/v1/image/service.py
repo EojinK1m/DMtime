@@ -39,14 +39,6 @@ class ImageService:
 
         return image
 
-    @staticmethod
-    def get_filename_by_id(id):
-        find_image_column = ImageModel.query.filter_by(id=id).first
-        if not find_image_column:
-            return None
-        else:
-            return find_image_column.filename
-
     @classmethod
     def delete_image(cls, image):
         def delete_file_from_storage(file_2_delete):
@@ -64,22 +56,8 @@ class ImageService:
             abort(500, 'An error occur while deleting image.')
 
     @classmethod
-    def delete_image_by_id(cls, id):
-        try:
-            image = cls.get_image_by_id(id)
-
-            cls.__delete_actual_file_from_storage(image)
-
-            db.session.delete(image)
-            db.session.flush()
-
-        except Exception as e:
-            db.session.rollback()
-            abort(500, 'An error occur while deleting image.')
-
-    @classmethod
     def set_foreign_key(cls, image_id, key, location):
-        image = cls.__get_image_by_id(image_id)
+        image = cls.get_image_by_id(image_id)
 
         if image.post_id or image.user_id or image.gallery_id:
             abort(409, 'Image is included in other content.')
