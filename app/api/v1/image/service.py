@@ -1,20 +1,8 @@
 import os
-from flask import jsonify, current_app as app, abort
+from flask import current_app as app, abort
 
 from app import db
-from app.api.v1.image.model import ImageModel, ImageSchema
-
-
-
-def is_correct_image(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-def get_id_from_filename(filename):
-    return int(filename.rsplit('.', 1)[0].lower())
-
-def get_path_from_filename(filename):
-    return os.path.join(app.config['IMAGE_UPLOADS'], filename)
+from app.api.v1.image.model import ImageModel
 
 
 class ImageService:
