@@ -48,10 +48,20 @@ class ImageService:
             return find_image_column.filename
 
     @classmethod
-    def delete_image(cls, id):
-        delete_image_column = cls.__get_image_by_id(id)
+    def delete_image(cls, image):
+        def delete_file_from_storage(file_2_delete):
+            os.remove(get_path_from_filename(file_2_delete.filename))
 
-        file_name = delete_image_column.filename
+        def get_path_from_filename(filename):
+            return os.path.join(app.config['IMAGE_UPLOADS'], filename)
+
+        try:
+            delete_file_from_storage(image)
+            db.session.delete(image)
+            db.session.flush()
+        except Exception:
+            db.session.rollback()
+            abort(500, 'An error occur while deleting image.')
 
     @classmethod
     def delete_image_by_id(cls, id):
