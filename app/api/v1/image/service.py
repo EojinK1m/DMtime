@@ -68,6 +68,15 @@ class ImageService:
 
         db.session.flush()
 
+    @classmethod
+    def get_image_by_id(cls, image_id):
+        image = ImageModel.query.filter_by(id=image_id).first()
+
+        if image is None:
+            abort(404, f'Image{image_id} s not found.')
+
+        return image
+
     @staticmethod
     def get_filename_by_id(id):
         find_image_column = ImageModel.query.filter_by(id=id).first
@@ -107,12 +116,3 @@ class ImageService:
             abort(500, 'Exception while set image')
 
         db.session.flush()
-
-    @classmethod
-    def __get_image_by_id(cls, image_id):
-        image = ImageModel.query.filter_by(id=image_id).first()
-
-        if image is None:
-            abort(404, f'Image{image_id} s not found.')
-
-        return image
