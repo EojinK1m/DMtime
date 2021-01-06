@@ -37,8 +37,7 @@ class ImageUpload(Resource):
 
 class Image(Resource):
     def delete(self, id):
-        if not ImageService.delete_image(id):
-            return make_response(jsonify(msg='image not found'), 404)
-        else:
-            return make_response(jsonify(msg='image deleted'), 200)
+        ImageService.delete_image(ImageService.get_image_by_id(id))
 
+        db.session.commit()
+        return {}, 200
