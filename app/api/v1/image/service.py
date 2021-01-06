@@ -65,10 +65,19 @@ class ImageService:
 
         file_name = delete_image_column.filename
 
-        os.remove(get_path_from_filename(file_name))
-        db.session.delete(delete_image_column)
+    @classmethod
+    def delete_image_by_id(cls, id):
+        try:
+            image = cls.get_image_by_id(id)
 
-        return True
+            cls.__delete_actual_file_from_storage(image)
+
+            db.session.delete(image)
+            db.session.flush()
+
+        except Exception as e:
+            db.session.rollback()
+            abort(500, 'An error occur while deleting image.')
 
     @classmethod
     def set_foreign_key(cls, image_id, key, location):
