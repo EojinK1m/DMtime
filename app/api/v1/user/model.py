@@ -1,10 +1,20 @@
 import re
 from flask import current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
+from marshmallow import validate
 
 from app import bcrypt
 from app import db, ma
 from app import jwt
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    if identity in current_app.config['ADMIN_LIST']:
+        print('admin')
+        return {'roles': 'admin'}
+    else:
+        print('peasant')
+        return {'roles': 'peasant'}
 
 
 class UserModel(db.Model):
@@ -36,28 +46,72 @@ class UserModel(db.Model):
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
+    def delete_account(self):
+        db.session.delete(self)
+
+    def is_admin(self):
+        return self.email in current_app.config['ADMIN_LIST']
+
+    @staticmethod
+    def get_user_by_email(email):
+        user = UserModel.get_user_by_email(email)
+        if not user:
+            return None
+        else:
+            return user
+
+    @staticmethod
+    def get_user_by_email(email):
+        return UserModel.query.filter_by(email=email).first()
+
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         model = UserModel()
 
-
     username = ma.auto_field()
     explain = ma.auto_field()
     profile_image = ma.Nested('ImageSchema', only=["url", "id"])
-
+    email = ma.auto_field()
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True, only=['username', 'profile_image'])
-
-from marshmallow import validate
 
 class UserPatchInputSchema(ma.Schema):
     username = ma.Str(required = False, validate = validate.Length(min = 2, max = 20))
     user_explain = ma.Str(required = False, validate = validate.Length(max = 400))
     profile_image_id = ma.Int(required = False, allow_null = True)
 
+
 class UserPutInputSchema(ma.Schema):
     username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
     user_explain = ma.Str(required = True, validate = validate.Length(max = 400))
     profile_image_id = ma.Int(required = False, allow_null = True)
+
+
+class AccountInputSchema(ma.Schema):
+    email = ma.Str(
+        required = True,
+        validate = [
+            validate.Email(error='Email parameter is not email'),
+            validate.Regexp('.*@dsm.hs.kr', error='Email is not of dsm')
+        ]
+    )
+    username = ma.Str(
+        required = True,
+        validate = [
+            validate.Length(min = 2, max = 20),
+            validate.Regexp(re.compile('^[가-힣\w]+$'))
+        ]
+    )
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+
+
+class AccountLoginInputSchema(ma.Schema):
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    email = ma.Str(required = True, validate = validate.Email())
+
+
+class AccountChangePasswrodInputSchema(ma.Schema):
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    new_password = ma.Str(required = True, validate = validate.Length(min = 8))
