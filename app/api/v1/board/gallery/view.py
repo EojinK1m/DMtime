@@ -6,7 +6,7 @@ from app.util.request_validator import RequestValidator
 from app.api.v1.board.gallery.service import GalleryService, GalleryListService
 from app.api.v1.board.gallery.model import galleries_schema, GalleryPostValidateSchema, gallery_schema
 
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
 
 class GalleryList(Resource):
     def get(self):

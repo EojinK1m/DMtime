@@ -17,7 +17,7 @@ from app.api.v1.board.post.model import \
     PostResourceQueryParameterValidateSchema,\
     PostPatchInputValidateSchema
 from app.api.v1.board.gallery.service import GalleryService
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
 from app.api.v1.user.service import UserService
 from app.api.v1.image.service import ImageService
 

@@ -16,7 +16,7 @@ from app.api.v1.board.gallery.report.model import \
 
 from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.board.post.service import PostService
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
 from app.api.v1.board.comment.service import CommentService
 
 

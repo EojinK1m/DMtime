@@ -4,7 +4,7 @@ from flask_restful import Resource
 from app.util.request_validator import RequestValidator
 
 from app.api.v1.auth.schema import PostTokenValidateSchema
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
 
 class Token(Resource):
 

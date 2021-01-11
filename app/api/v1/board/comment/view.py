@@ -14,7 +14,7 @@ from app.api.v1.board.comment.model import \
     CommentPatchInputSchema
 from app.api.v1.user.service import UserService
 from app.api.v1.board.post.service import PostService
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
 
 class CommentList(Resource):
     def get(self):
