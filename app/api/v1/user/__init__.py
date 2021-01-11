@@ -20,3 +20,15 @@ account_api.add_resource(AuthEmailVerificationCode, '/users/accounts/auth/verifi
 account_api.add_resource(Refresh, '/users/accounts/auth/refresh')
 account_api.add_resource(DuplicateCheckEmail, '/users/accounts/duplicate-check/email')
 account_api.add_resource(DuplicateCheckUsername, '/users/accounts/duplicate-check/username')
+
+'''
+/users/{username}
+/users/{username}/account
+/users/{username}/account/email-verification-code
+/users/{username}/account/password
+/users/email-duplication
+/users/username-duplication
+
+/token
+/email-verification-code
+'''
