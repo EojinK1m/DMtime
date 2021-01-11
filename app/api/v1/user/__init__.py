@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from app.api.v1.user.view import user
+from app.api.v1.user.view import User
 from app.api.v1.user.account.view import Account, AccountPassword, Auth, Refresh,\
                                     DuplicateCheckEmail, DuplicateCheckUsername,\
                                     AuthEmailVerificationCode
@@ -8,7 +8,7 @@ from app.api.v1.user.account.view import Account, AccountPassword, Auth, Refresh
 
 user_api = Api()
 
-user_api.add_resource(user, '/users/<username>')
+user_api.add_resource(User, '/users/<username>')
 
 
 account_api = Api()

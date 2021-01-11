@@ -3,7 +3,7 @@ from flask import make_response, request
 
 from app.api.v1.user.service import UserService
 
-class user(Resource):
+class User(Resource):
     def get(self, username):
         return make_response(UserService.provide_user_info(username))
 
