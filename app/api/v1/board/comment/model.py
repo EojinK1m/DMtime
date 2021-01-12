@@ -7,7 +7,7 @@ class CommentModel(db.Model):
     __tablename__ = 'comment'
 
     id  = db.Column(db.Integer(), primary_key=True)
-    wrote_user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete="CASCADE"), nullable=False)
+    wrote_user_id = db.Column(db.String(320), db.ForeignKey('user.email', ondelete="CASCADE"), nullable=False)
     wrote_post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete="SET NULL"), nullable=True)
     upper_comment_id = db.Column(db.Integer(), db.ForeignKey('comment.id', ondelete="SET NULL"), nullable=True)
     content = db.Column(db.String(100), nullable=False)

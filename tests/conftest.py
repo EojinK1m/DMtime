@@ -131,7 +131,7 @@ def create_temp_image(app, session):
 
 @pytest.fixture
 def create_temp_account(app, session):
-    from app.api.v1.user.account.model import AccountModel
+    from app.api.v1.user.model import UserModel
     from app.api.v1.user.model import UserModel
 
 
@@ -148,8 +148,8 @@ def create_temp_account(app, session):
             else:
                 raise Exception('TestAdminOverError', 'Admin account for test cant exist more than one')
 
-        temp_account = AccountModel(email=email,
-                                    password_hash=AccountModel.hash_password(password))
+        temp_account = UserModel(email=email,
+                                    password_hash=UserModel.hash_password(password))
 
         session.add(temp_account)
         session.commit()

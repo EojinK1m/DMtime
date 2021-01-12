@@ -7,7 +7,7 @@ class GalleryModel(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.String(255), nullable=True)
-    manager_user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
+    manager_user_id = db.Column(db.String(320), db.ForeignKey('user.email'), nullable=False)
 
     posts = db.relationship('PostModel', passive_deletes=True, backref = 'posted_gallery')
 

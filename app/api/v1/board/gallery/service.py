@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 from app import db
 from app.api.v1.board.gallery.model import GalleryModel
-from app.api.v1.user.account.model import AccountModel
+from app.api.v1.user.model import UserModel
 
 
 class GalleryListService:
@@ -50,7 +50,7 @@ class GalleryService:
 
         def __call__(self, *args, **kargs):
             verify_jwt_in_request()
-            request_account = AccountModel.get_account_by_email(get_jwt_identity())
+            request_account = UserModel.get_account_by_email(get_jwt_identity())
             target_gallery = GalleryService.get_gallery_by_id(kargs['gallery_id'])
 
             if(target_gallery.is_manager(request_account.user) or request_account.is_admin()):

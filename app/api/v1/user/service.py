@@ -3,7 +3,6 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
 from app.api.v1.user.model import UserModel, user_schema
-from app.api.v1.user.account.model import AccountModel
 
 from app.api.v1.image.service import ImageService
 
@@ -35,7 +34,7 @@ class UserService:
         if error:
             return jsonify(msg= 'Bad request, json body is wrong'), 400
 
-        user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
+        user = (UserModel.query.filter_by(email=get_jwt_identity()).first()).user
         if not user or not UserModel.query.filter_by(username=username).first():
             return jsonify({'msg': 'user not found'}), 404
         elif user.username != username:
@@ -98,8 +97,7 @@ from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt
 from app import db, redis_client, email_sender
 from app.util import verification_code_generater
 
-from app.api.v1.user.model import UserModel
-from app.api.v1.user.account.model import AccountModel, account_schema, AccountInputSchema, \
+from app.api.v1.user.model import UserModel, user_schema, AccountInputSchema, \
     AccountChangePasswrodInputSchema
 from app.api.v1.user.service import UserService
 
@@ -110,7 +108,7 @@ class AccountService:
     @jwt_required
     def provide_account_info():
         email = get_jwt_identity()
-        account = AccountModel.get_account_by_email(email)
+        account = UserModel.get_account_by_email(email)
 
         return jsonify(account_info=account_schema.dump(account),
                        msg='query succeed'), 200
@@ -143,7 +141,7 @@ class AccountService:
 
     @staticmethod
     def check_exist_same_email(email):
-        if AccountModel.get_account_by_email(email):
+        if UserModel.get_account_by_email(email):
             abort(409, 'same email exist')
 
     @staticmethod
@@ -201,9 +199,9 @@ class AccountService:
     @staticmethod
     def store_account_user_information(register_data):
         try:
-            new_account = AccountModel(
+            new_account = UserModel(
                 email=register_data.get('email'),
-                password_hash=AccountModel.hash_password(register_data.get('password'))
+                password_hash=UserModel.hash_password(register_data.get('password'))
             )
             db.session.add(new_account)
             db.session.flush()
@@ -222,7 +220,7 @@ class AccountService:
     @staticmethod
     @jwt_required
     def delete_account(email):
-        account = AccountModel.get_account_by_email(email)
+        account = UserModel.get_account_by_email(email)
         if not account:
             abort(404, 'Account not found')
 
@@ -243,21 +241,21 @@ class AccountService:
             abort(400, 'missing parameter exist')
 
         email = get_jwt_identity()
-        account = AccountModel.get_account_by_email(email)
+        account = UserModel.get_account_by_email(email)
         password = data.get('password')
         new_password = data.get('new_password')
 
         if not (account.verify_password(password)):
             abort(403, 'Access denied')
 
-        account.password_hash = AccountModel.hash_password(new_password)
+        account.password_hash = UserModel.hash_password(new_password)
 
         db.session.commit()
         return jsonify(msg='change password succeed!')
 
     @staticmethod
     def find_account_by_email(email):
-        found_account = AccountModel.get_account_by_email(email)
+        found_account = UserModel.get_account_by_email(email)
 
         if found_account is None:
             abort(404, 'Account not found, there is no account include the email.')
@@ -269,7 +267,7 @@ class AuthService:
 
     @staticmethod
     def login(data):
-        from app.api.v1.user.account.model import AccountLoginInputSchema
+        from app.api.v1.user.model import AccountLoginInputSchema
         error = AccountLoginInputSchema().validate(data)
         if error:
             return jsonify(msg='Bad request, wrong json body'), 400
@@ -277,7 +275,7 @@ class AuthService:
         email = data.get('email', None)
         password = data.get('password', None)
 
-        login_account = AccountModel.get_account_by_email(email)
+        login_account = UserModel.get_account_by_email(email)
 
         if login_account:
             if login_account.verify_password(password):
@@ -294,7 +292,7 @@ class AuthService:
     @jwt_refresh_token_required
     def refresh():
         email = get_jwt_identity()
-        account = AccountModel.get_account_by_email(email)
+        account = UserModel.get_account_by_email(email)
         access_token = account.generate_access_token()
 
         return jsonify({'access_token': access_token}), 200
@@ -306,7 +304,7 @@ class DuplicateCheck:
     def email_check(email):
         if (email == None):
             abort(400, 'email parameter missed')
-        if (AccountModel.get_account_by_email(email) == None):
+        if (UserModel.get_account_by_email(email) == None):
             return jsonify({'msg': 'same email does not exist', 'usable': True}), 200
         else:
             return jsonify({'msg': 'same email exist', 'usable': False}), 200

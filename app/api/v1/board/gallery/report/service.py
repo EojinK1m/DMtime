@@ -12,7 +12,7 @@ from app.api.v1.board.gallery.report.model import\
     ReportCommentInputSchema,\
     ReportPostInputSchema,\
     ContentType
-from app.api.v1.user.account.model import AccountModel
+from app.api.v1.user.model import UserModel
 from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.board.comment.service import CommentService
 from app.api.v1.board.post.service import PostService

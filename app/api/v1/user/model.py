@@ -74,8 +74,12 @@ class UserSchema(ma.SQLAlchemySchema):
     profile_image = ma.Nested('ImageSchema', only=["url", "id"])
     email = ma.auto_field()
 
-user_schema = UserSchema()
+
+user_schema = UserSchema(exclude=['password_hash', 'email'])
 users_schema = UserSchema(many=True, only=['username', 'profile_image'])
+
+account_schema = UserSchema(only = ['email'])
+
 
 class UserPatchInputSchema(ma.Schema):
     username = ma.Str(required = False, validate = validate.Length(min = 2, max = 20))

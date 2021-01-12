@@ -13,7 +13,7 @@ class PostModel(db.Model):
     views = db.Column(db.Integer(), default=0)
     is_anonymous = db.Column(db.Boolean, nullable=False)
 
-    uploader_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    uploader_id = db.Column(db.String(320), db.ForeignKey('user.email', ondelete='CASCADE'), nullable=False)
     gallery_id = db.Column(db.Integer(),db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
 
     images = db.relationship('ImageModel')

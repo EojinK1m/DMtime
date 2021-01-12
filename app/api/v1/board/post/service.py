@@ -17,7 +17,7 @@ from app.api.v1.board.post.model import PostModel,\
 
 from app.api.v1.board.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
-from app.api.v1.user.account.model import AccountModel
+from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
 
 def check_user_permission(post):
@@ -25,7 +25,7 @@ def check_user_permission(post):
     roles = get_jwt_claims()['roles']
     if roles == 'admin':
         return True
-    user = AccountModel.query.filter_by(email=identify).first().user
+    user = UserModel.query.filter_by(email=identify).first().user
     return user.id == post.uploader.id
 
 
@@ -126,7 +126,7 @@ class PostService():
     @jwt_required
     def post_like(post_id):
         post = PostModel.query.get(post_id)
-        request_user = AccountModel.query.filter_by(email=get_jwt_identity()).first().user
+        request_user = UserModel.query.filter_by(email=get_jwt_identity()).first().user
 
         if not post:
             return 404
@@ -248,7 +248,7 @@ class PostListService():
         if not post_gallery:
             return jsonify({'msg': 'Wrong gallery id, gallery not found'}), 404
 
-        uploader_account = AccountModel.query.filter_by(email=get_jwt_identity()).first()
+        uploader_account = UserModel.query.filter_by(email=get_jwt_identity()).first()
 
 
         json = request.get_json()
