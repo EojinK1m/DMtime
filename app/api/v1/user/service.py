@@ -27,6 +27,14 @@ class UserService:
         return find_user
 
     @staticmethod
+    def get_user_by_email(email):
+        find_user = UserModel.query.filter_by(email=email).first()
+        if find_user is None:
+            abort(404, 'User not found')
+
+        return find_user
+
+    @staticmethod
     @jwt_required
     def modify_user_info(username, data):
         from app.api.v1.user.model import UserPatchInputSchema
