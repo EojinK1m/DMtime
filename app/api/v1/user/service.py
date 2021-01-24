@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import jsonify, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -95,6 +97,26 @@ class UserService:
         if profile_image:
             ImageService.delete_image(profile_image.id)
         user.delete_user()
+
+    @staticmethod
+    def user_access_authorize_required(func):
+
+        @jwt_required
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            user_to_work = UserService.get_user_by_username(kwargs.get('username'))
+            request_user = UserService.get_user_by_email(email=get_jwt_identity())
+
+            if not user_to_work == request_user:
+                abort(403, f'access denied, you are not {user_to_work.username}')
+
+            func(*args, **kwargs)
+
+        return wrapper
+
+
+
+
 
 
 import json
