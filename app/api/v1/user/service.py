@@ -108,6 +108,7 @@ class UserService:
 
         return True
 
+
     @staticmethod
     def delete_user(user):
         profile_image = user.profile_image
@@ -116,19 +117,19 @@ class UserService:
             ImageService.delete_image(profile_image.id)
         user.delete_user()
 
+
     @staticmethod
     def user_access_authorize_required(func):
 
-        @jwt_required
         @wraps(func)
         def wrapper(*args, **kwargs):
-            user_to_work = UserService.get_user_by_username(kwargs.get('username'))
+            user_to_work = UserService.get_user_by_username(kwargs['username'])
             request_user = UserService.get_user_by_email(email=get_jwt_identity())
 
             if not user_to_work == request_user:
                 abort(403, f'access denied, you are not {user_to_work.username}')
 
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return wrapper
 
