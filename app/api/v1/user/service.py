@@ -37,6 +37,24 @@ class UserService:
         return find_user
 
     @staticmethod
+    def update_user(
+            user,
+            email,
+            password_hash,
+            username,
+            explain,
+            profile_image_id
+    ):
+        user.email = email
+        user.password_hash = password_hash
+        user.username = username
+        user.explain = explain
+        user.profile_image_id = profile_image_id
+
+        db.session.flush()
+        return user
+
+    @staticmethod
     @jwt_required
     def modify_user_info(username, data):
         from app.api.v1.user.model import UserPatchInputSchema
