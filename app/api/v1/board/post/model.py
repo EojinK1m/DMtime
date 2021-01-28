@@ -8,7 +8,7 @@ class PostModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     title = db.Column(db.String(30), nullable=False)
-    content = db.Column(db.Text(), nullable=False) #sould be false
+    content = db.Column(db.Text(), nullable=False)
     posted_datetime = db.Column(db.DateTime(), default=datetime.now())
     views = db.Column(db.Integer(), default=0)
     is_anonymous = db.Column(db.Boolean, nullable=False)
@@ -34,7 +34,7 @@ class PostLikeModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
-    liker_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    liker_id = db.Column(db.String(320), db.ForeignKey('user.email', ondelete='CASCADE'), nullable=False)
 
 
 class PostSchema(ma.SQLAlchemySchema):
