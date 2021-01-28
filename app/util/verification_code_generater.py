@@ -14,8 +14,8 @@ def generate_verification_code():
 
 
 def validate_verification_code(code):
-    if not (isinstance(code, str)):
-        raise Exception()
+    if not isinstance(code, str):
+        raise TypeError('code is not string')
 
     p = re.compile('[0-9A-Z]{10}')
     return (p.match(code) != None)
