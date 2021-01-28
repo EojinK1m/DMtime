@@ -13,48 +13,55 @@ class User(Resource):
     def get(self, username):
         return user_schema.dump(UserService.get_user_by_username(username)), 200
 
-    @jwt_required
+    @UserService.user_access_authorize_required
     def put(self, username):
-        RequestValidator.validate_request(UserPutInputSchema(), request.json)
+        user = UserService.get_user_by_username(username)
+        json = request.json
 
-        user2put = UserService.get_user_by_username(username)
-        request_user = UserService.get_user_by_email(get_jwt_identity())
+        RequestValidator.validate_request(UserPutInputSchema(), json)
 
-        if not user2put == request_user:
-            abort(403)
+        UserService.update_user(
+            user=user,
+            username=json['username'],
+            explain=json['user_explain'],
+            email=user.email,
+            profile_image_id=user.profile_image_id,
+            password_hash=user.password_hash
+        )
 
+        return {}, 200
 
-
-    @jwt_required
-    def patch(self, username):
-        RequestValidator.validate_request(UserPatchInputSchema(), request.json)
-
-        user = (UserModel.query.filter_by(email=get_jwt_identity()).first()).user
-        if not user or not UserModel.query.filter_by(username=username).first():
-            return jsonify({'msg': 'user not found'}), 404
-        elif user.username != username:
-            return jsonify({'msg': f'access denied, you are not {username}'}), 403
-
-        new_username = data.get('username', None)
-        new_explain = data.get('user_explain', None)
-        new_profile_image_id = data.get('profile_image_id',
-                                        user.profile_image.id if user.profile_image else None)
-
-
-        if not (new_username == None):
-            if(UserModel.query.filter_by(username=new_username).first()):
-                return jsonify(msg='Bad request, same username exist'), 400
-            user.username = new_username
-        if not (new_explain == None):
-            user.explain = new_explain
-        if not UserService.set_profile_image(user, new_profile_image_id):
-            return jsonify({'msg': f'image not found, image {new_profile_image_id}is not exist'}), 404
-
-        db.session.commit()
-
-        return jsonify({'msg':'modification succeed'}), 200
-
-        return make_response(UserService.modify_user_info(username, request.json))
+    #
+    # @jwt_required
+    # def patch(self, username):
+    #     RequestValidator.validate_request(UserPatchInputSchema(), request.json)
+    #
+    #     user = (UserModel.query.filter_by(email=get_jwt_identity()).first()).user
+    #     if not user or not UserModel.query.filter_by(username=username).first():
+    #         return jsonify({'msg': 'user not found'}), 404
+    #     elif user.username != username:
+    #         return jsonify({'msg': f'access denied, you are not {username}'}), 403
+    #
+    #     new_username = data.get('username', None)
+    #     new_explain = data.get('user_explain', None)
+    #     new_profile_image_id = data.get('profile_image_id',
+    #                                     user.profile_image.id if user.profile_image else None)
+    #
+    #
+    #     if not (new_username == None):
+    #         if(UserModel.query.filter_by(username=new_username).first()):
+    #             return jsonify(msg='Bad request, same username exist'), 400
+    #         user.username = new_username
+    #     if not (new_explain == None):
+    #         user.explain = new_explain
+    #     if not UserService.set_profile_image(user, new_profile_image_id):
+    #         return jsonify({'msg': f'image not found, image {new_profile_image_id}is not exist'}), 404
+    #
+    #     db.session.commit()
+    #
+    #     return jsonify({'msg':'modification succeed'}), 200
+    #
+    #     return make_response(UserService.modify_user_info(username, request.json))
 
 
 class Account(Resource):
@@ -95,4 +102,5 @@ class DuplicateCheckUsername(Resource):
 
 class AuthEmailVerificationCode(Resource):
     def post(self):
+        #add validate request
         return make_response(AccountService.verify_email_verification_code(verification_code=request.args.get('verification-code')))
