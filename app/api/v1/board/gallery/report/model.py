@@ -10,7 +10,7 @@ class ReportModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reason = db.Column(db.Integer(), nullable=False)
     detail_reason = db.Column(db.String(500), nullable=False)
-    reported_user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    reported_user_id = db.Column(db.String(320), db.ForeignKey('user.email', ondelete='CASCADE'), nullable=False)
     gallery_id = db.Column(db.Integer(), db.ForeignKey('gallery.id', ondelete='CASCADE'), nullable=False)
     reported_content_type = db.Column(db.Integer(), nullable=False)
     post_id = db.Column(db.Integer(), db.ForeignKey('post.id', ondelete='SET NULL'), nullable=True)
@@ -46,7 +46,7 @@ class ReportSchema(ma.SQLAlchemySchema):
     detail_reason = ma.auto_field()
     reported_content_type = ma.auto_field()
     reporter = ma.Nested('UserSchema', only=['username'])
-    reported_post = ma.Nested('PostSchema', only=['title', 'id', 'content'])
+    reported_post = ma.Nested('PostSchema', only=['title', 'email', 'content'])
     reported_comment = ma.Nested('CommentSchema', exclude=['upper_comment_id', 'wrote_datetime'])
     
 
