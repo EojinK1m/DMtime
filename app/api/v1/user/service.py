@@ -4,7 +4,7 @@ from flask import jsonify, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
-from app.api.v1.user.model import UserModel, user_schema
+from app.api.v1.user.model import UserModel, user_schema, account_schema
 
 from app.api.v1.image.service import ImageService
 
@@ -190,7 +190,7 @@ class AccountService:
 
     @staticmethod
     def check_exist_same_email(email):
-        if UserModel.get_account_by_email(email):
+        if UserModel.query.filter_by(email=email).first():
             abort(409, 'same email exist')
 
     @staticmethod
