@@ -14,6 +14,7 @@ class EmailSender():
         self.password=password
         self.smtp_server_address=smtp_server_address
         self.port=port
+        self.testing = None
 
 
     def init_app(self, app):
