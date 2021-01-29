@@ -146,7 +146,7 @@ from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt
 from app import db, redis_client, email_sender
 from app.util import verification_code_generater
 
-from app.api.v1.user.model import UserModel, user_schema, AccountInputSchema, \
+from app.api.v1.user.model import UserModel, user_schema, AccountRegisterSchema,\
     AccountChangePasswrodInputSchema
 from app.api.v1.user.service import UserService
 
@@ -179,7 +179,7 @@ class AccountService:
 
     @staticmethod
     def validate_account_register_data(data):
-        errors = AccountInputSchema().validate(data)
+        errors = AccountRegisterSchema().validate(data)
         if errors:
             abort(400, str(errors))
 
