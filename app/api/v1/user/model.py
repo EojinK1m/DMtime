@@ -75,7 +75,7 @@ class UserSchema(ma.SQLAlchemySchema):
     email = ma.auto_field()
 
 
-user_schema = UserSchema(exclude=['password_hash', 'email'])
+user_schema = UserSchema(exclude=['email'])
 users_schema = UserSchema(many=True, only=['username', 'profile_image'])
 
 account_schema = UserSchema(only = ['email'])
