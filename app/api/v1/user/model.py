@@ -93,7 +93,7 @@ class UserPutInputSchema(ma.Schema):
     profile_image_id = ma.Int(required = False, allow_null = True)
 
 
-class AccountInputSchema(ma.Schema):
+class AccountRegisterSchema(ma.Schema):
     email = ma.Str(
         required = True,
         validate = [
