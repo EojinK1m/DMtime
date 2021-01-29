@@ -1,11 +1,21 @@
-from flask import make_response, request, abort
+import pickle
+from smtplib import SMTPException
+
+from flask import make_response, request, current_app, abort
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app import redis_client
+from app import bcrypt
+from app import email_sender
 
 from app.util.request_validator import RequestValidator
 
 from app.api.v1.user.service import UserService, AccountService, AuthService, DuplicateCheck
-from app.api.v1.user.model import user_schema, UserPatchInputSchema, UserPutInputSchema
+from app.api.v1.user.model import \
+    user_schema,\
+    UserPutInputSchema,\
+    AccountRegisterSchema,\
+    UserModel
 
 
 class User(Resource):
@@ -69,7 +79,43 @@ class Account(Resource):
         return make_response(AccountService.provide_account_info())
 
     def post(self):
-        return make_response(AccountService.register_account(request.json))
+        RequestValidator.validate_request(AccountRegisterSchema(), request.json)
+
+        email = request.json.get('email')
+        username = request.json.get('username')
+
+        AccountService.check_exist_same_email(email)
+        AccountService.check_exist_same_username(username)
+        new_user = self.create_new_user(username=username, email=email, password=request.json.get('password'))
+        verification_code = AccountService.generate_verification_code()
+
+        self.store_account_data_with_verification_code(verification_code, new_user)
+        self.send_verification_code_by_email(verification_code, email)
+
+        return {}, 200
+
+    def create_new_user(self, username, email, password):
+        return UserModel(
+            username=username,
+            email=email,
+            password_hash=bcrypt.generate_password_hash(password)
+        )
+
+    def send_verification_code_by_email(self, verification_code, email):
+        mail_title = '[대마타임] 회원가입 인증 코드입니다.'
+        mail = email_sender.make_mail(subject=mail_title, message=verification_code)
+
+        try:
+            email_sender.send_mail(to_email=email, message=mail)
+        except SMTPException:
+            abort(500, 'An error occurred while send e-mail, plz try again later')
+
+    def store_account_data_with_verification_code(self, verification_code, account):
+        with redis_client.pipeline() as pipe:
+            pipe.mset({verification_code: pickle.dumps(account)})
+            pipe.expire(verification_code, current_app.config['EMAIL_VERIFY_DEADLINE'])
+            pipe.execute()
+
 
     def delete(self):
         return make_response(AccountService.delete_account(request.args.get('email')))
@@ -102,5 +148,5 @@ class DuplicateCheckUsername(Resource):
 
 class AuthEmailVerificationCode(Resource):
     def post(self):
-        #add validate request
+        #기존 함수들 치우고 사용해야함
         return make_response(AccountService.verify_email_verification_code(verification_code=request.args.get('verification-code')))
