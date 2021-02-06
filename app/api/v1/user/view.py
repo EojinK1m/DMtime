@@ -9,13 +9,15 @@ from app import bcrypt
 from app import email_sender
 
 from app.util.request_validator import RequestValidator
+from app.util.db_helper import DBHelper
 
 from app.api.v1.user.service import UserService, AccountService, AuthService, DuplicateCheck
 from app.api.v1.user.model import \
     user_schema,\
     UserPutInputSchema,\
     AccountRegisterSchema,\
-    UserModel
+    UserModel,\
+    EmailVerificationCodePostSchema
 
 
 class User(Resource):
@@ -148,5 +150,22 @@ class DuplicateCheckUsername(Resource):
 
 class AuthEmailVerificationCode(Resource):
     def post(self):
-        #기존 함수들 치우고 사용해야함
-        return make_response(AccountService.verify_email_verification_code(verification_code=request.args.get('verification-code')))
+        RequestValidator.validate_request(EmailVerificationCodePostSchema(), request.args)
+        verification_code = request.args['verification-code']
+
+        user_to_register = self.find_user_by_verificatino_code(verification_code)
+        self.delete_from_temporary_storage(verification_code)
+
+        DBHelper.add_model(user_to_register)
+        return {}, 200
+
+    def find_user_by_verificatino_code(self, verification_code):
+        dumped_user_data = redis_client.get(verification_code)
+
+        if dumped_user_data is None:
+            abort(404, 'Verification code not found.')
+
+        return pickle.loads(dumped_user_data)
+
+    def delete_from_temporary_storage(self, verification_code):
+        redis_client.delete(verification_code)
