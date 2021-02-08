@@ -47,13 +47,13 @@ class UserService:
             password_hash,
             username,
             explain,
-            profile_image_id
+            profile_image
     ):
         user.email = email
         user.password_hash = password_hash
         user.username = username
         user.explain = explain
-        user.profile_image_id = profile_image_id
+        user.profile_image = profile_image
 
         db.session.flush()
         return user
