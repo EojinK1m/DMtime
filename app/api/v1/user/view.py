@@ -37,7 +37,7 @@ class User(Resource):
             username=json['username'],
             explain=json['user_explain'],
             email=user.email,
-            profile_image_id=user.profile_image_id,
+            profile_image=user.profile_image,
             password_hash=user.password_hash
         )
 
