@@ -88,6 +88,7 @@ class Account(Resource):
 
         AccountService.check_exist_same_email(email)
         AccountService.check_exist_same_username(username)
+
         new_user = self.create_new_user(username=username, email=email, password=request.json.get('password'))
         verification_code = AccountService.generate_verification_code()
 
@@ -126,12 +127,6 @@ class Account(Resource):
 class AccountPassword(Resource):
     def put(self):
         return make_response(AccountService.change_account_password(request.json))
-
-
-class Auth(Resource):
-    def post(self):
-        return make_response(AuthService.login(request.json))
-
 
 class Refresh(Resource):
     def get(self):
