@@ -15,3 +15,5 @@ class PostTokenValidateSchema(ma.Schema):
     email = ma.Str(required = True, validate = [validate.Email(), check_is_school_email.__func__])
 
 
+class PostEmailVerificationCodeSchema(ma.Schema):
+    verification_code = ma.Str(data_key = 'verification-code', required = True)
