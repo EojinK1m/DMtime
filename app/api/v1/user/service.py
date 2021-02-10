@@ -1,12 +1,16 @@
+import json
+from smtplib import SMTPException
 from functools import wraps
 
-from flask import jsonify, abort
-from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request
+from flask import jsonify, abort, current_app
+from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request, jwt_refresh_token_required
 
-from app import db
-from app.api.v1.user.model import UserModel, user_schema, account_schema
+from app import db, redis_client, email_sender
+from app.util import verification_code_generater
 
+from app.api.v1.user.model import UserModel, user_schema, account_schema, AccountChangePasswordInputSchema, AccountRegisterSchema
 from app.api.v1.image.service import ImageService
+
 
 class UserService:
 
@@ -141,23 +145,6 @@ class UserService:
             return func(*args, **kwargs)
 
         return wrapper
-
-
-
-
-
-
-import json
-from smtplib import SMTPException
-from flask import jsonify, abort, current_app
-from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt_identity
-
-from app import db, redis_client, email_sender
-from app.util import verification_code_generater
-
-from app.api.v1.user.model import UserModel, user_schema, AccountRegisterSchema,\
-    AccountChangePasswrodInputSchema
-from app.api.v1.user.service import UserService
 
 
 class AccountService:
