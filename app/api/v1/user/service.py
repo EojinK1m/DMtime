@@ -294,7 +294,7 @@ class AccountService:
     @staticmethod
     @jwt_required
     def change_account_password(data):
-        errors = AccountChangePasswrodInputSchema().validate(data)
+        errors = AccountChangePasswordInputSchema().validate(data)
         if errors:
             abort(400, 'missing parameter exist')
 
