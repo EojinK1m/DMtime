@@ -17,7 +17,9 @@ from app.api.v1.user.model import \
     UserPutInputSchema,\
     AccountRegisterSchema,\
     UserModel,\
-    EmailVerificationCodePostSchema
+    EmailVerificationCodePostSchema,\
+    GetUsernameDuplicationSchema,\
+    GetEmailDuplicationSchema
 
 
 class User(Resource):
@@ -135,12 +137,22 @@ class Refresh(Resource):
 
 class DuplicateCheckEmail(Resource):
     def get(self):
-        return make_response(DuplicateCheck.email_check(request.args.get('email')))
+        RequestValidator.validate_request(GetEmailDuplicationSchema(), request.args)
+        username = request.args['email']
+
+        usable = UserService.get_user_by_email_or_none(username) is None
+
+        return {'usable': usable}, 200
 
 
 class DuplicateCheckUsername(Resource):
     def get(self):
-        return make_response(DuplicateCheck.username_check(request.args.get('username')))
+        RequestValidator.validate_request(GetUsernameDuplicationSchema(), request.args)
+        username = request.args['username']
+
+        usable = UserService.get_user_by_username_or_none(username) is None
+
+        return {'usable':usable}, 200
 
 
 class AuthEmailVerificationCode(Resource):
