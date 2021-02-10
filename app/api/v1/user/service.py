@@ -29,6 +29,10 @@ class UserService:
         return find_user
 
     @staticmethod
+    def get_user_by_username_or_none(username):
+        return UserModel.query.filter_by(username=username).first()
+
+    @staticmethod
     def get_user_by_email_or_404(email):
         find_user = UserModel.query.filter_by(email=email).first()
         if find_user is None:
