@@ -116,9 +116,18 @@ class AccountLoginInputSchema(ma.Schema):
     email = ma.Str(required = True, validate = validate.Email())
 
 
-class AccountChangePasswrodInputSchema(ma.Schema):
+class AccountChangePasswordInputSchema(ma.Schema):
     password = ma.Str(required = True, validate = validate.Length(min = 8))
     new_password = ma.Str(required = True, validate = validate.Length(min = 8))
 
+
 class EmailVerificationCodePostSchema(ma.Schema):
     verification_code = ma.Str(data_key = 'verification-code', required = True)
+
+
+class GetEmailDuplicationSchema(ma.Schema):
+    email = ma.Str(required = True, validate = validate.Email())
+
+
+class GetUsernameDuplicationSchema(ma.Schema):
+    username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
