@@ -138,9 +138,9 @@ class Refresh(Resource):
 class DuplicateCheckEmail(Resource):
     def get(self):
         RequestValidator.validate_request(GetEmailDuplicationSchema(), request.args)
-        username = request.args['email']
+        email = request.args['email']
 
-        usable = UserService.get_user_by_email_or_none(username) is None
+        usable = UserService.get_user_by_email_or_none(email)
 
         return {'usable': usable}, 200
 
