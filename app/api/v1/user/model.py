@@ -131,3 +131,7 @@ class GetEmailDuplicationSchema(ma.Schema):
 
 class GetUsernameDuplicationSchema(ma.Schema):
     username = ma.Str(required = True, validate = validate.Length(min = 2, max = 20))
+
+
+class DeleteUserSchema(ma.Schema):
+    password = ma.Str(required = True, validate = validate.Length(min = 8))
