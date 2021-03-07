@@ -7,7 +7,7 @@ def test_comment_patch_correct(client,
                                create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
     temp_comment = create_temp_comment(temp_account.id, temp_post.id)
 
     change_comment_info = {

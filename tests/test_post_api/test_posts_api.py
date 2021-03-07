@@ -85,7 +85,7 @@ def test_post_post_with_unsuitable_post_data(client, create_temp_account, create
 def test_posts_get(client, create_temp_post, create_temp_gallery, create_temp_account):
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
-    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.email) for i in range(10)]
 
     rv = client.get(url+f'?gallery-id={temp_gallery.id}')
 
@@ -108,7 +108,7 @@ def test_posts_get(client, create_temp_post, create_temp_gallery, create_temp_ac
 def test_posts_get_anonymous_correct(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(uploader_id = temp_account.id,
+    temp_post = create_temp_post(uploader_id = temp_account.email,
                                  upload_gallery_id = temp_gallery.id,
                                  is_anonymous=True)
 
@@ -120,7 +120,7 @@ def test_posts_get_anonymous_correct(client, create_temp_account, create_temp_ga
 def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, create_temp_account):
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
-    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.email) for i in range(10)]
 
     rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page={5}')
     assert rv.status_code == 200
@@ -133,7 +133,7 @@ def test_posts_get_with_per_page(client, create_temp_post, create_temp_gallery, 
 def test_posts_get_with_not_exist_page(client, create_temp_account, create_temp_gallery, create_temp_post):
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
-    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id) for i in range(10)]
+    temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.email) for i in range(10)]
 
     rv = client.get(url+f'?gallery-id={temp_gallery.id}&per-page={5}&page=10')
 
@@ -156,7 +156,7 @@ def test_posts_get_whether_exist_value_of_post(client, create_temp_post, create_
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
     temp_image = create_temp_image()
-    temp_post = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.id,
+    temp_post = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account.email,
                                  included_images = [temp_image])
 
 
@@ -171,7 +171,7 @@ def test_posts_get_without_gallery_id(client, create_temp_post, create_temp_gall
     temp_galleries = [create_temp_gallery() for i in range(3)]
     temp_account = create_temp_account()
     temp_posts = [create_temp_post(upload_gallery_id = temp_gallery.id,
-                                   uploader_id=temp_account.id) for temp_gallery in temp_galleries]
+                                   uploader_id=temp_account.email) for temp_gallery in temp_galleries]
 
     rv = client.get(url)
 
@@ -188,9 +188,9 @@ def test_get_hot_posts(client,
     temp_gallery = create_temp_gallery()
     temp_account_1 = create_temp_account()
     temp_account_2 = create_temp_account()
-    temp_post_1 = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account_1.id)
-    temp_post_2 = create_temp_post(upload_gallery_id=temp_gallery.id, uploader_id=temp_account_2.id)
-    temp_postlilke = create_temp_postlike(post_id=temp_post_1.id, liker_id=temp_account_2.user.id)
+    temp_post_1 = create_temp_post(upload_gallery_id = temp_gallery.id, uploader_id=temp_account_1.email)
+    temp_post_2 = create_temp_post(upload_gallery_id=temp_gallery.id, uploader_id=temp_account_2.email)
+    temp_postlilke = create_temp_postlike(post_id=temp_post_1.id, liker_id=temp_account_2.email)
 
 
     rv = client.get(url+f'?gallery-id={temp_gallery.id}')

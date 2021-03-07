@@ -16,7 +16,7 @@ def test_account_delete_without_jwt_request_return_422(client, create_temp_accou
     rv = delete_account(client, temp_account.email)
     assert rv.status_code == 422
 
-def test_get_account_information(client, create_temp_account):
+def test_get_user_information(client, create_temp_account):
     temp_account = create_temp_account()
     rv = client.get(account_uri,
                     headers={'authorization':f'Bearer {temp_account.generate_access_token()}'})

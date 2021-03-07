@@ -113,7 +113,7 @@ class PostService():
 
     @staticmethod
     def check_post_access_permission_of_account(post, account, admin_allow=False):
-        permission = account.user.id == post.uploader_id
+        permission = account.email == post.uploader_id
 
         if admin_allow:
             if account.is_admin():
@@ -384,7 +384,7 @@ class PostListService():
 class PostLikeService:
     @classmethod
     def get_postlike_by_post_and_account(cls, post, account):
-        return  PostLikeModel.query.filter_by(post_id=post.id, liker_id=account.user.id).first()
+        return  PostLikeModel.query.filter_by(post_id=post.id, liker_id=account.email).first()
 
     @classmethod
     def delete_postlike(cls, postlike):
@@ -393,7 +393,7 @@ class PostLikeService:
 
     @classmethod
     def create_postlike(cls, post, account):
-        new_postlike = PostLikeModel(liker_id=account.user.id, post_id=post.id)
+        new_postlike = PostLikeModel(liker_id=account.email, post_id=post.id)
 
         db.session.add(new_postlike)
         db.session.flush()

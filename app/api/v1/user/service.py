@@ -153,7 +153,7 @@ class AccountService:
     @jwt_required
     def provide_account_info():
         email = get_jwt_identity()
-        account = UserModel.get_account_by_email(email)
+        account = UserModel.get_user_by_email(email)
 
         return jsonify(account_info=account_schema.dump(account),
                        msg='query succeed'), 200
@@ -265,7 +265,7 @@ class AccountService:
     @staticmethod
     @jwt_required
     def delete_account(email):
-        account = UserModel.get_account_by_email(email)
+        account = UserModel.get_user_by_email(email)
         if not account:
             abort(404, 'Account not found')
 
@@ -286,7 +286,7 @@ class AccountService:
             abort(400, 'missing parameter exist')
 
         email = get_jwt_identity()
-        account = UserModel.get_account_by_email(email)
+        account = UserModel.get_user_by_email(email)
         password = data.get('password')
         new_password = data.get('new_password')
 
@@ -299,8 +299,8 @@ class AccountService:
         return jsonify(msg='change password succeed!')
 
     @staticmethod
-    def find_account_by_email(email):
-        found_account = UserModel.get_account_by_email(email)
+    def find_user_by_email(email):
+        found_account = UserModel.get_user_by_email(email)
 
         if found_account is None:
             abort(404, 'Account not found, there is no account include the email.')
@@ -320,7 +320,7 @@ class AuthService:
         email = data.get('email', None)
         password = data.get('password', None)
 
-        login_account = UserModel.get_account_by_email(email)
+        login_account = UserModel.get_user_by_email(email)
 
         if login_account:
             if login_account.verify_password(password):
@@ -337,7 +337,7 @@ class AuthService:
     @jwt_refresh_token_required
     def refresh():
         email = get_jwt_identity()
-        account = UserModel.get_account_by_email(email)
+        account = UserModel.get_user_by_email(email)
         access_token = account.generate_access_token()
 
         return jsonify({'access_token': access_token}), 200
@@ -349,7 +349,7 @@ class DuplicateCheck:
     def email_check(email):
         if (email == None):
             abort(400, 'email parameter missed')
-        if (UserModel.get_account_by_email(email) == None):
+        if (UserModel.get_user_by_email(email) == None):
             return jsonify({'msg': 'same email does not exist', 'usable': True}), 200
         else:
             return jsonify({'msg': 'same email exist', 'usable': False}), 200

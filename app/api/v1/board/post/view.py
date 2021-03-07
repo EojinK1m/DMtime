@@ -67,13 +67,13 @@ class PostList(Resource):
         RequestValidator.validate_request(PostPostInputValidateSchema(), json)
 
         post_gallery = GalleryService.get_gallery_by_id(args.get(key='gallery-id', type=int))
-        uploader_account = AccountService.find_account_by_email(get_jwt_identity())
+        uploader_account = AccountService.find_user_by_email(get_jwt_identity())
 
         created_post = PostListService.create_post(
             content=json['content'],
             title=json['title'],
             is_anonymous=json['is_anonymous'],
-            upload_user=uploader_account.user,
+            upload_user=uploader_account,
             post_gallery=post_gallery,
             posted_datetime=datetime.now()
         )
@@ -110,7 +110,7 @@ class Post(Resource):
 
     @jwt_required
     def patch(self, post_id):
-        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        request_account = AccountService.find_user_by_email(get_jwt_identity())
         post = PostService.get_post_by_post_id(post_id)
         json = request.json
 
@@ -126,7 +126,7 @@ class Post(Resource):
         new_images_ids, delete_images_ids = PostService.get_diff_of_images(post, json.get('image_ids', []))
 
         for image_id_to_delete in delete_images_ids:
-            ImageService.delete_image(image_id_to_delete)
+            ImageService.delete_image_by_id(image_id_to_delete)
         for image_id_to_register in new_images_ids:
             ImageService.set_foreign_key(image_id_to_register, post.id, 'post')
 
@@ -135,7 +135,7 @@ class Post(Resource):
 
     @jwt_required
     def delete(self, post_id):
-        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        request_account = AccountService.find_user_by_email(get_jwt_identity())
         post = PostService.get_post_by_post_id(post_id)
 
         PostService.check_post_access_permission_of_account(post=post, account=request_account, admin_allow=True)
@@ -150,7 +150,7 @@ class PostLike(Resource):
     @jwt_required
     def post(self, post_id):
         post = PostService.get_post_by_post_id(post_id)
-        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        request_account = AccountService.find_user_by_email(get_jwt_identity())
 
         postlike = PostLikeService.get_postlike_by_post_and_account(post=post, account=request_account)
 

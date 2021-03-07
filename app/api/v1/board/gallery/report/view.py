@@ -49,7 +49,7 @@ class ReportList(Resource):
 
     @jwt_required
     def post(self, gallery_id):
-        request_account = AccountService.find_account_by_email(get_jwt_identity())
+        request_account = AccountService.find_user_by_email(get_jwt_identity())
         create_report_data = self.validate_json_body(request.json)
 
         self.check_reported_write_is_exist(create_report_data)

@@ -53,7 +53,7 @@ class CommentList(Resource):
 
         validate_request()
 
-        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
         json = request.json
         upper_comment_id = json.get('upper_comment_id', None)
         is_anonymous = json.get('is_anonymous')
@@ -85,7 +85,7 @@ class Comment(Resource):
         RequestValidator.validate_request(CommentPatchInputSchema(), json)
 
         comment = CommentService.get_comment_by_id(comment_id)
-        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
 
         CommentService.check_comment_access_permission_of_account(comment=comment, account=request_account)
 
@@ -104,7 +104,7 @@ class Comment(Resource):
     def delete(self, comment_id):
 
         comment = CommentService.get_comment_by_id(comment_id)
-        request_account = AccountService.find_account_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
 
         CommentService.check_comment_access_permission_of_account(
             comment=comment,

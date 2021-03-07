@@ -17,7 +17,7 @@ class GalleryList(Resource):
 
     @jwt_required
     def post(self):
-        post_account = AccountService.find_account_by_email(get_jwt_identity())
+        post_account = AccountService.find_user_by_email(get_jwt_identity())
         RequestValidator.validate_request(GalleryPostValidateSchema(), request.json)
 
         GalleryListService.create_new_gallery(
