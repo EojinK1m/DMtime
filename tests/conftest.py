@@ -71,7 +71,7 @@ def session(app, db, request):
 
         # Cleanup
         sess.remove()
-        # This instruction rollsback any commit that were executed in the tests.
+        # This instruction rollback any commit that were executed in the tests.
         txn.rollback()
         conn.close()
 
@@ -132,7 +132,7 @@ def create_temp_image(app, session):
 @pytest.fixture
 def create_temp_account(app, session):
     from app.api.v1.user.model import UserModel
-    from app.api.v1.user.model import UserModel
+    from app import bcrypt
 
 
     def create_temp_account_(profile_image = None, is_admin = False):
@@ -148,15 +148,12 @@ def create_temp_account(app, session):
             else:
                 raise Exception('TestAdminOverError', 'Admin account for test cant exist more than one')
 
-        temp_account = UserModel(email=email,
-                                    password_hash=UserModel.hash_password(password))
-
-        session.add(temp_account)
-        session.commit()
-
-        temp_user = UserModel(username=username,
-                              explain=user_explain,
-                              account_id=temp_account.id)
+        temp_user = UserModel(
+            email=email,
+            username=username,
+            password_hash=bcrypt.generate_password_hash(password),
+            explain=user_explain
+        )
 
         session.add(temp_user)
         session.commit()
@@ -165,7 +162,7 @@ def create_temp_account(app, session):
             profile_image.user_id = temp_user.id
 
         create_temp_account_.number += 1
-        return temp_account
+        return temp_user
 
     create_temp_account_.test_admin_exist = False
     create_temp_account_.number = 1
@@ -182,7 +179,7 @@ def create_temp_gallery(app, session, create_temp_account):
         name = f'test_gallery{create_temp_gallery_.number}_name'
         explain = f'test_gallery{create_temp_gallery_.number}_explain'
 
-        temp_gallery = GalleryModel(name=name, explain=explain, manager_user_id=manager_user.id)
+        temp_gallery = GalleryModel(name=name, explain=explain, manager_user_id=manager_user.email)
 
         session.add(temp_gallery)
         session.commit()
