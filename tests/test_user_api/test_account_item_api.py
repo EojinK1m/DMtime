@@ -27,7 +27,7 @@ def test_get_user_information(client, create_temp_account):
 
 def test_put_account_password(client, create_temp_account):
     temp_account = create_temp_account()
-    password = temp_account.user.username.replace('user', 'password')
+    password = temp_account.username.replace('user', 'password')
     new_password = 'this_1s_new_passsword!'
 
     rv = client.put(account_uri+'/password',
@@ -43,7 +43,7 @@ def test_put_account_password(client, create_temp_account):
 
 def test_put_account_incorrect_password(client, create_temp_account):
     temp_account = create_temp_account()
-    password = temp_account.user.username.replace('user', 'password')
+    password = temp_account.username.replace('user', 'password')
     new_password = 'this_1s_new_passsword!'
 
     rv = client.put(account_uri + '/password',

@@ -20,7 +20,7 @@ class GalleryListService:
         try:
             new_gallery = GalleryModel(name=name,
                                        explain=explain,
-                                       manager_user_id=manager_user.id)
+                                       manager_user_id=manager_user.email)
             db.session.add(new_gallery)
             db.session.commit()
         except:
@@ -53,7 +53,7 @@ class GalleryService:
             request_account = UserModel.get_user_by_email(get_jwt_identity())
             target_gallery = GalleryService.get_gallery_by_id(kargs['gallery_id'])
 
-            if(target_gallery.is_manager(request_account.user) or request_account.is_admin()):
+            if(target_gallery.is_manager(request_account) or request_account.is_admin()):
                 return self.fn(*args, **kargs)
             else:
                 abort(403)

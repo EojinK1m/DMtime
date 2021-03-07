@@ -46,7 +46,7 @@ class ReportSchema(ma.SQLAlchemySchema):
     detail_reason = ma.auto_field()
     reported_content_type = ma.auto_field()
     reporter = ma.Nested('UserSchema', only=['username'])
-    reported_post = ma.Nested('PostSchema', only=['title', 'email', 'content'])
+    reported_post = ma.Nested('PostSchema', only=['title', 'id', 'content'])
     reported_comment = ma.Nested('CommentSchema', exclude=['upper_comment_id', 'wrote_datetime'])
     
 

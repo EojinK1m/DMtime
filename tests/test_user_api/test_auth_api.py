@@ -7,7 +7,7 @@ def login(client, login_data):
 def test_login_with_correct_data(client, create_temp_account):
     temp_account = create_temp_account()
     rv = login(client, login_data={'email':temp_account.email,
-                                   'password':temp_account.user.username.replace('user', 'password')})
+                                   'password':temp_account.username.replace('user', 'password')})
     assert rv.status_code == 200
     assert 'refresh_token' in rv.json
     assert 'access_token' in rv.json

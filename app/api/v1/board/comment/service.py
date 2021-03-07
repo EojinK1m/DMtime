@@ -31,7 +31,7 @@ class CommentService():
 
     @staticmethod
     def check_comment_access_permission_of_account(comment, account, admin_allow=False):
-        permission = account.user.id == comment.writer.id
+        permission = account.email == comment.writer.email
 
         if admin_allow:
             if account.is_admin():

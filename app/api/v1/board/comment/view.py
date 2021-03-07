@@ -34,7 +34,7 @@ class CommentList(Resource):
             dumped_comments = comments_schema.dump(comments.items)
         elif username:
             found_user = UserService.get_user_by_username(username)
-            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(user_id=found_user.id, page=page, per_page=per_page)
+            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(user_id=found_user.email, page=page, per_page=per_page)
             dumped_comments = comments_schema_user.dump(comments.items)
 
         return {'comments':dumped_comments,
@@ -69,7 +69,7 @@ class CommentList(Resource):
         CommentListService.create_comment(
             wrote_post_id=target_post.id,
             wrote_datetime=datetime.now(),
-            wrote_user_id=request_account.user.id,
+            wrote_user_id=request_account.email,
             content=content,
             upper_comment_id=upper_comment_id,
             is_anonymous=is_anonymous

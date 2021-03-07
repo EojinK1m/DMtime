@@ -56,7 +56,7 @@ class ReportList(Resource):
         GalleryService.get_gallery_by_id(gallery_id)
 
         ReportListService.create_new_report(
-            reporter=request_account.user,
+            reporter=request_account,
             reported_content_type=create_report_data['reported_content_type'],
             reason=create_report_data['reason'],
             detail_reason=create_report_data['detail_reason'],

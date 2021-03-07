@@ -15,7 +15,7 @@ class GalleryModel(db.Model):
         db.session.delete(self)
 
     def is_manager(self, user):
-        return user.id == self.manager_user_id
+        return user.email == self.manager_user_id
 
     def patch(self, name, explain):
         self.name = name if name is not None else self.name

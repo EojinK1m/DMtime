@@ -19,6 +19,7 @@ account_api.add_resource(DuplicateCheckEmail, '/users/accounts/duplicate-check/e
 account_api.add_resource(DuplicateCheckUsername, '/users/accounts/duplicate-check/username')
 
 '''
+/users
 /users/{username}
 /users/{username}/account
 /users/{username}/account/email-verification-code

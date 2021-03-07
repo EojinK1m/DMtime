@@ -23,7 +23,7 @@ class GalleryList(Resource):
         GalleryListService.create_new_gallery(
             name=request.json['name'],
             explain=request.json['explain'],
-            manager_user=post_account.user
+            manager_user=post_account
         )
 
         return {}, 201

@@ -15,16 +15,16 @@ def default_ready(
             self.temp_non_manager_account = create_temp_account()
             self.temp_account = create_temp_account()
             self.temp_gallery = create_temp_gallery(manager_user=self.temp_account)
-            self.temp_post = create_temp_post(self.temp_account.user.id, self.temp_gallery.id)
-            self.temp_comment = create_temp_comment(self.temp_account.user.id, self.temp_post.id)
+            self.temp_post = create_temp_post(self.temp_account.email, self.temp_gallery.id)
+            self.temp_comment = create_temp_comment(self.temp_account.email, self.temp_post.id)
             self.temp_post_report = create_temp_report(
-                self.temp_account.user.id,
+                self.temp_account.email,
                 self.temp_gallery.id,
                 ContentType.POST.value,
                 post_id=self.temp_post.id
                 )
             self.temp_comment_report = create_temp_report(
-                self.temp_account.user.id,
+                self.temp_account.email,
                 self.temp_gallery.id,
                 ContentType.COMMENT.value,
                 comment_id=self.temp_comment.id

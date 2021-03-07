@@ -8,7 +8,7 @@ def test_comment_patch_correct(client,
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.email, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     change_comment_info = {
         'content' : 'she played the fiddle in an irish band'
@@ -27,8 +27,8 @@ def test_comment_patch_without_content_key(client,
                                            create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     change_comment_info = {}
 
@@ -46,8 +46,8 @@ def test_comment_patch_without_access_token(client,
                                             create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     change_comment_info = {
         'content' : 'she played the fiddle in an irish band'
@@ -66,8 +66,8 @@ def test_comment_patch_with_another_account(client,
     temp_account = create_temp_account()
     temp_account_2 = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     change_comment_info = {
         'content' : 'she played the fiddle in an irish band'
@@ -86,8 +86,8 @@ def test_comment_patch_with_oversize_content(client,
                                              create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     change_comment_info = {
         'content' : 's'*401
@@ -122,8 +122,8 @@ def test_comment_delete_correct(client,
                                 create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
 
     rv = client.delete(url+f'{temp_comment.id}',
@@ -140,8 +140,8 @@ def test_comment_delete_with_admin_account(client,
     temp_account = create_temp_account()
     admin_account = create_temp_account(is_admin=True)
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     rv = client.delete(url + f'{temp_comment.id}',
                     headers={'authorization': 'Bearer ' + admin_account.generate_access_token()})
@@ -156,8 +156,8 @@ def test_comment_delete_with_another_account(client,
     temp_account = create_temp_account()
     temp_account_2 = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     rv = client.delete(url + f'{temp_comment.id}',
                     headers={'authorization': 'Bearer ' + temp_account_2.generate_access_token()})
@@ -181,8 +181,8 @@ def test_comment_delete_without_access_token(client,
                                             create_temp_comment):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.id, temp_gallery.id)
-    temp_comment = create_temp_comment(temp_account.id, temp_post.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_comment = create_temp_comment(temp_account.email, temp_post.id)
 
     rv = client.delete(url + f'{temp_comment.id}')
 

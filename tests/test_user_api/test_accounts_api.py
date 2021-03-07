@@ -23,7 +23,7 @@ def test_register_same_username(client, create_temp_account):
     temp_account = create_temp_account()
 
     same_username_account = correct_account_1.copy()
-    same_username_account['username'] = temp_account.user.username
+    same_username_account['username'] = temp_account.username
     rv = register(client, same_username_account)
     assert rv.status_code == 409
 

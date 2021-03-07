@@ -34,7 +34,7 @@ def test_not_exist_username_duplicate_check(client):
 
 def test_exist_username_duplicate_check(client, create_temp_account):
     temp_account = create_temp_account()
-    rv = check_username(client, temp_account.user.username)
+    rv = check_username(client, temp_account.username)
 
     assert rv.status_code == 200
     assert rv.json['usable'] == False
