@@ -22,4 +22,9 @@ def test_users_post_correctly_response_200(client, default_ready):
         json=default_ready.correct_register_json
     )
 
+    assert rv.status == 200
+
+
+
+
 pass
