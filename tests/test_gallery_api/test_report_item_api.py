@@ -79,7 +79,7 @@ def test_get_comment_report(client, default_ready):
 
 def test_get_report_with_non_manager_account(client, default_ready):
     rv = client.get(
-         default_ready.post_report_uri,
+        default_ready.post_report_uri,
         headers=default_ready.non_manager_auth_header
     )
 
