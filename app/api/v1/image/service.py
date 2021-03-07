@@ -56,6 +56,11 @@ class ImageService:
             abort(500, 'An error occur while deleting image.')
 
     @classmethod
+    def delete_image_by_id(cls, id):
+        image = cls.get_image_by_id(id)
+        cls.delete_image(image)
+
+    @classmethod
     def set_foreign_key(cls, image_id, key, location):
         image = cls.get_image_by_id(image_id)
 
