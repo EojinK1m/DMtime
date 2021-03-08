@@ -121,6 +121,12 @@ class Account(Resource):
             pipe.expire(verification_code, current_app.config['EMAIL_VERIFY_DEADLINE'])
             pipe.execute()
 
+    @UserService.user_access_authorize_required
+    def delete(self, username):
+        RequestValidator.validate_request(DeleteUserSchema, request.json)
+
+        user = UserService.get_user_by_username(username)
+        password = request.json.get('password')
 
     def delete(self):
         return make_response(AccountService.delete_account(request.args.get('email')))
