@@ -19,7 +19,9 @@ from app.api.v1.user.model import \
     UserModel,\
     EmailVerificationCodePostSchema,\
     GetUsernameDuplicationSchema,\
-    GetEmailDuplicationSchema
+    GetEmailDuplicationSchema,\
+    DeleteUserSchema
+
 
 
 class User(Resource):
@@ -128,8 +130,14 @@ class Account(Resource):
         user = UserService.get_user_by_username(username)
         password = request.json.get('password')
 
-    def delete(self):
-        return make_response(AccountService.delete_account(request.args.get('email')))
+        self.raise_401_if_not_verified(user, password=password)
+        user.delete_user()
+
+        return {}, 200
+
+    def raise_401_if_not_verified(user, password):
+        if not user.verify_password(password):
+            abort(401, 'password not match')
 
 
 class AccountPassword(Resource):
