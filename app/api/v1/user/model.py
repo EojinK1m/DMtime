@@ -108,7 +108,13 @@ class AccountRegisterSchema(ma.Schema):
             validate.Regexp(re.compile('^[가-힣\w]+$'))
         ]
     )
-    password = ma.Str(required = True, validate = validate.Length(min = 8))
+    password = ma.Str(
+        required = True,
+        validate = validate.Regexp(
+            re.compile('^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\\]{8,36}$')
+        )
+        #비밀번호 8자리 이상 36자리 이하 숫자, 알파벳 1개씩 포함
+    )
 
 
 class AccountLoginInputSchema(ma.Schema):
@@ -117,9 +123,19 @@ class AccountLoginInputSchema(ma.Schema):
 
 
 class AccountChangePasswordInputSchema(ma.Schema):
-    password = ma.Str(required = True, validate = validate.Length(min = 8))
-    new_password = ma.Str(required = True, validate = validate.Length(min = 8))
+    password = ma.Str(
+        required = True,
+        validate= validate.Regexp(
+            re.compile('^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\]{8,36}$')
+        )
+    )
 
+    new_password = ma.Str(
+        required = True,
+        validate = validate.Regexp(
+            re.compile('^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\]{8,36}$')
+        )
+    )
 
 class EmailVerificationCodePostSchema(ma.Schema):
     verification_code = ma.Str(data_key = 'verification-code', required = True)
