@@ -2,7 +2,7 @@ from flask_restful import Api
 
 from app.api.v1.user.view import User, Account, AccountPassword, Refresh,\
                                     DuplicateCheckEmail, DuplicateCheckUsername,\
-                                    AuthEmailVerificationCode
+                                    AuthEmailVerificationCode, Users
 
 
 user_api = Api()
@@ -18,6 +18,7 @@ account_api.add_resource(Refresh, '/users/accounts/auth/refresh')
 account_api.add_resource(DuplicateCheckEmail, '/users/accounts/duplicate-check/email')
 account_api.add_resource(DuplicateCheckUsername, '/users/accounts/duplicate-check/username')
 
+account_api.add_resource(Users, '/users')
 '''
 /users
 /users/{username}
