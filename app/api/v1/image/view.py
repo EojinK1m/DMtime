@@ -1,7 +1,7 @@
 import os
 import imghdr
 
-from flask import request, make_response, jsonify, current_app
+from flask import request, current_app
 from flask_restful import Resource
 
 from app import db
@@ -9,6 +9,7 @@ from app import db
 from app.util.request_validator import RequestValidator
 from app.api.v1.image.service import ImageService
 from app.api.v1.image.model import PostImageValidateSchema
+
 
 class ImageUpload(Resource):
     def post(self):
