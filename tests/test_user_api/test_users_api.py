@@ -9,7 +9,7 @@ def default_ready():
             self.uri = '/api/v1/users'
             self.correct_register_json = {
                 'email':'testemail123@dsm.hs.kr',
-                'password':'',
+                'password':'testpassword123',
                 'username':'회원가입test123'
             }
 
@@ -30,7 +30,7 @@ def register(client, user_info):
 def test_users_post_correctly_response_200(client, default_ready):
     rv = register(client, default_ready.correct_register_json)
 
-    assert rv.status == 200
+    assert rv.status_code == 200
 
 # def test_users_post_with_json_violate_rule_response_400(client, default_ready):
 #     pass
@@ -95,7 +95,7 @@ def test_register_with_belowlength_password_response_400(client, default_ready):
 
 def test_register_with_overlength_password_response_400(client, default_ready):
     wrong_password_account = default_ready.correct_register_json.copy()
-    wrong_password_account['password'] = 'q12345678434434910'
+    wrong_password_account['password'] = 'q1'*19
 
     rv = register(client, wrong_password_account)
 
@@ -103,7 +103,7 @@ def test_register_with_overlength_password_response_400(client, default_ready):
 
 def test_register_with_forbidden_character_password_response_400(client, default_ready):
     wrong_password_account = default_ready.correct_register_json.copy()
-    wrong_password_account['password'] = '잉기모링1233'
+    wrong_password_account['password'] = '잉기모링123k3\\'
 
     rv = register(client, wrong_password_account)
 
