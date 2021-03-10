@@ -19,7 +19,7 @@ class Token(Resource):
         email = request.json.get('email')
         password = request.json.get('password')
 
-        login_user = UserService.get_user_by_email_or_None(email)
+        login_user = UserService.get_user_by_email_or_none(email)
 
         if login_user and login_user.verify_password(password):
             return {
