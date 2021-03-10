@@ -137,7 +137,7 @@ class UserService:
         def wrapper(*args, **kwargs):
             verify_jwt_in_request()
             user_to_work = UserService.get_user_by_username(kwargs['username'])
-            request_user = UserService.get_user_by_email_or_None(email=get_jwt_identity())
+            request_user = UserService.get_user_by_email_or_none(email=get_jwt_identity())
 
             if not user_to_work == request_user:
                 abort(403, f'access denied, you are not {user_to_work.username}')
