@@ -77,6 +77,7 @@ class User(Resource):
         json = request.json
 
         RequestValidator.validate_request(UserPutInputSchema(), json)
+        AccountService.check_exist_same_username(json['username'])
 
         UserService.update_user(
             user=user,
