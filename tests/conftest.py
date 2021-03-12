@@ -303,26 +303,34 @@ def create_temp_report(app, session):
 
 @pytest.fixture
 def create_temp_register_account(app, session, redis_client):
-    import json
     from app.util import verification_code_generater
+    from app.api.v1.user.model import UserModel
+    from app.api.v1.user.view import Users
+    from app import bcrypt
 
     def create_temp_register_account_():
         email = f'test_account_{create_temp_register_account_.number}@dsm.hs.kr'
         username = f'test_user_{create_temp_register_account_.number}'
         password = f'test_password_{create_temp_register_account_.number}'
+        explain = f'test_user_explain_{create_temp_register_account_.number}'
 
+        temp_user = UserModel(
+            email=email,
+            username=username,
+            password_hash=bcrypt.generate_password_hash(password),
+            explain=explain
+        )
         verification_code = verification_code_generater.generate_verification_code()
-        registry_data = {
-            'email':email,
-            'username':username,
-            'password':password
-        }
-        redis_client.mset({verification_code:json.dumps(registry_data)})
 
-        registry_data['verification_code']=verification_code
+        Users().store_account_data_with_verification_code(
+            verification_code,temp_user
+        )
 
         create_temp_register_account_.number += 1
-        return registry_data
+        return {
+            'verification_code':verification_code,
+            'user':temp_user
+        }
 
     create_temp_register_account_.number = 1
     return create_temp_register_account_
