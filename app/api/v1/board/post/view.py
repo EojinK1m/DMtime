@@ -37,24 +37,21 @@ class PostList(Resource):
               per_page=per_page,
               page=page
           )
-          convert_schema = posts_schema
         elif gallery_id is not None:
             posts = PostListService.get_posts_by_gallery_with_paging(
                 gallery=GalleryService.get_gallery_by_id(gallery_id),
                 per_page=per_page,
                 page=page
             )
-            convert_schema = posts_schema
         elif username is not None:
             posts = PostListService.get_posts_by_user_with_paging(
                 user=UserService.get_user_by_username(username),
                 per_page=per_page,
                 page=page
             )
-            convert_schema = posts_schema_user
 
         return {
-                   'posts': convert_schema.dump(posts.items),
+                   'posts': posts_schema.dump(posts.items),
                    'number_of_pages': posts.pages
                }, 200
 

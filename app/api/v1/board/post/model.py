@@ -130,6 +130,6 @@ class PostPatchInputValidateSchema(ma.Schema):
 
 
 post_schema = PostSchema(many=False, exclude=['whether_exist_image', 'number_of_comments'])
-posts_schema = PostSchema(many=True, exclude=['posted_gallery', 'image_ids', 'content'])
+posts_schema = PostSchema(many=True, exclude=['image_ids', 'content'])
 posts_schema_user = PostSchema(many=True, exclude=['content', 'image_ids', 'uploader'])
 
