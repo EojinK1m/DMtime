@@ -24,23 +24,29 @@ def test_delete_account_correctly_response_200(client, test_user):
     rv = delete_account(
         client=client,
         user=test_user,
+        json={'password':test_user.password},
         access_token=get_access_token(test_user)
     )
+
     assert rv.status_code == 200
 
-def test_account_delete_without_jwt_request_response_422(client, test_user):
+def test_delete_account_without_jwt_request_response_422(client, test_user):
     rv = delete_account(
         client=client,
         user=test_user,
+        json={'password': test_user.password},
         access_token=''
     )
 
     assert rv.status_code == 422
 
-def test_delete_account_without_permission_response_403(client, test_user):
+def test_delete_account_without_permission_response_403(client, test_user, create_temp_account):
+    another_user = create_temp_account()
+
     rv = delete_account(
         client=client,
-        user=test_user,
+        user=another_user,
+        json={'password': test_user.password},
         access_token=get_access_token(test_user)
     )
 
@@ -111,3 +117,4 @@ def test_change_password_forbidden_password_response_400(client, test_user):
     )
 
     assert rv.status_code == 400
+
