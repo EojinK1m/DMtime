@@ -18,7 +18,7 @@ from app.api.v1.user.model import \
     UserModel,\
     GetUsernameDuplicationSchema,\
     GetEmailDuplicationSchema,\
-    DeleteUserSchema
+    DeleteUserSchema, account_schema
 
 
 class Users(Resource):
@@ -121,8 +121,10 @@ class User(Resource):
 
 
 class Account(Resource):
-    def get(self):
-        return make_response(AccountService.provide_account_info())
+    @UserService.user_access_authorize_required
+    def get(self, username):
+        user = UserService.get_user_by_username(username)
+        return account_schema.dump(user), 200
 
     @UserService.user_access_authorize_required
     def delete(self, username):
@@ -149,7 +151,6 @@ class AccountPassword(Resource):
 class Refresh(Resource):
     def get(self):
         return make_response(AuthService.refresh())
-
 
 class DuplicateCheckEmail(Resource):
     def get(self):
