@@ -52,6 +52,26 @@ def test_delete_account_without_permission_response_403(client, test_user, creat
 
     assert rv.status_code == 403
 
+def test_delete_account_with_wrong_password_response_401(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={'password':test_user.password + 'wrong'},
+        access_token=get_access_token(test_user)
+    )
+
+    assert rv.status_code == 401
+
+def test_delete_account_without_password_response_400(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={},
+        access_token=get_access_token(test_user)
+    )
+
+    assert rv.status_code == 400
+
 def get_account_information(client, test_user, access_token):
     return client.get(
         get_user_path(test_user),
