@@ -45,9 +45,9 @@ def test_delete_account_without_permission_response_403(client, test_user, creat
 
     rv = delete_account(
         client=client,
-        user=another_user,
+        user=test_user,
         json={'password': test_user.password},
-        access_token=get_access_token(test_user)
+        access_token=get_access_token(another_user)
     )
 
     assert rv.status_code == 403
@@ -82,18 +82,15 @@ def test_get_account_correctly_response_200(client, test_user):
     rv = get_account_information(client, test_user, test_user.generate_access_token())
 
     assert rv.status_code == 200
+    assert rv.json['email'] == test_user.email
 
-    account_info = rv.json['account_info']
-    assert account_info
-    assert account_info['email'] == test_user.email
-
-def test_get_account_without_permission_response_403(client, test_user):
-    test_user.username += 'test'
+def test_get_account_without_permission_response_403(client, test_user, create_temp_account):
+    another_user = create_temp_account()
 
     rv = get_account_information(
         client,
         test_user,
-        get_access_token(test_user)
+        get_access_token(another_user)
     )
 
     assert rv.status_code == 403
