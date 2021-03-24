@@ -35,8 +35,7 @@ class ImageUpload(Resource):
         image_file.filename = file_name_for_save
         save_image_file_2_storage(image_file)
 
-        db.session.commit()
-        return {}, 200
+        return {}, 201
 
 
 class Image(Resource):
