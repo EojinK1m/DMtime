@@ -165,17 +165,17 @@ class Account(Resource):
 
     @UserService.user_access_authorize_required
     def delete(self, username):
-        RequestValidator.validate_request(DeleteUserSchema, request.json)
+        RequestValidator.validate_request(DeleteUserSchema(), request.json)
 
         user = UserService.get_user_by_username(username)
         password = request.json.get('password')
 
-        self.raise_401_if_not_verified(user, password=password)
+        self.raise_401_if_not_password_verified(user, password=password)
         user.delete_user()
 
         return {}, 200
 
-    def raise_401_if_not_verified(user, password):
+    def raise_401_if_not_password_verified(self, user, password):
         if not user.verify_password(password):
             abort(401, 'password not match')
 
