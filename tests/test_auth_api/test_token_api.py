@@ -10,7 +10,7 @@ def login(client, json):
         json = json
     )
 
-def test_login_correctly_response_200_access_token(client, test_user):
+def test_login_correctly_response_201_access_token(client, test_user):
     rv = login(
         client,
         {
@@ -19,7 +19,7 @@ def test_login_correctly_response_200_access_token(client, test_user):
         }
     )
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
     assert rv.json['access_token']
 
 def test_login_failed_response_401(client, test_user):

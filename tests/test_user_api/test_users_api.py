@@ -30,7 +30,7 @@ def register(client, user_info):
 def test_register_correctly_response_200(client, default_ready):
     rv = register(client, default_ready.correct_register_json)
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 
 def test_register_with_already_using_username_response_409(client, default_ready, create_temp_account):

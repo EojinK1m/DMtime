@@ -27,7 +27,7 @@ def test_post_post_correct(client, create_temp_account, create_temp_gallery, def
         temp_account.generate_access_token()
     )
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 def test_post_post_correct_with_image(client, create_temp_account, create_temp_gallery, create_temp_image, default_post_data):
     temp_account = create_temp_account()

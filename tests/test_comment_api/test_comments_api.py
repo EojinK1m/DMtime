@@ -22,7 +22,7 @@ def test_comment_post_correct(client, create_temp_account, create_temp_gallery, 
                      headers={'authorization': 'Bearer '+temp_account.generate_access_token()},
                      json = default_comment_data)
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 def test_comment_post_without_post_id(client, create_temp_account, default_comment_data):
     temp_account = create_temp_account()
