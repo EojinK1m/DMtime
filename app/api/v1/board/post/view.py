@@ -78,7 +78,7 @@ class PostList(Resource):
         for image_id in json['image_ids']:
             ImageService.set_foreign_key(image_id=image_id, key=created_post.id, location='post')
 
-        return {}, 200
+        return {}, 201
 
 
 class HotPostList(Resource):
