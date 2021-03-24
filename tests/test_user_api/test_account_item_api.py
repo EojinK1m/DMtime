@@ -2,7 +2,10 @@ from pytest import fixture
 
 @fixture
 def test_user(create_temp_account):
-    return create_temp_account()
+    test_user = create_temp_account()
+    test_user.password = test_user.username.replace('user', 'password')
+
+    return test_user
 
 def get_user_path(user):
     return f'/api/v1/users/{user.username}/account'
@@ -10,9 +13,10 @@ def get_user_path(user):
 def get_access_token(user):
     return user.generate_access_token()
 
-def delete_account(client, user, access_token):
+def delete_account(client, user, json, access_token):
     return client.delete(
         get_user_path(user),
+        json = json,
         headers = {'authorization':'Bearer ' + access_token}
     )
 
