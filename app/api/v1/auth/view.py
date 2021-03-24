@@ -25,7 +25,7 @@ class Token(Resource):
             return {
                 'access_token':login_user.generate_access_token(),
                 'refresh_token':login_user.generate_refresh_token()
-            }, 200
+            }, 201
 
         abort(401, 'incorrect username or password')
 
