@@ -7,7 +7,7 @@ def test_user(create_temp_account):
 
     return test_user
 
-def get_user_path(user):
+def get_user_account_path(user):
     return f'/api/v1/users/{user.username}/account'
 
 def get_access_token(user):
@@ -15,7 +15,7 @@ def get_access_token(user):
 
 def delete_account(client, user, json, access_token):
     return client.delete(
-        get_user_path(user),
+        get_user_account_path(user),
         json = json,
         headers = {'authorization':'Bearer ' + access_token}
     )
@@ -74,12 +74,12 @@ def test_delete_account_without_password_response_400(client, test_user):
 
 def get_account_information(client, test_user, access_token):
     return client.get(
-        get_user_path(test_user),
+        get_user_account_path(test_user),
         headers={'authorization': 'Bearer ' + access_token}
     )
 
 def test_get_account_correctly_response_200(client, test_user):
-    rv = get_account_information(client, test_user, get_account_information(test_user))
+    rv = get_account_information(client, test_user, test_user.generate_access_token())
 
     assert rv.status_code == 200
 
@@ -101,7 +101,7 @@ def test_get_account_without_permission_response_403(client, test_user):
 
 def change_password(client, user, password, access_token):
     return client.put(
-        get_user_path(user)  + '/password',
+        get_user_account_path(user)  + '/password',
         headers={'authorization': 'Bearer ' + access_token},
         json = {'password':password}
     )
