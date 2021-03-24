@@ -9,7 +9,6 @@ from app import bcrypt
 from app import email_sender
 
 from app.util.request_validator import RequestValidator
-from app.util.db_helper import DBHelper
 
 from app.api.v1.user.service import UserService, AccountService, AuthService, DuplicateCheck
 from app.api.v1.user.model import \
@@ -17,7 +16,6 @@ from app.api.v1.user.model import \
     UserPutInputSchema,\
     AccountRegisterSchema,\
     UserModel,\
-    EmailVerificationCodePostSchema,\
     GetUsernameDuplicationSchema,\
     GetEmailDuplicationSchema,\
     DeleteUserSchema
@@ -63,7 +61,6 @@ class Users(Resource):
             pipe.mset({verification_code: pickle.dumps(account)})
             pipe.expire(verification_code, current_app.config['EMAIL_VERIFY_DEADLINE'])
             pipe.execute()
-
 
 
 class User(Resource):
@@ -187,6 +184,7 @@ class AccountPassword(Resource):
     def put(self):
         return make_response(AccountService.change_account_password(request.json))
 
+
 class Refresh(Resource):
     def get(self):
         return make_response(AuthService.refresh())
@@ -197,7 +195,7 @@ class DuplicateCheckEmail(Resource):
         RequestValidator.validate_request(GetEmailDuplicationSchema(), request.args)
         email = request.args['email']
 
-        usable = UserService.get_user_by_email_or_none(email)
+        usable = UserService.get_user_by_email_or_none(email) is None
 
         return {'usable': usable}, 200
 
@@ -210,26 +208,3 @@ class DuplicateCheckUsername(Resource):
         usable = UserService.get_user_by_username_or_none(username) is None
 
         return {'usable':usable}, 200
-
-
-class AuthEmailVerificationCode(Resource):
-    def post(self):
-        RequestValidator.validate_request(EmailVerificationCodePostSchema(), request.args)
-        verification_code = request.args['verification-code']
-
-        user_to_register = self.find_user_by_verificatino_code(verification_code)
-        self.delete_from_temporary_storage(verification_code)
-
-        DBHelper.add_model(user_to_register)
-        return {}, 200
-
-    def find_user_by_verificatino_code(self, verification_code):
-        dumped_user_data = redis_client.get(verification_code)
-
-        if dumped_user_data is None:
-            abort(404, 'Verification code not found.')
-
-        return pickle.loads(dumped_user_data)
-
-    def delete_from_temporary_storage(self, verification_code):
-        redis_client.delete(verification_code)
