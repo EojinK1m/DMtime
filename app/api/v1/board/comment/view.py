@@ -30,14 +30,16 @@ class CommentList(Resource):
 
         if post_id:
             PostService.get_post_by_post_id(post_id)
-            comments = CommentListService.get_comments_by_post_id_and_paging_order_by_latest(post_id=post_id, page=page, per_page=per_page)
-            dumped_comments = comments_schema.dump(comments.items)
+            comments = CommentListService.get_comments_by_post_id_and_paging_order_by_latest(
+                post_id=post_id, page=page, per_page=per_page
+            )
         elif username:
             found_user = UserService.get_user_by_username(username)
-            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(user_id=found_user.email, page=page, per_page=per_page)
-            dumped_comments = comments_schema_user.dump(comments.items)
+            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(
+                user_id=found_user.email, page=page, per_page=per_page
+            )
 
-        return {'comments':dumped_comments,
+        return {'comments':comments_schema.dump(comments.items),
                 'number_of_pages':comments.pages}, 200
 
     @jwt_required
