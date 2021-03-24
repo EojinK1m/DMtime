@@ -77,7 +77,7 @@ class CommentList(Resource):
             is_anonymous=is_anonymous
         )
 
-        return {}, 200
+        return {}, 201
 
 
 class Comment(Resource):
