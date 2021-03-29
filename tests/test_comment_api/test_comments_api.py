@@ -84,7 +84,7 @@ def test_comment_post_lower_correct(client, create_temp_account, create_temp_gal
                      headers={'authorization': 'Bearer '+temp_account.generate_access_token()},
                      json = default_comment_data)
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
 
 def test_comment_post_lower_with_wrong_upper_comment_id(client,
                                                         create_temp_account,
