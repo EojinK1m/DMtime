@@ -27,7 +27,7 @@ def register(client, user_info):
     )
 
 
-def test_register_correctly_response_200(client, default_ready):
+def test_register_correctly_response_201(client, default_ready):
     rv = register(client, default_ready.correct_register_json)
 
     assert rv.status_code == 201

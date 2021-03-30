@@ -38,7 +38,7 @@ class Users(Resource):
         self.store_account_data_with_verification_code(verification_code, new_user)
         self.send_verification_code_by_email(verification_code, email)
 
-        return {}, 200
+        return {}, 201
 
     def create_new_user(self, username, email, password):
         return UserModel(
