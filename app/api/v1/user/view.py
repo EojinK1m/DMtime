@@ -152,7 +152,7 @@ class AccountPassword(Resource):
     @UserService.user_access_authorize_required
     def put(self, username):
         RequestValidator.validate_request(
-            AccountChangePasswordInputSchema,
+            AccountChangePasswordInputSchema(),
             request.json
         )
 
