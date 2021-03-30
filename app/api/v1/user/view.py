@@ -25,6 +25,7 @@ from app.api.v1.user.model import (
     GetEmailDuplicationSchema,
     DeleteUserSchema,
     account_schema,
+    AccountChangePasswordInputSchema
 )
 
 
@@ -140,19 +141,30 @@ class Account(Resource):
         user = UserService.get_user_by_username(username)
         password = request.json.get("password")
 
-        self.raise_401_if_not_password_verified(user, password=password)
+        UserService.raise_401_if_not_password_verified(user, password=password)
         user.delete_user()
 
         return {}, 200
 
-    def raise_401_if_not_password_verified(self, user, password):
-        if not user.verify_password(password):
-            abort(401, "password not match")
-
 
 class AccountPassword(Resource):
-    def put(self):
-        return make_response(AccountService.change_account_password(request.json))
+
+    @UserService.user_access_authorize_required
+    def put(self, username):
+        RequestValidator.validate_request(
+            AccountChangePasswordInputSchema,
+            request.json
+        )
+
+        json = request.json
+        user = UserService.get_user_by_username(username)
+        password = json["password"]
+        new_password = json["new_password"]
+
+        UserService.raise_401_if_not_password_verified(user, password)
+        AccountService.change_account_password(user, new_password)
+
+        return {}, 200
 
 
 class Refresh(Resource):

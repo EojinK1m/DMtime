@@ -154,6 +154,11 @@ class UserService:
             return func(*args, **kwargs)
 
         return wrapper
+    
+    @staticmethod
+    def raise_401_if_not_password_verified(user, password):
+        if not user.verify_password(password):
+            abort(401, "password not match")
 
 
 class AccountService:
@@ -298,24 +303,9 @@ class AccountService:
 
     @staticmethod
     @jwt_required
-    def change_account_password(data):
-        errors = AccountChangePasswordInputSchema().validate(data)
-        if errors:
-            abort(400, "missing parameter exist")
-
-        email = get_jwt_identity()
-        account = UserModel.get_user_by_email(email)
-        password = data.get("password")
-        new_password = data.get("new_password")
-
-        if not (account.verify_password(password)):
-            abort(403, "Access denied")
-
-        account.password_hash = UserModel.hash_password(new_password)
-
-        db.session.commit()
-        return jsonify(msg="change password succeed!")
-
+    def change_account_password(user, password):
+        user.password_hash = UserModel.password_hash(password)
+        
     @staticmethod
     def find_user_by_email(email):
         found_account = UserModel.get_user_by_email(email)
