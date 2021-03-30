@@ -4,7 +4,6 @@ from app.api.v1.user.view import (
     User,
     Account,
     AccountPassword,
-    Refresh,
     DuplicateCheckEmail,
     DuplicateCheckUsername,
     Users,

@@ -1,7 +1,7 @@
 import pickle
 from smtplib import SMTPException
 
-from flask import make_response, request, current_app, abort
+from flask import request, current_app, abort
 from flask_restful import Resource
 
 from app import redis_client
@@ -12,9 +12,7 @@ from app.util.request_validator import RequestValidator
 
 from app.api.v1.user.service import (
     UserService,
-    AccountService,
-    AuthService,
-    DuplicateCheck,
+    AccountService
 )
 from app.api.v1.user.model import (
     user_schema,
@@ -180,11 +178,6 @@ class AccountPassword(Resource):
         AccountService.change_account_password(user, new_password)
 
         return {}, 200
-
-
-class Refresh(Resource):
-    def get(self):
-        return make_response(AuthService.refresh())
 
 
 class DuplicateCheckEmail(Resource):
