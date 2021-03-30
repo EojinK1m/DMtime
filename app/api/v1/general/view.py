@@ -2,7 +2,6 @@ from app import db
 
 
 def commit_session_after_request(response):
-    print(f"commit_session_after_request is executed")
     db.session.commit()
     return response
 
