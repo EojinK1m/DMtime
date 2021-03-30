@@ -15,7 +15,6 @@ from app.api.v1.board.post.service import (
 from app.api.v1.board.post.model import (
     posts_schema,
     post_schema,
-    posts_schema_user,
     PostGetQueryParameterValidateSchema,
     PostPostInputValidateSchema,
     PostResourceQueryParameterValidateSchema,
