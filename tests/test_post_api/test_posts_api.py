@@ -126,7 +126,7 @@ def test_posts_get(
 ):
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
-    temp_posts = [
+    [
         create_temp_post(
             upload_gallery_id=temp_gallery.id, uploader_id=temp_account.email
         )
