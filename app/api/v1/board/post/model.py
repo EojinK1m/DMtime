@@ -18,12 +18,12 @@ class PostModel(db.Model):
     uploader_id = db.Column(
         db.String(320),
         db.ForeignKey("user.email", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
     gallery_id = db.Column(
         db.Integer(),
         db.ForeignKey("gallery.id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
 
     images = db.relationship("ImageModel")
@@ -45,12 +45,12 @@ class PostLikeModel(db.Model):
     post_id = db.Column(
         db.Integer(),
         db.ForeignKey("post.id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
     liker_id = db.Column(
         db.String(320),
         db.ForeignKey("user.email", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
 
 
@@ -59,9 +59,8 @@ class PostSchema(ma.SQLAlchemySchema):
         model = PostModel
 
     image_ids = ma.Method(
-        serialize="get_image_ids",
-        deserialize="get_image_ids"
-        )
+        serialize="get_image_ids", deserialize="get_image_ids"
+    )
     id = ma.auto_field()
     uploader = ma.Method("get_uploader_with_check_anonymous")
     content = ma.auto_field()
@@ -71,8 +70,8 @@ class PostSchema(ma.SQLAlchemySchema):
     is_anonymous = ma.auto_field()
     likes = ma.Method(
         serialize="get_number_of_postlikes",
-        deserialize="get_number_of_postlikes"
-        )
+        deserialize="get_number_of_postlikes",
+    )
     posted_gallery = ma.Nested("GallerySchema", only=["name", "id"])
     number_of_comments = ma.Method(serialize="get_number_of_comments")
     whether_exist_image = ma.Method(serialize="get_whether_image_exist")
@@ -132,9 +131,8 @@ class PostResourceQueryParameterValidateSchema(ma.Schema):
 class PostGetQueryParameterValidateSchema(ma.Schema):
     page = ma.Integer(required=False, validate=Range(min=1))
     per_page = ma.Integer(
-        required=False,
-        validate=Range(min=1), data_key="per-page"
-        )
+        required=False, validate=Range(min=1), data_key="per-page"
+    )
     username = ma.Str(required=False, validate=Length(min=2, max=20))
     gallery_id = ma.Integer(
         required=False, validate=Range(min=1), data_key="gallery-id"
@@ -144,10 +142,8 @@ class PostGetQueryParameterValidateSchema(ma.Schema):
 class HotPostGetQueryParameterValidateSchema(ma.Schema):
     page = ma.Integer(required=False, validate=Range(min=1))
     per_page = ma.Integer(
-        required=False,
-        validate=Range(min=1),
-        data_key="per-page"
-        )
+        required=False, validate=Range(min=1), data_key="per-page"
+    )
 
 
 class PostPatchInputValidateSchema(ma.Schema):
@@ -160,5 +156,6 @@ post_schema = PostSchema(
     many=False, exclude=["whether_exist_image", "number_of_comments"]
 )
 posts_schema = PostSchema(many=True, exclude=["image_ids", "content"])
-posts_schema_user =\
-    PostSchema(many=True, exclude=["content", "image_ids", "uploader"])
+posts_schema_user = PostSchema(
+    many=True, exclude=["content", "image_ids", "uploader"]
+)

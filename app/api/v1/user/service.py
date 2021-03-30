@@ -41,7 +41,9 @@ class UserService:
         return UserModel.query.filter_by(email=email).first()
 
     @staticmethod
-    def update_user(user, email, password_hash, username, explain, profile_image):
+    def update_user(
+        user, email, password_hash, username, explain, profile_image
+    ):
         user.email = email
         user.password_hash = password_hash
         user.username = username
@@ -70,12 +72,14 @@ class UserService:
             )
 
             if not user_to_work == request_user:
-                abort(403, f"access denied, you are not {user_to_work.username}")
+                abort(
+                    403, f"access denied, you are not {user_to_work.username}"
+                )
 
             return func(*args, **kwargs)
 
         return wrapper
-    
+
     @staticmethod
     def raise_401_if_not_password_verified(user, password):
         if not user.verify_password(password):
@@ -96,18 +100,24 @@ class AccountService:
     def store_register_data_temporally(verification_code, data):
         with redis_client.pipeline() as pipe:
             pipe.mset({verification_code: json.dumps(data)})
-            pipe.expire(verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"])
+            pipe.expire(
+                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
+            )
             pipe.execute()
 
     @staticmethod
     def send_verification_by_email(verification_code, to_send_email):
         mail_title = "[대마타임] 회원가입 인증 코드입니다."
-        mail = email_sender.make_mail(subject=mail_title, message=verification_code)
+        mail = email_sender.make_mail(
+            subject=mail_title, message=verification_code
+        )
 
         try:
             email_sender.send_mail(to_email=to_send_email, message=mail)
         except SMTPException as e:
-            abort(500, "An error occurred while send e-mail, plz try again later")
+            abort(
+                500, "An error occurred while send e-mail, plz try again later"
+            )
 
     @staticmethod
     def generate_verification_code():
@@ -135,12 +145,14 @@ class AccountService:
     @staticmethod
     def change_account_password(user, password):
         user.password_hash = user.hash_password(password)
-        
+
     @staticmethod
     def find_user_by_email(email):
         found_account = UserModel.get_user_by_email(email)
 
         if found_account is None:
-            abort(404, "Account not found, there is no account include the email.")
+            abort(
+                404, "Account not found, there is no account include the email."
+            )
 
         return found_account

@@ -66,7 +66,9 @@ def test_post_delete_correct(
 
     rv = client.delete(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -84,7 +86,9 @@ def test_post_delete_with_admin_account(
 
     rv = client.delete(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + admin_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -102,7 +106,9 @@ def test_post_delete_with_another_account(
 
     rv = client.delete(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account2.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account2.generate_access_token()
+        },
     )
 
     assert rv.status_code == 403
@@ -124,7 +130,9 @@ def test_post_patch_correct(
 
     rv = client.patch(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=change_post_info,
     )
 
@@ -140,11 +148,15 @@ def test_post_patch_with_data_miss(
         uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
     )
 
-    change_post_info = {"content": "my name is blurry face and i care what u think"}
+    change_post_info = {
+        "content": "my name is blurry face and i care what u think"
+    }
 
     rv = client.patch(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=change_post_info,
     )
 
@@ -168,7 +180,9 @@ def test_post_patch_with_another_account(
 
     rv = client.patch(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account2.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account2.generate_access_token()
+        },
         json=change_post_info,
     )
 
@@ -194,21 +208,29 @@ def test_post_patch_image_ids_correct(
     rv = client.patch(
         url + f"{temp_post.id}",
         json={"image_ids": [temp_image.id]},
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
     assert rv.status_code == 200
 
     rv2 = client.patch(
         url + f"{temp_post.id}",
         json={"image_ids": [temp_image.id, temp_image_2.id]},
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
-    assert rv2.status_code == 200, "image_ids = [temp_image.id, temp_image_2.id]"
+    assert (
+        rv2.status_code == 200
+    ), "image_ids = [temp_image.id, temp_image_2.id]"
 
     rv4 = client.patch(
         url + f"{temp_post.id}",
         json={"image_ids": []},
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
     assert rv4.status_code == 200, "image_ids = []"
 
@@ -225,7 +247,9 @@ def test_post_patch_image_id_none(
     rv = client.patch(
         url + f"{temp_post.id}",
         json={"image_ids": None},
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 400, "image_ids = None"
@@ -289,7 +313,9 @@ def test_delete_post_have_like(
 
     rv = client.delete(
         url + f"{temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200

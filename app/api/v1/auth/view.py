@@ -17,7 +17,9 @@ from app.api.v1.user.service import UserService
 
 class Token(Resource):
     def post(self):
-        RequestValidator.validate_request(PostTokenValidateSchema(), request.json)
+        RequestValidator.validate_request(
+            PostTokenValidateSchema(), request.json
+        )
         email = request.json.get("email")
         password = request.json.get("password")
 
@@ -39,7 +41,9 @@ class EmailVerificationCode(Resource):
         )
         verification_code = request.args["verification-code"]
 
-        user_to_register = self.find_user_by_verificatino_code(verification_code)
+        user_to_register = self.find_user_by_verificatino_code(
+            verification_code
+        )
         self.delete_from_temporary_storage(verification_code)
 
         DBHelper.add_model(user_to_register)

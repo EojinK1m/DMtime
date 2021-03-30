@@ -35,17 +35,13 @@ class CommentList(Resource):
 
         if post_id:
             PostService.get_post_by_post_id(post_id)
-            comments = (
-                CommentListService.get_comments_by_post_id_and_paging_order_by_latest(
-                    post_id=post_id, page=page, per_page=per_page
-                )
+            comments = CommentListService.get_comments_by_post_id_and_paging_order_by_latest(
+                post_id=post_id, page=page, per_page=per_page
             )
         elif username:
             found_user = UserService.get_user_by_username(username)
-            comments = (
-                CommentListService.get_comments_by_user_id_and_paging_order_by_latest(
-                    user_id=found_user.email, page=page, per_page=per_page
-                )
+            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(
+                user_id=found_user.email, page=page, per_page=per_page
             )
 
         return {
@@ -59,7 +55,9 @@ class CommentList(Resource):
             RequestValidator.validate_request(
                 PostCommentParameterSchema(), request.args
             )
-            RequestValidator.validate_request(CommentInputSchema(), request.json)
+            RequestValidator.validate_request(
+                CommentInputSchema(), request.json
+            )
 
         def check_comment_belonging_to_this_post(comment, post):
             if comment.wrote_post_id != post.id:
@@ -67,7 +65,9 @@ class CommentList(Resource):
 
         validate_request()
 
-        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(
+            email=get_jwt_identity()
+        )
         json = request.json
         upper_comment_id = json.get("upper_comment_id", None)
         is_anonymous = json.get("is_anonymous")
@@ -101,7 +101,9 @@ class Comment(Resource):
         RequestValidator.validate_request(CommentPatchInputSchema(), json)
 
         comment = CommentService.get_comment_by_id(comment_id)
-        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(
+            email=get_jwt_identity()
+        )
 
         CommentService.check_comment_access_permission_of_account(
             comment=comment, account=request_account
@@ -119,7 +121,9 @@ class Comment(Resource):
     def delete(self, comment_id):
 
         comment = CommentService.get_comment_by_id(comment_id)
-        request_account = AccountService.find_user_by_email(email=get_jwt_identity())
+        request_account = AccountService.find_user_by_email(
+            email=get_jwt_identity()
+        )
 
         CommentService.check_comment_access_permission_of_account(
             comment=comment, account=request_account, admin_allow=True

@@ -9,13 +9,19 @@ class CommentModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     wrote_user_id = db.Column(
-        db.String(320), db.ForeignKey("user.email", ondelete="CASCADE"), nullable=False
+        db.String(320),
+        db.ForeignKey("user.email", ondelete="CASCADE"),
+        nullable=False,
     )
     wrote_post_id = db.Column(
-        db.Integer(), db.ForeignKey("post.id", ondelete="SET NULL"), nullable=True
+        db.Integer(),
+        db.ForeignKey("post.id", ondelete="SET NULL"),
+        nullable=True,
     )
     upper_comment_id = db.Column(
-        db.Integer(), db.ForeignKey("comment.id", ondelete="SET NULL"), nullable=True
+        db.Integer(),
+        db.ForeignKey("comment.id", ondelete="SET NULL"),
+        nullable=True,
     )
     content = db.Column(db.String(100), nullable=False)
     wrote_datetime = db.Column(db.DateTime(), nullable=False)
@@ -79,12 +85,18 @@ class GetCommentParameterSchema(ma.Schema):
     post_id = ma.Integer(data_key="post-id", required=False)
     username = ma.Str(required=False)
     page = ma.Integer(required=False, validate=Range(min=0))
-    per_page = ma.Integer(data_key="per-page", required=False, validate=Range(min=1))
+    per_page = ma.Integer(
+        data_key="per-page", required=False, validate=Range(min=1)
+    )
 
 
 class PostCommentParameterSchema(ma.Schema):
-    post_id = ma.Integer(data_key="post-id", required=True, validate=Range(min=0))
+    post_id = ma.Integer(
+        data_key="post-id", required=True, validate=Range(min=0)
+    )
 
 
 comments_schema = CommentSchema(many=True)
-comments_schema_user = CommentSchema(many=True, exclude=["writer", "upper_comment_id"])
+comments_schema_user = CommentSchema(
+    many=True, exclude=["writer", "upper_comment_id"]
+)

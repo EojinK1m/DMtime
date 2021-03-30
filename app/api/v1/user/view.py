@@ -25,13 +25,15 @@ from app.api.v1.user.model import (
     GetEmailDuplicationSchema,
     DeleteUserSchema,
     account_schema,
-    AccountChangePasswordInputSchema
+    AccountChangePasswordInputSchema,
 )
 
 
 class Users(Resource):
     def post(self):
-        RequestValidator.validate_request(AccountRegisterSchema(), request.json)
+        RequestValidator.validate_request(
+            AccountRegisterSchema(), request.json
+        )
 
         email = request.json.get("email")
         username = request.json.get("username")
@@ -40,11 +42,15 @@ class Users(Resource):
         AccountService.check_exist_same_username(username)
 
         new_user = self.create_new_user(
-            username=username, email=email, password=request.json.get("password")
+            username=username,
+            email=email,
+            password=request.json.get("password"),
         )
         verification_code = AccountService.generate_verification_code()
 
-        self.store_account_data_with_verification_code(verification_code, new_user)
+        self.store_account_data_with_verification_code(
+            verification_code, new_user
+        )
         self.send_verification_code_by_email(verification_code, email)
 
         return {}, 201
@@ -58,23 +64,34 @@ class Users(Resource):
 
     def send_verification_code_by_email(self, verification_code, email):
         mail_title = "[대마타임] 회원가입 인증 코드입니다."
-        mail = email_sender.make_mail(subject=mail_title, message=verification_code)
+        mail = email_sender.make_mail(
+            subject=mail_title, message=verification_code
+        )
 
         try:
             email_sender.send_mail(to_email=email, message=mail)
         except SMTPException:
-            abort(500, "An error occurred while send e-mail, plz try again later")
+            abort(
+                500, "An error occurred while send e-mail, plz try again later"
+            )
 
-    def store_account_data_with_verification_code(self, verification_code, account):
+    def store_account_data_with_verification_code(
+        self, verification_code, account
+    ):
         with redis_client.pipeline() as pipe:
             pipe.mset({verification_code: pickle.dumps(account)})
-            pipe.expire(verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"])
+            pipe.expire(
+                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
+            )
             pipe.execute()
 
 
 class User(Resource):
     def get(self, username):
-        return user_schema.dump(UserService.get_user_by_username(username)), 200
+        return (
+            user_schema.dump(UserService.get_user_by_username(username)),
+            200,
+        )
 
     @UserService.user_access_authorize_required
     def put(self, username):
@@ -148,12 +165,10 @@ class Account(Resource):
 
 
 class AccountPassword(Resource):
-
     @UserService.user_access_authorize_required
     def put(self, username):
         RequestValidator.validate_request(
-            AccountChangePasswordInputSchema(),
-            request.json
+            AccountChangePasswordInputSchema(), request.json
         )
 
         json = request.json
@@ -174,7 +189,9 @@ class Refresh(Resource):
 
 class DuplicateCheckEmail(Resource):
     def get(self):
-        RequestValidator.validate_request(GetEmailDuplicationSchema(), request.args)
+        RequestValidator.validate_request(
+            GetEmailDuplicationSchema(), request.args
+        )
         email = request.args["email"]
 
         usable = UserService.get_user_by_email_or_none(email) is None
@@ -184,7 +201,9 @@ class DuplicateCheckEmail(Resource):
 
 class DuplicateCheckUsername(Resource):
     def get(self):
-        RequestValidator.validate_request(GetUsernameDuplicationSchema(), request.args)
+        RequestValidator.validate_request(
+            GetUsernameDuplicationSchema(), request.args
+        )
         username = request.args["username"]
 
         usable = UserService.get_user_by_username_or_none(username) is None

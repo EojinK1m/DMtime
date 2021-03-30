@@ -79,7 +79,9 @@ def test_patch_user_information_with_exist_data(client, test_user):
     assert rv.status_code == 409
 
 
-def test_patch_user_information_without_access_token_response_422(client, test_user):
+def test_patch_user_information_without_access_token_response_422(
+    client, test_user
+):
     rv = patch_user(
         client=client,
         user=test_user,

@@ -12,7 +12,8 @@ class PostTokenValidateSchema(ma.Schema):
 
     password = ma.Str(required=True, validate=validate.Length(min=8))
     email = ma.Str(
-        required=True, validate=[validate.Email(), check_is_school_email.__func__]
+        required=True,
+        validate=[validate.Email(), check_is_school_email.__func__],
     )
 
 

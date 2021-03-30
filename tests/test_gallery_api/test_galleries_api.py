@@ -11,7 +11,9 @@ def test_create_gallery_correct(client, create_temp_account):
     rv = client.post(
         url,
         json=test_gallery_1,
-        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + admin_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 201
@@ -31,13 +33,17 @@ def test_create_gallery_with_wrong_json_data(client, create_temp_account):
     rv = client.post(
         url,
         json=test_gallery_has_overlenth_name,
-        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + admin_account.generate_access_token()
+        },
     )
 
     rv2 = client.post(
         url,
         json=test_gallery_has_overlenth_explain,
-        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + admin_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 400

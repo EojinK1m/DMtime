@@ -75,7 +75,12 @@ class ReportListService:
     @staticmethod
     def provide_report_list(gallery_id):
         reports = ReportListService.get_reports_by_gallery_id(gallery_id)
-        return jsonify(msg="query_succceed", reports=reports_schema.dumps(reports)), 200
+        return (
+            jsonify(
+                msg="query_succceed", reports=reports_schema.dumps(reports)
+            ),
+            200,
+        )
 
     @staticmethod
     def get_reports_by_gallery_id(gallery_id):

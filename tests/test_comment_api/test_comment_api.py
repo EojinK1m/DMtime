@@ -18,7 +18,9 @@ def test_comment_patch_correct(
     rv = client.patch(
         url + f"{temp_comment.id}",
         json=change_comment_info,
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -41,7 +43,9 @@ def test_comment_patch_without_content_key(
     rv = client.patch(
         url + f"{temp_comment.id}",
         json=change_comment_info,
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -85,7 +89,9 @@ def test_comment_patch_with_another_account(
     rv = client.patch(
         url + f"{temp_comment.id}",
         json=change_comment_info,
-        headers={"authorization": "Bearer " + temp_account_2.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account_2.generate_access_token()
+        },
     )
 
     assert rv.status_code == 403
@@ -108,7 +114,9 @@ def test_comment_patch_with_oversize_content(
     rv = client.patch(
         url + f"{temp_comment.id}",
         json=change_comment_info,
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 400
@@ -123,7 +131,9 @@ def test_comment_patch_to_not_exist_comment(client, create_temp_account):
     rv = client.patch(
         url + f"{1}",
         json=change_comment_info,
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 404
@@ -143,7 +153,9 @@ def test_comment_delete_correct(
 
     rv = client.delete(
         url + f"{temp_comment.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -164,7 +176,9 @@ def test_comment_delete_with_admin_account(
 
     rv = client.delete(
         url + f"{temp_comment.id}",
-        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + admin_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 200
@@ -185,7 +199,9 @@ def test_comment_delete_with_another_account(
 
     rv = client.delete(
         url + f"{temp_comment.id}",
-        headers={"authorization": "Bearer " + temp_account_2.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account_2.generate_access_token()
+        },
     )
 
     assert rv.status_code == 403
@@ -196,7 +212,9 @@ def test_comment_delete_not_exist_comment(client, create_temp_account):
 
     rv = client.delete(
         url + f"{1}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
     )
 
     assert rv.status_code == 404

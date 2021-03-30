@@ -89,7 +89,9 @@ class PostService:
         if image_ids:
             if post.images:
                 before_image_ids = [image.id for image in post.images]
-                new_images_ids = [id for id in image_ids if not id in before_image_ids]
+                new_images_ids = [
+                    id for id in image_ids if not id in before_image_ids
+                ]
                 delete_images_ids = [
                     id for id in before_image_ids if not id in image_ids
                 ]
@@ -114,7 +116,9 @@ class PostService:
         return jsonify(msg="modify succeed"), 200
 
     @staticmethod
-    def check_post_access_permission_of_account(post, account, admin_allow=False):
+    def check_post_access_permission_of_account(
+        post, account, admin_allow=False
+    ):
         permission = account.email == post.uploader_id
 
         if admin_allow:
@@ -128,21 +132,30 @@ class PostService:
     @jwt_required
     def post_like(post_id):
         post = PostModel.query.get(post_id)
-        request_user = UserModel.query.filter_by(email=get_jwt_identity()).first().user
+        request_user = (
+            UserModel.query.filter_by(email=get_jwt_identity()).first().user
+        )
 
         if not post:
             return 404
 
         postlikes = PostLikeModel.query.filter_by(post_id=post_id)
-        request_user_postlike = postlikes.filter_by(liker_id=request_user.id).first()
+        request_user_postlike = postlikes.filter_by(
+            liker_id=request_user.id
+        ).first()
 
         if request_user_postlike:
             db.session.delete(request_user_postlike)
             db.session.commit()
 
-            return jsonify(msg="cancel post like", likes=len(postlikes.all())), 200
+            return (
+                jsonify(msg="cancel post like", likes=len(postlikes.all())),
+                200,
+            )
         else:
-            new_postlike = PostLikeModel(liker_id=request_user.id, post_id=post.id)
+            new_postlike = PostLikeModel(
+                liker_id=request_user.id, post_id=post.id
+            )
             db.session.add(new_postlike)
             db.session.commit()
 
@@ -157,7 +170,9 @@ class PostService:
     def get_diff_of_images(cls, post, image_ids):
         before_image_ids = [image.id for image in post.images]
         new_images_ids = [id for id in image_ids if not id in before_image_ids]
-        delete_images_ids = [id for id in before_image_ids if not id in image_ids]
+        delete_images_ids = [
+            id for id in before_image_ids if not id in image_ids
+        ]
 
         return new_images_ids, delete_images_ids
 
@@ -178,7 +193,12 @@ class PostService:
 class PostListService:
     @staticmethod
     def create_post(
-        content, title, upload_user, post_gallery, is_anonymous, posted_datetime
+        content,
+        title,
+        upload_user,
+        post_gallery,
+        is_anonymous,
+        posted_datetime,
     ):
         new_post = PostModel(
             content=content,
@@ -218,7 +238,10 @@ class PostListService:
                     400,
                 )
             if not GalleryModel.query.get(gallery_id):
-                return jsonify({"msg": "Wrong gallery id, gallery not found"}), 404
+                return (
+                    jsonify({"msg": "Wrong gallery id, gallery not found"}),
+                    404,
+                )
             posts = PostModel.query.filter_by(gallery_id=gallery_id)
 
         if page:
@@ -251,7 +274,10 @@ class PostListService:
         else:
             dumped_posts = posts_schema.dump(posts.items)
 
-        return jsonify({"posts": dumped_posts, "number_of_pages": posts.pages}), 200
+        return (
+            jsonify({"posts": dumped_posts, "number_of_pages": posts.pages}),
+            200,
+        )
 
     @staticmethod
     @jwt_required
@@ -263,7 +289,9 @@ class PostListService:
         if not post_gallery:
             return jsonify({"msg": "Wrong gallery id, gallery not found"}), 404
 
-        uploader_account = UserModel.query.filter_by(email=get_jwt_identity()).first()
+        uploader_account = UserModel.query.filter_by(
+            email=get_jwt_identity()
+        ).first()
 
         json = request.get_json()
         validate_error = PostPostInputValidateSchema().validate(json)
@@ -306,7 +334,9 @@ class PostListService:
 
     @staticmethod
     def provide_hot_post_list():
-        PostListService.validate_query_parameters_of_provide_hot_post(request.args)
+        PostListService.validate_query_parameters_of_provide_hot_post(
+            request.args
+        )
 
         page = request.args.get("page", 1)
         per_page = request.args.get("per_page", 20)
@@ -318,13 +348,17 @@ class PostListService:
         )
 
         return (
-            jsonify(posts=posts_schema.dump(posts), number_of_page=number_of_pages),
+            jsonify(
+                posts=posts_schema.dump(posts), number_of_page=number_of_pages
+            ),
             200,
         )
 
     @staticmethod
     def validate_query_parameters_of_provide_hot_post(query_parameters):
-        error = PostGetQueryParameterValidateSchema().validate(query_parameters)
+        error = PostGetQueryParameterValidateSchema().validate(
+            query_parameters
+        )
         if error:
             abort(400, str(error))
 
@@ -332,12 +366,17 @@ class PostListService:
     def get_posts_for_days(days):
         post_deadline = datetime.now() - timedelta(days=days)
 
-        return PostModel.query.filter(PostModel.posted_datetime >= post_deadline).all()
+        return PostModel.query.filter(
+            PostModel.posted_datetime >= post_deadline
+        ).all()
 
     @staticmethod
     def sort_posts_by_hot_score(posts):
         posts.sort(
-            key=lambda p: (PostListService.get_hot_score_of_post(p), p.posted_datetime),
+            key=lambda p: (
+                PostListService.get_hot_score_of_post(p),
+                p.posted_datetime,
+            ),
             reverse=True,
         )
 
@@ -370,9 +409,9 @@ class PostListService:
 
     @staticmethod
     def get_posts_with_paging(per_page, page):
-        return PostListService.order_post_query_from_latest(PostModel.query).paginate(
-            page=page, per_page=per_page
-        )
+        return PostListService.order_post_query_from_latest(
+            PostModel.query
+        ).paginate(page=page, per_page=per_page)
 
     @staticmethod
     def get_posts_by_gallery_with_paging(gallery, per_page, page):

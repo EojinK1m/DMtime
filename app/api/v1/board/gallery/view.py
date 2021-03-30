@@ -23,7 +23,9 @@ class GalleryList(Resource):
     @jwt_required
     def post(self):
         post_account = AccountService.find_user_by_email(get_jwt_identity())
-        RequestValidator.validate_request(GalleryPostValidateSchema(), request.json)
+        RequestValidator.validate_request(
+            GalleryPostValidateSchema(), request.json
+        )
 
         GalleryListService.create_new_gallery(
             name=request.json["name"],
@@ -42,7 +44,9 @@ class Gallery(Resource):
 
     @GalleryService.gallery_manager_required
     def patch(self, gallery_id):
-        RequestValidator.validate_request(GalleryPostValidateSchema(), request.json)
+        RequestValidator.validate_request(
+            GalleryPostValidateSchema(), request.json
+        )
 
         GalleryService.modify_gallery_info(
             gallery=GalleryService.get_gallery_by_id(gallery_id),

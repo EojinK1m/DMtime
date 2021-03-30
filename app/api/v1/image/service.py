@@ -7,9 +7,14 @@ from app.api.v1.image.model import ImageModel
 
 class ImageService:
     @classmethod
-    def create_image(cls, file_name="", user_id=None, post_id=None, gallery_id=None):
+    def create_image(
+        cls, file_name="", user_id=None, post_id=None, gallery_id=None
+    ):
         image = ImageModel(
-            filename=file_name, user_id=user_id, post_id=post_id, gallery_id=gallery_id
+            filename=file_name,
+            user_id=user_id,
+            post_id=post_id,
+            gallery_id=gallery_id,
         )
 
         db.session.add(image)

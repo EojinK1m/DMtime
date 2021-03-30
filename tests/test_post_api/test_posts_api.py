@@ -28,7 +28,10 @@ def test_post_post_correct(
     temp_gallery = create_temp_gallery()
 
     rv = post_post(
-        client, default_post_data, temp_gallery.id, temp_account.generate_access_token()
+        client,
+        default_post_data,
+        temp_gallery.id,
+        temp_account.generate_access_token(),
     )
 
     assert rv.status_code == 201
@@ -47,7 +50,10 @@ def test_post_post_correct_with_image(
     default_post_data["image_ids"].append(temp_image.id)
 
     rv = post_post(
-        client, default_post_data, temp_gallery.id, temp_account.generate_access_token()
+        client,
+        default_post_data,
+        temp_gallery.id,
+        temp_account.generate_access_token(),
     )
 
     assert rv.status_code == 200
@@ -79,9 +85,15 @@ def test_post_post_with_unsuitable_post_data(
     access_token_of_temp_account = temp_account.generate_access_token()
     temp_gallery = create_temp_gallery()
 
-    too_long_title_post = {"title": "t" * 41, "content": "test test test content yeah~"}
+    too_long_title_post = {
+        "title": "t" * 41,
+        "content": "test test test content yeah~",
+    }
     rv = post_post(
-        client, too_long_title_post, temp_gallery.id, access_token_of_temp_account
+        client,
+        too_long_title_post,
+        temp_gallery.id,
+        access_token_of_temp_account,
     )
     assert rv.status_code == 400
 
@@ -96,7 +108,10 @@ def test_post_post_with_unsuitable_post_data(
 
     empty_content_post = {"title": "Samba yeah~", "content": ""}
     rv3 = post_post(
-        client, empty_content_post, temp_gallery.id, access_token_of_temp_account
+        client,
+        empty_content_post,
+        temp_gallery.id,
+        access_token_of_temp_account,
     )
     assert rv3.status_code == 400
 
@@ -106,7 +121,9 @@ def test_post_post_with_unsuitable_post_data(
 # Todo make GET method test
 
 
-def test_posts_get(client, create_temp_post, create_temp_gallery, create_temp_account):
+def test_posts_get(
+    client, create_temp_post, create_temp_gallery, create_temp_account
+):
     temp_gallery = create_temp_gallery()
     temp_account = create_temp_account()
     temp_posts = [
@@ -186,7 +203,9 @@ def test_posts_get_with_not_exist_page(
         for i in range(10)
     ]
 
-    rv = client.get(url + f"?gallery-id={temp_gallery.id}&per-page={5}&page=10")
+    rv = client.get(
+        url + f"?gallery-id={temp_gallery.id}&per-page={5}&page=10"
+    )
 
     json = rv.json
     assert rv.status_code == 404

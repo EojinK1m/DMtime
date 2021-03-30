@@ -24,7 +24,9 @@ class ImageUpload(Resource):
 
         def save_image_file_2_storage(image):
             image.save(
-                os.path.join(current_app.config["IMAGE_UPLOADS"], image.filename)
+                os.path.join(
+                    current_app.config["IMAGE_UPLOADS"], image.filename
+                )
             )
 
         image_file = validate_image_file(request.files.get("image"))
@@ -34,7 +36,9 @@ class ImageUpload(Resource):
             f"{temp_image_model.id}.{get_extension_from_image(image_file)}"
         )
 
-        ImageService.update_image(image=temp_image_model, file_name=file_name_for_save)
+        ImageService.update_image(
+            image=temp_image_model, file_name=file_name_for_save
+        )
         image_file.filename = file_name_for_save
         save_image_file_2_storage(image_file)
 

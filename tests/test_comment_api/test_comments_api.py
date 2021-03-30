@@ -5,7 +5,11 @@ url = "/api/v1/board/comments"
 
 @fixture(scope="function")
 def default_comment_data():
-    return {"content": "이건 테스트 코멘트양!", "upper_comment_id": None, "is_anonymous": False}
+    return {
+        "content": "이건 테스트 코멘트양!",
+        "upper_comment_id": None,
+        "is_anonymous": False,
+    }
 
 
 def test_comment_post_correct(
@@ -21,7 +25,9 @@ def test_comment_post_correct(
 
     rv = client.post(
         url + f"?post-id={temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=default_comment_data,
     )
 
@@ -35,7 +41,9 @@ def test_comment_post_without_post_id(
 
     rv = client.post(
         url,
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=default_comment_data,
     )
 
@@ -49,7 +57,9 @@ def test_comment_post_with_wrong_post_id(
 
     rv = client.post(
         url + f"?post-id={1}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=default_comment_data,
     )
 
@@ -81,7 +91,9 @@ def test_comment_post_over_size(
 
     rv = client.post(
         url + f"?post-id={temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=test_comment_info,
     )
 
@@ -109,7 +121,9 @@ def test_comment_post_lower_correct(
 
     rv = client.post(
         url + f"?post-id={temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=default_comment_data,
     )
 
@@ -131,7 +145,9 @@ def test_comment_post_lower_with_wrong_upper_comment_id(
 
     rv = client.post(
         url + f"?post-id={temp_post.id}",
-        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+        headers={
+            "authorization": "Bearer " + temp_account.generate_access_token()
+        },
         json=default_comment_data,
     )
 
@@ -231,7 +247,9 @@ def test_comment_get_with_paging(
 
         assert temp_comments[1].id == comments[0]["id"]
 
-        rv = client.get(url + f"?username={temp_account.username}&per-page=1&page=2")
+        rv = client.get(
+            url + f"?username={temp_account.username}&per-page=1&page=2"
+        )
 
 
 def test_comment_get_with_username_post_id_together(
@@ -241,7 +259,9 @@ def test_comment_get_with_username_post_id_together(
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.email, temp_gallery.id)
 
-    rv = client.get(url + f"?post-id={temp_post.id}&username=" + temp_account.username)
+    rv = client.get(
+        url + f"?post-id={temp_post.id}&username=" + temp_account.username
+    )
 
     assert rv.status_code == 400
 
@@ -257,7 +277,9 @@ def test_get_anonymous_comment(
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.email, temp_gallery.id)
     temp_comment = create_temp_comment(
-        wrote_user_id=temp_account.email, wrote_post_id=temp_post.id, is_anonymous=True
+        wrote_user_id=temp_account.email,
+        wrote_post_id=temp_post.id,
+        is_anonymous=True,
     )
 
     rv = client.get(url + f"?post-id={temp_post.id}")

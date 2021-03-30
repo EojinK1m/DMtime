@@ -7,7 +7,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.util.request_validator import RequestValidator
 
 from app import db
-from app.api.v1.board.post.service import PostService, PostListService, PostLikeService
+from app.api.v1.board.post.service import (
+    PostService,
+    PostListService,
+    PostLikeService,
+)
 from app.api.v1.board.post.model import (
     posts_schema,
     post_schema,
@@ -37,7 +41,9 @@ class PostList(Resource):
         if gallery_id and username:
             abort(400)
         elif gallery_id is None and username is None:
-            posts = PostListService.get_posts_with_paging(per_page=per_page, page=page)
+            posts = PostListService.get_posts_with_paging(
+                per_page=per_page, page=page
+            )
         elif gallery_id is not None:
             posts = PostListService.get_posts_by_gallery_with_paging(
                 gallery=GalleryService.get_gallery_by_id(gallery_id),
@@ -69,7 +75,9 @@ class PostList(Resource):
         post_gallery = GalleryService.get_gallery_by_id(
             args.get(key="gallery-id", type=int)
         )
-        uploader_account = AccountService.find_user_by_email(get_jwt_identity())
+        uploader_account = AccountService.find_user_by_email(
+            get_jwt_identity()
+        )
 
         created_post = PostListService.create_post(
             content=json["content"],

@@ -15,7 +15,9 @@ def default_ready(
         def __init__(self):
             self.temp_non_manager_account = create_temp_account()
             self.temp_account = create_temp_account()
-            self.temp_gallery = create_temp_gallery(manager_user=self.temp_account)
+            self.temp_gallery = create_temp_gallery(
+                manager_user=self.temp_account
+            )
             self.temp_post = create_temp_post(
                 self.temp_account.email, self.temp_gallery.id
             )
@@ -35,7 +37,8 @@ def default_ready(
                 comment_id=self.temp_comment.id,
             )
             self.auth_header = {
-                "authorization": "Bearer " + self.temp_account.generate_access_token()
+                "authorization": "Bearer "
+                + self.temp_account.generate_access_token()
             }
             self.non_manager_auth_header = {
                 "authorization": "Bearer "
@@ -82,7 +85,9 @@ def test_create_post_report(client, default_ready):
 
 
 def test_create_post_report(client, default_ready):
-    default_ready.default_comment_report_json["post_id"] = default_ready.temp_post.id
+    default_ready.default_comment_report_json[
+        "post_id"
+    ] = default_ready.temp_post.id
 
     rv = client.post(
         default_ready.url,
@@ -104,6 +109,8 @@ def test_get_report_list(client, default_ready):
 
 
 def test_get_report_list_with_non_manager_account(client, default_ready):
-    rv = client.get(default_ready.url, headers=default_ready.non_manager_auth_header)
+    rv = client.get(
+        default_ready.url, headers=default_ready.non_manager_auth_header
+    )
 
     assert rv.status_code == 403

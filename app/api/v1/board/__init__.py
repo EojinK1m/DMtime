@@ -19,5 +19,7 @@ board_api.add_resource(GalleryList, "/board/galleries")
 board_api.add_resource(Comment, "/board/comments/<comment_id>")
 board_api.add_resource(CommentList, "/board/comments")
 
-board_api.add_resource(Report, "/board/galleries/<gallery_id>/reports/<report_id>")
+board_api.add_resource(
+    Report, "/board/galleries/<gallery_id>/reports/<report_id>"
+)
 board_api.add_resource(ReportList, "/board/galleries/<gallery_id>/reports")

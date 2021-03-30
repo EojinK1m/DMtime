@@ -15,7 +15,9 @@ def default_ready(
         def __init__(self):
             self.temp_non_manager_account = create_temp_account()
             self.temp_account = create_temp_account()
-            self.temp_gallery = create_temp_gallery(manager_user=self.temp_account)
+            self.temp_gallery = create_temp_gallery(
+                manager_user=self.temp_account
+            )
             self.temp_post = create_temp_post(
                 self.temp_account.email, self.temp_gallery.id
             )
@@ -35,14 +37,17 @@ def default_ready(
                 comment_id=self.temp_comment.id,
             )
             self.auth_header = {
-                "authorization": "Bearer " + self.temp_account.generate_access_token()
+                "authorization": "Bearer "
+                + self.temp_account.generate_access_token()
             }
             self.non_manager_auth_header = {
                 "authorization": "Bearer "
                 + self.temp_non_manager_account.generate_access_token()
             }
             self.url = f"api/v1/board/galleries/{self.temp_gallery.id}/reports"
-            self.comment_report_uri = self.url + f"/{self.temp_comment_report.id}"
+            self.comment_report_uri = (
+                self.url + f"/{self.temp_comment_report.id}"
+            )
             self.post_report_uri = self.url + f"/{self.temp_post_report.id}"
 
             self.default_comment_report_json = {
@@ -64,7 +69,9 @@ def default_ready(
 
 
 def test_get_post_report(client, default_ready):
-    rv = client.get(default_ready.post_report_uri, headers=default_ready.auth_header)
+    rv = client.get(
+        default_ready.post_report_uri, headers=default_ready.auth_header
+    )
 
     assert rv.status_code == 200
     assert rv.json
@@ -72,7 +79,9 @@ def test_get_post_report(client, default_ready):
 
 
 def test_get_comment_report(client, default_ready):
-    rv = client.get(default_ready.comment_report_uri, headers=default_ready.auth_header)
+    rv = client.get(
+        default_ready.comment_report_uri, headers=default_ready.auth_header
+    )
 
     assert rv.status_code == 200
     assert rv.json
@@ -81,7 +90,8 @@ def test_get_comment_report(client, default_ready):
 
 def test_get_report_with_non_manager_account(client, default_ready):
     rv = client.get(
-        default_ready.post_report_uri, headers=default_ready.non_manager_auth_header
+        default_ready.post_report_uri,
+        headers=default_ready.non_manager_auth_header,
     )
 
     assert rv.status_code == 403
@@ -96,18 +106,22 @@ def test_get_not_exist_report(client, default_ready):
 
 
 def test_delete_report(client, default_ready):
-    rv = client.delete(default_ready.post_report_uri, headers=default_ready.auth_header)
+    rv = client.delete(
+        default_ready.post_report_uri, headers=default_ready.auth_header
+    )
 
     assert rv.status_code == 200
 
 
 def test_delete_report_with_non_manager_account(client, default_ready):
     comment_report_rv = client.delete(
-        default_ready.comment_report_uri, headers=default_ready.non_manager_auth_header
+        default_ready.comment_report_uri,
+        headers=default_ready.non_manager_auth_header,
     )
 
     post_report_rv = client.delete(
-        default_ready.post_report_uri, headers=default_ready.non_manager_auth_header
+        default_ready.post_report_uri,
+        headers=default_ready.non_manager_auth_header,
     )
 
     assert comment_report_rv.status_code == 403

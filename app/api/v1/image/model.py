@@ -11,10 +11,14 @@ class ImageModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
     user_id = db.Column(
-        db.String(320), db.ForeignKey("user.email", ondelete="CASCADE"), nullable=True
+        db.String(320),
+        db.ForeignKey("user.email", ondelete="CASCADE"),
+        nullable=True,
     )
     gallery_id = db.Column(
-        db.Integer, db.ForeignKey("gallery.id", ondelete="CASCADE"), nullable=True
+        db.Integer,
+        db.ForeignKey("gallery.id", ondelete="CASCADE"),
+        nullable=True,
     )
     post_id = db.Column(
         db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=True

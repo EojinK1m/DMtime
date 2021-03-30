@@ -4,7 +4,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
-from app.api.v1.board.gallery.report.service import ReportService, ReportListService
+from app.api.v1.board.gallery.report.service import (
+    ReportService,
+    ReportListService,
+)
 from app.api.v1.board.gallery.report.model import (
     ContentType,
     ReportPostInputSchema,

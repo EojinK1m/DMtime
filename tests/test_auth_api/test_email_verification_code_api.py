@@ -14,12 +14,18 @@ def post_email_verification_code(client, code):
     return client.post("/api/v1/email-verification-code" + param)
 
 
-def test_email_verify_success_response_200_and_create_user(client, test_registration):
-    rv = post_email_verification_code(client, test_registration["verification_code"])
+def test_email_verify_success_response_200_and_create_user(
+    client, test_registration
+):
+    rv = post_email_verification_code(
+        client, test_registration["verification_code"]
+    )
 
     assert rv.status_code == 200
     assert (
-        UserService.get_user_by_username_or_none(test_registration["user"].username)
+        UserService.get_user_by_username_or_none(
+            test_registration["user"].username
+        )
         is not None
     )
 

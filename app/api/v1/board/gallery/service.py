@@ -50,9 +50,14 @@ class GalleryService:
         def __call__(self, *args, **kargs):
             verify_jwt_in_request()
             request_account = UserModel.get_user_by_email(get_jwt_identity())
-            target_gallery = GalleryService.get_gallery_by_id(kargs["gallery_id"])
+            target_gallery = GalleryService.get_gallery_by_id(
+                kargs["gallery_id"]
+            )
 
-            if target_gallery.is_manager(request_account) or request_account.is_admin():
+            if (
+                target_gallery.is_manager(request_account)
+                or request_account.is_admin()
+            ):
                 return self.fn(*args, **kargs)
             else:
                 abort(403)

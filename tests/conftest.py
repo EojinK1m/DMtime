@@ -130,7 +130,9 @@ def create_temp_image(app, session):
     for i in range(create_temp_image_.number):
         try:
             os.remove(
-                os.path.join(app.config["IMAGE_UPLOADS"], f"fake_filename{i+1}.png")
+                os.path.join(
+                    app.config["IMAGE_UPLOADS"], f"fake_filename{i+1}.png"
+                )
             )
         except FileNotFoundError:
             continue
@@ -211,10 +213,15 @@ def create_temp_post(app, session):
     from app.api.v1.board.post.model import PostModel
 
     def create_temp_post_(
-        uploader_id, upload_gallery_id, is_anonymous=False, included_images=None
+        uploader_id,
+        upload_gallery_id,
+        is_anonymous=False,
+        included_images=None,
     ):
         title = f"test_post{create_temp_post_.number}_title"
-        content = f"test_post{create_temp_post_.number}_content" + "test\n" * 10
+        content = (
+            f"test_post{create_temp_post_.number}_content" + "test\n" * 10
+        )
 
         temp_post = PostModel(
             uploader_id=uploader_id,
@@ -246,7 +253,9 @@ def create_temp_comment(app, session):
     def create_temp_comment_(
         wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None
     ):
-        content = f"test_post{create_temp_comment_.number}_content" + "test\n" * 5
+        content = (
+            f"test_post{create_temp_comment_.number}_content" + "test\n" * 5
+        )
 
         import datetime
 
@@ -340,7 +349,9 @@ def create_temp_register_account(app, session, redis_client):
     from app import bcrypt
 
     def create_temp_register_account_():
-        email = f"test_account_{create_temp_register_account_.number}@dsm.hs.kr"
+        email = (
+            f"test_account_{create_temp_register_account_.number}@dsm.hs.kr"
+        )
         username = f"test_user_{create_temp_register_account_.number}"
         password = f"test_password_{create_temp_register_account_.number}"
         explain = f"test_user_explain_{create_temp_register_account_.number}"
@@ -351,9 +362,13 @@ def create_temp_register_account(app, session, redis_client):
             password_hash=bcrypt.generate_password_hash(password),
             explain=explain,
         )
-        verification_code = verification_code_generater.generate_verification_code()
+        verification_code = (
+            verification_code_generater.generate_verification_code()
+        )
 
-        Users().store_account_data_with_verification_code(verification_code, temp_user)
+        Users().store_account_data_with_verification_code(
+            verification_code, temp_user
+        )
 
         create_temp_register_account_.number += 1
         return {"verification_code": verification_code, "user": temp_user}

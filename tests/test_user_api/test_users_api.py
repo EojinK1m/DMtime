@@ -55,7 +55,9 @@ def test_register_with_wrong_username_response_400(client, default_ready):
     assert overlength_username_rv.status_code == 400
 
 
-def test_register_with_forbidden_character_username_response_400(client, default_ready):
+def test_register_with_forbidden_character_username_response_400(
+    client, default_ready
+):
     wrong_username_account = default_ready.correct_register_json.copy()
     wrong_username_account["username"] += "?"
 
@@ -94,7 +96,9 @@ def test_register_with_non_school_email_response_400(client, default_ready):
     assert rv.status_code == 400
 
 
-def test_register_with_belowlength_password_response_400(client, default_ready):
+def test_register_with_belowlength_password_response_400(
+    client, default_ready
+):
     wrong_password_account = default_ready.correct_register_json.copy()
     wrong_password_account["password"] = "x1"
 
@@ -112,7 +116,9 @@ def test_register_with_overlength_password_response_400(client, default_ready):
     assert rv.status_code == 400
 
 
-def test_register_with_forbidden_character_password_response_400(client, default_ready):
+def test_register_with_forbidden_character_password_response_400(
+    client, default_ready
+):
     wrong_password_account = default_ready.correct_register_json.copy()
     wrong_password_account["password"] = "잉기모링123k3\\"
 

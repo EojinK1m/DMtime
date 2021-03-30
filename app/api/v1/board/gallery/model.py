@@ -12,7 +12,9 @@ class GalleryModel(db.Model):
         db.String(320), db.ForeignKey("user.email"), nullable=False
     )
 
-    posts = db.relationship("PostModel", passive_deletes=True, backref="posted_gallery")
+    posts = db.relationship(
+        "PostModel", passive_deletes=True, backref="posted_gallery"
+    )
 
     def delete_gallery(self):
         db.session.delete(self)

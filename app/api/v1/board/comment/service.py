@@ -30,7 +30,9 @@ class CommentService:
         return comment
 
     @staticmethod
-    def check_comment_access_permission_of_account(comment, account, admin_allow=False):
+    def check_comment_access_permission_of_account(
+        comment, account, admin_allow=False
+    ):
         permission = account.email == comment.writer.email
 
         if admin_allow:
@@ -43,7 +45,9 @@ class CommentService:
 
 class CommentListService:
     @staticmethod
-    def get_comments_by_post_id_and_paging_order_by_latest(post_id, per_page, page):
+    def get_comments_by_post_id_and_paging_order_by_latest(
+        post_id, per_page, page
+    ):
         return (
             CommentModel.query.filter_by(wrote_post_id=post_id)
             .order_by(CommentModel.wrote_datetime.desc())
@@ -51,7 +55,9 @@ class CommentListService:
         )
 
     @staticmethod
-    def get_comments_by_user_id_and_paging_order_by_latest(user_id, per_page, page):
+    def get_comments_by_user_id_and_paging_order_by_latest(
+        user_id, per_page, page
+    ):
         return (
             CommentModel.query.filter_by(wrote_user_id=user_id)
             .order_by(CommentModel.wrote_datetime.desc())

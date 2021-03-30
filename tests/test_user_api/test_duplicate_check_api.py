@@ -13,7 +13,9 @@ def check_email_duplication(client, email):
     return client.get(email_duplication_url + "?email=" + email)
 
 
-def test_not_using_email_duplication_check_response_200_and_usable_true(client):
+def test_not_using_email_duplication_check_response_200_and_usable_true(
+    client,
+):
     rv = check_email_duplication(client, "not-using-email@dsm.hs.kr")
 
     print(rv.json)
@@ -40,7 +42,9 @@ def check_username_duplication(client, username):
     return client.get(username_duplication_url + "?username=" + username)
 
 
-def test_check_not_using_username_duplication_response_200_and_usable_true(client):
+def test_check_not_using_username_duplication_response_200_and_usable_true(
+    client,
+):
     rv = check_username_duplication(client, "notusername")
 
     assert rv.status_code == 200

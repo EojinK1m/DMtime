@@ -7,7 +7,10 @@ class RequestValidator:
         error = schema.validate(data)
         if error:
             response = make_response(
-                jsonify({"message": "Request validate failed.", "errors": error}), 400
+                jsonify(
+                    {"message": "Request validate failed.", "errors": error}
+                ),
+                400,
             )
 
             abort(response)
