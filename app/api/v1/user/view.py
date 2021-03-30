@@ -10,29 +10,37 @@ from app import email_sender
 
 from app.util.request_validator import RequestValidator
 
-from app.api.v1.user.service import UserService, AccountService, AuthService, DuplicateCheck
-from app.api.v1.user.model import \
-    user_schema,\
-    UserPutInputSchema,\
-    AccountRegisterSchema,\
-    UserModel,\
-    GetUsernameDuplicationSchema,\
-    GetEmailDuplicationSchema,\
-    DeleteUserSchema, account_schema
+from app.api.v1.user.service import (
+    UserService,
+    AccountService,
+    AuthService,
+    DuplicateCheck,
+)
+from app.api.v1.user.model import (
+    user_schema,
+    UserPutInputSchema,
+    AccountRegisterSchema,
+    UserModel,
+    GetUsernameDuplicationSchema,
+    GetEmailDuplicationSchema,
+    DeleteUserSchema,
+    account_schema,
+)
 
 
 class Users(Resource):
-
     def post(self):
         RequestValidator.validate_request(AccountRegisterSchema(), request.json)
 
-        email = request.json.get('email')
-        username = request.json.get('username')
+        email = request.json.get("email")
+        username = request.json.get("username")
 
         AccountService.check_exist_same_email(email)
         AccountService.check_exist_same_username(username)
 
-        new_user = self.create_new_user(username=username, email=email, password=request.json.get('password'))
+        new_user = self.create_new_user(
+            username=username, email=email, password=request.json.get("password")
+        )
         verification_code = AccountService.generate_verification_code()
 
         self.store_account_data_with_verification_code(verification_code, new_user)
@@ -44,27 +52,26 @@ class Users(Resource):
         return UserModel(
             username=username,
             email=email,
-            password_hash=bcrypt.generate_password_hash(password)
+            password_hash=bcrypt.generate_password_hash(password),
         )
 
     def send_verification_code_by_email(self, verification_code, email):
-        mail_title = '[대마타임] 회원가입 인증 코드입니다.'
+        mail_title = "[대마타임] 회원가입 인증 코드입니다."
         mail = email_sender.make_mail(subject=mail_title, message=verification_code)
 
         try:
             email_sender.send_mail(to_email=email, message=mail)
         except SMTPException:
-            abort(500, 'An error occurred while send e-mail, plz try again later')
+            abort(500, "An error occurred while send e-mail, plz try again later")
 
     def store_account_data_with_verification_code(self, verification_code, account):
         with redis_client.pipeline() as pipe:
             pipe.mset({verification_code: pickle.dumps(account)})
-            pipe.expire(verification_code, current_app.config['EMAIL_VERIFY_DEADLINE'])
+            pipe.expire(verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"])
             pipe.execute()
 
 
 class User(Resource):
-
     def get(self, username):
         return user_schema.dump(UserService.get_user_by_username(username)), 200
 
@@ -74,15 +81,15 @@ class User(Resource):
         json = request.json
 
         RequestValidator.validate_request(UserPutInputSchema(), json)
-        AccountService.check_exist_same_username(json['username'])
+        AccountService.check_exist_same_username(json["username"])
 
         UserService.update_user(
             user=user,
-            username=json['username'],
-            explain=json['user_explain'],
+            username=json["username"],
+            explain=json["user_explain"],
             email=user.email,
             profile_image=user.profile_image,
-            password_hash=user.password_hash
+            password_hash=user.password_hash,
         )
 
         return {}, 200
@@ -131,7 +138,7 @@ class Account(Resource):
         RequestValidator.validate_request(DeleteUserSchema(), request.json)
 
         user = UserService.get_user_by_username(username)
-        password = request.json.get('password')
+        password = request.json.get("password")
 
         self.raise_401_if_not_password_verified(user, password=password)
         user.delete_user()
@@ -140,7 +147,7 @@ class Account(Resource):
 
     def raise_401_if_not_password_verified(self, user, password):
         if not user.verify_password(password):
-            abort(401, 'password not match')
+            abort(401, "password not match")
 
 
 class AccountPassword(Resource):
@@ -152,21 +159,22 @@ class Refresh(Resource):
     def get(self):
         return make_response(AuthService.refresh())
 
+
 class DuplicateCheckEmail(Resource):
     def get(self):
         RequestValidator.validate_request(GetEmailDuplicationSchema(), request.args)
-        email = request.args['email']
+        email = request.args["email"]
 
         usable = UserService.get_user_by_email_or_none(email) is None
 
-        return {'usable': usable}, 200
+        return {"usable": usable}, 200
 
 
 class DuplicateCheckUsername(Resource):
     def get(self):
         RequestValidator.validate_request(GetUsernameDuplicationSchema(), request.args)
-        username = request.args['username']
+        username = request.args["username"]
 
         usable = UserService.get_user_by_username_or_none(username) is None
 
-        return {'usable':usable}, 200
+        return {"usable": usable}, 200

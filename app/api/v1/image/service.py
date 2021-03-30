@@ -6,14 +6,10 @@ from app.api.v1.image.model import ImageModel
 
 
 class ImageService:
-
     @classmethod
-    def create_image(cls, file_name='', user_id=None, post_id=None, gallery_id=None):
+    def create_image(cls, file_name="", user_id=None, post_id=None, gallery_id=None):
         image = ImageModel(
-            filename = file_name,
-            user_id = user_id,
-            post_id = post_id,
-            gallery_id = gallery_id
+            filename=file_name, user_id=user_id, post_id=post_id, gallery_id=gallery_id
         )
 
         db.session.add(image)
@@ -22,7 +18,9 @@ class ImageService:
         return image
 
     @classmethod
-    def update_image(cls, image, file_name='', user_id=None, post_id=None, gallery_id=None):
+    def update_image(
+        cls, image, file_name="", user_id=None, post_id=None, gallery_id=None
+    ):
         image.filename = file_name
         image.user_id = user_id
         image.post_id = post_id
@@ -35,7 +33,7 @@ class ImageService:
         image = ImageModel.query.filter_by(id=image_id).first()
 
         if image is None:
-            abort(404, f'Image{image_id} s not found.')
+            abort(404, f"Image{image_id} s not found.")
 
         return image
 
@@ -45,7 +43,7 @@ class ImageService:
             os.remove(get_path_from_filename(file_2_delete.filename))
 
         def get_path_from_filename(filename):
-            return os.path.join(app.config['IMAGE_UPLOADS'], filename)
+            return os.path.join(app.config["IMAGE_UPLOADS"], filename)
 
         try:
             delete_file_from_storage(image)
@@ -53,7 +51,7 @@ class ImageService:
             db.session.flush()
         except Exception:
             db.session.rollback()
-            abort(500, 'An error occur while deleting image.')
+            abort(500, "An error occur while deleting image.")
 
     @classmethod
     def delete_image_by_id(cls, id):
@@ -65,18 +63,18 @@ class ImageService:
         image = cls.get_image_by_id(image_id)
 
         if image.post_id or image.user_id or image.gallery_id:
-            abort(409, 'Image is included in other content.')
+            abort(409, "Image is included in other content.")
 
         try:
-            if location == 'user':
+            if location == "user":
                 image.user_id = key
-            elif location == 'gallery':
+            elif location == "gallery":
                 image.gallery_id = key
-            elif location == 'post':
+            elif location == "post":
                 image.post_id = key
             else:
                 raise ValueError()
         except:
-            abort(500, 'Exception while set image')
+            abort(500, "Exception while set image")
 
         db.session.flush()

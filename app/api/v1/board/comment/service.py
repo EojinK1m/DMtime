@@ -4,8 +4,8 @@ from app import db
 
 from app.api.v1.board.comment.model import CommentModel
 
-class CommentService():
 
+class CommentService:
     @staticmethod
     def modify_comment(comment, new_content):
         comment.content = new_content
@@ -18,14 +18,14 @@ class CommentService():
 
     @staticmethod
     def abort_if_not_exist_comment_id(comment_id):
-        if (CommentModel.query.get(comment_id) == None):
-            abort(404, 'comment not found')
+        if CommentModel.query.get(comment_id) == None:
+            abort(404, "comment not found")
 
     @staticmethod
     def get_comment_by_id(comment_id):
         comment = CommentModel.query.filter_by(id=comment_id).first()
         if comment is None:
-            abort(404, f'Comment{comment_id} Not Found.')
+            abort(404, f"Comment{comment_id} Not Found.")
 
         return comment
 
@@ -38,32 +38,35 @@ class CommentService():
                 permission = True
 
         if permission is False:
-            abort(403, 'Access denied.')
+            abort(403, "Access denied.")
 
 
-
-class CommentListService():
+class CommentListService:
     @staticmethod
     def get_comments_by_post_id_and_paging_order_by_latest(post_id, per_page, page):
-        return CommentModel.query\
-            .filter_by(wrote_post_id = post_id)\
-            .order_by(CommentModel.wrote_datetime.desc())\
+        return (
+            CommentModel.query.filter_by(wrote_post_id=post_id)
+            .order_by(CommentModel.wrote_datetime.desc())
             .paginate(per_page=per_page, page=page)
+        )
 
     @staticmethod
     def get_comments_by_user_id_and_paging_order_by_latest(user_id, per_page, page):
-        return CommentModel.query\
-            .filter_by(wrote_user_id = user_id)\
-            .order_by(CommentModel.wrote_datetime.desc())\
+        return (
+            CommentModel.query.filter_by(wrote_user_id=user_id)
+            .order_by(CommentModel.wrote_datetime.desc())
             .paginate(per_page=per_page, page=page)
+        )
 
     @staticmethod
-    def create_comment(content,
-                       is_anonymous,
-                       wrote_datetime,
-                       wrote_user_id,
-                       wrote_post_id,
-                       upper_comment_id):
+    def create_comment(
+        content,
+        is_anonymous,
+        wrote_datetime,
+        wrote_user_id,
+        wrote_post_id,
+        upper_comment_id,
+    ):
         try:
             new_comment = CommentModel(
                 content=content,
@@ -71,7 +74,7 @@ class CommentListService():
                 wrote_datetime=wrote_datetime,
                 wrote_user_id=wrote_user_id,
                 wrote_post_id=wrote_post_id,
-                upper_comment_id=upper_comment_id
+                upper_comment_id=upper_comment_id,
             )
 
             db.session.add(new_comment)

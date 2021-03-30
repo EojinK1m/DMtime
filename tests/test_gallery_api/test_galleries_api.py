@@ -1,37 +1,48 @@
-url = '/api/v1/board/galleries'
+url = "/api/v1/board/galleries"
+
 
 def test_create_gallery_correct(client, create_temp_account):
-    admin_account = create_temp_account(is_admin = True)
+    admin_account = create_temp_account(is_admin=True)
     test_gallery_1 = {
-        'name':'test_gallery_1',
-        'explain':'this is explain of test_gallery1.'
+        "name": "test_gallery_1",
+        "explain": "this is explain of test_gallery1.",
     }
 
-    rv = client.post(url, json=test_gallery_1,
-                    headers={'authorization':'Bearer '+admin_account.generate_access_token()})
+    rv = client.post(
+        url,
+        json=test_gallery_1,
+        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+    )
 
     assert rv.status_code == 201
 
 
 def test_create_gallery_with_wrong_json_data(client, create_temp_account):
-    admin_account = create_temp_account(is_admin = True)
+    admin_account = create_temp_account(is_admin=True)
     test_gallery_has_overlenth_name = {
-        'name':'t'*31,
-        'explain':'this is explain of test_gallery.'
+        "name": "t" * 31,
+        "explain": "this is explain of test_gallery.",
     }
     test_gallery_has_overlenth_explain = {
-        'name':'overlenth_explain_gallery',
-        'explain':'t'*256
+        "name": "overlenth_explain_gallery",
+        "explain": "t" * 256,
     }
 
-    rv = client.post(url, json=test_gallery_has_overlenth_name,
-                    headers={'authorization':'Bearer '+admin_account.generate_access_token()})
+    rv = client.post(
+        url,
+        json=test_gallery_has_overlenth_name,
+        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+    )
 
-    rv2 = client.post(url, json=test_gallery_has_overlenth_explain,
-                    headers={'authorization':'Bearer '+admin_account.generate_access_token()})
+    rv2 = client.post(
+        url,
+        json=test_gallery_has_overlenth_explain,
+        headers={"authorization": "Bearer " + admin_account.generate_access_token()},
+    )
 
     assert rv.status_code == 400
     assert rv2.status_code == 400
+
 
 def test_get_gallery_list_correct(client, create_temp_gallery):
     temp_galleries = [create_temp_gallery() for i in range(10)]
@@ -41,8 +52,9 @@ def test_get_gallery_list_correct(client, create_temp_gallery):
 
     assert galleries_list
     for i in range(10):
-        assert temp_galleries[i].name == galleries_list[i]['name']
-        assert temp_galleries[i].id == galleries_list[i]['id']
+        assert temp_galleries[i].name == galleries_list[i]["name"]
+        assert temp_galleries[i].id == galleries_list[i]["id"]
+
 
 def test_get_gallery_list_when_exist_any_gallery(client):
     rv = client.get(url)

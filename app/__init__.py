@@ -22,8 +22,8 @@ def create_app(config):
     app.config.from_object(config)
 
     from app.api.v1 import v1_blueprint
-    app.register_blueprint(v1_blueprint, url_prefix='/api/v1')
 
+    app.register_blueprint(v1_blueprint, url_prefix="/api/v1")
 
     db.init_app(app)
     ma.init_app(app)
@@ -37,8 +37,6 @@ def create_app(config):
 
     with app.app_context():
         db.create_all()
-
-
 
     # from app.api.v1.image import image_blueprint
     # from app.api.v1.board import board_blueprint
@@ -56,13 +54,14 @@ from functools import wraps
 from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
 
+
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if not claims['roles'] == 'admin':
-            return jsonify(msg='Access denied, admin only!'), 403
+        if not claims["roles"] == "admin":
+            return jsonify(msg="Access denied, admin only!"), 403
         else:
             return fn(*args, **kwargs)
 
@@ -73,6 +72,7 @@ import time
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
 
+
 def wait_db_ready(app):
     wait_db_ready.num_of_try = 0
 
@@ -82,9 +82,9 @@ def wait_db_ready(app):
                 db.session.query("1").from_statement(text("SELECT 1")).all()
             return True
         except OperationalError:
-            time.sleep(.5)
+            time.sleep(0.5)
             if wait_db_ready.num_of_try >= 20:
-                raise Exception('db not work!')
+                raise Exception("db not work!")
             else:
                 wait_db_ready.num_of_try += 1
             continue
@@ -101,13 +101,11 @@ def wait_redis_ready(app):
                 redis_client.ping()
             return True
         except ConnectionError:
-            time.sleep(.5)
+            time.sleep(0.5)
             if wait_db_ready.num_of_try >= 20:
-                raise Exception('redis not work!')
+                raise Exception("redis not work!")
             else:
                 wait_db_ready.num_of_try += 1
             continue
         except Exception as e:
             raise e
-
-

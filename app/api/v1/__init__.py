@@ -7,7 +7,7 @@ from app.api.v1.auth import auth_api
 from app.api.v1.general import view
 
 
-v1_blueprint = Blueprint('api_v1', 'api_v1')
+v1_blueprint = Blueprint("api_v1", "api_v1")
 
 v1_blueprint.after_request(view.commit_session_after_request)
 v1_blueprint.teardown_request(view.rollback_session_when_error)
