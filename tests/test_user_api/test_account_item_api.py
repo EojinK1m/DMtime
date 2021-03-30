@@ -89,7 +89,7 @@ def get_account_information(client, test_user, access_token):
 
 
 def test_get_account_correctly_response_200(client, test_user):
-    rv = get_account_information(client, test_user, test_user.generate_access_token())
+    rv = get_account_information(client, test_user, get_access_token(test_user))
 
     assert rv.status_code == 200
     assert rv.json["email"] == test_user.email
@@ -100,36 +100,72 @@ def test_get_account_without_permission_response_403(
 ):
     another_user = create_temp_account()
 
-    rv = get_account_information(client, test_user, get_access_token(another_user))
+    rv = get_account_information(
+        client,
+        test_user,
+        get_access_token(another_user)
+    )
 
     assert rv.status_code == 403
 
 
-def change_password(client, user, password, access_token):
+def change_password(client, user, password, new_password, access_token):
     return client.put(
         get_user_account_path(user) + "/password",
         headers={"authorization": "Bearer " + access_token},
-        json={"password": password},
+        json={"new_password": new_password, "password": password},
     )
 
 
 def test_change_password_correctly_response_200(client, test_user):
     rv = change_password(
-        client, test_user, "changepass123", get_access_token(test_user)
+        client,
+        test_user,
+        test_user.password,
+        "changepass123",
+        get_access_token(test_user)
     )
 
     assert rv.status_code == 200
 
 
-def test_change_password_without_permission_response_403(client, test_user):
-    test_user.username += "test"
+def test_change_password_without_permission_response_403(
+    client,
+    test_user,
+    create_temp_account
+):
+    another_user = create_temp_account()
 
-    rv = change_password(client, test_user, "changePass1", get_access_token(test_user))
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password,
+        "changePass1",
+        get_access_token(another_user)
+    )
 
     assert rv.status_code == 403
 
 
 def test_change_password_forbidden_password_response_400(client, test_user):
-    rv = change_password(client, test_user, "changepass", get_access_token(test_user))
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password,
+        "changepass",
+        get_access_token(test_user)
+    )
 
     assert rv.status_code == 400
+
+
+def test_change_password_with_wrong_password_response_401(client, test_user):
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password+"wrong",
+        "changePasss123",
+        get_access_token(test_user)
+    )
+
+    assert rv.status_code == 401
