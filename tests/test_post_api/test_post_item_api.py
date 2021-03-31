@@ -270,7 +270,7 @@ def test_post_like_post_correct(
         headers={"authorization": "Bearer " + access_token},
     )
 
-    assert rv.status_code == 200
+    assert rv.status_code == 201
     assert rv.json["likes"] == 1
 
     rv2 = client.post(

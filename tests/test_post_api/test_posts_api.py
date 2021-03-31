@@ -288,5 +288,5 @@ def test_get_hot_posts(
     )
 
     rv = client.get(url + f"?gallery-id={temp_gallery.id}")
-    assert rv.status_code == 201
+    assert rv.status_code == 200
     assert rv.json["posts"][0]["title"] == temp_post_1.title
