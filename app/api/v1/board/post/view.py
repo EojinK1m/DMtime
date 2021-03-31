@@ -185,4 +185,4 @@ class PostLike(Resource):
             message = "Like post"
 
         db.session.commit()
-        return {"message": message, "likes": len(post.postlikes)}, 200
+        return {"message": message, "likes": len(post.postlikes)}, 201
