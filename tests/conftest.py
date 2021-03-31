@@ -57,7 +57,7 @@ def session(app, db, request):
         # (http://docs.sqlalchemy.org/en/latest/orm/session_transaction.html#using-savepoint)
         sess.begin_nested()
 
-        @event.listens_for(sess(), 'after_transaction_end')
+        @event.listens_for(sess(), "after_transaction_end")
         def restart_savepoint(sess2, trans):
             # Detecting whether this is indeed the nested transaction of the test
             if trans.nested and not trans._parent.nested:
@@ -71,32 +71,35 @@ def session(app, db, request):
 
         # Cleanup
         sess.remove()
-        # This instruction rollsback any commit that were executed in the tests.
+        # This instruction rollback any commit that were executed in the tests.
         txn.rollback()
         conn.close()
+
 
 @pytest.fixture()
 def client(app):
     return app.test_client()
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def redis_client():
     _redis_client.flushall()
     yield _redis_client
 
     _redis_client.flushall()
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def image(app, session):
     from app.api.v1.image.model import ImageModel
 
-    temp_image = ImageModel(filename='temp_image_1')
+    temp_image = ImageModel(filename="temp_image_1")
 
     session.add(temp_image)
     session.commit()
 
     return temp_image
+
 
 @pytest.fixture()
 def create_temp_image(app, session):
@@ -105,10 +108,15 @@ def create_temp_image(app, session):
 
     def create_temp_image_():
         create_temp_image_.number += 1
-        temp_image = ImageModel(filename=f'fake_filename{create_temp_image_.number}.png')
+        temp_image = ImageModel(
+            filename=f"fake_filename{create_temp_image_.number}.png"
+        )
 
-
-        temp_file = open(app.config['IMAGE_UPLOADS']+f'/fake_filename{create_temp_image_.number}.png', 'w')
+        temp_file = open(
+            app.config["IMAGE_UPLOADS"]
+            + f"/fake_filename{create_temp_image_.number}.png",
+            "w",
+        )
         temp_file.close()
 
         session.add(temp_image)
@@ -121,68 +129,73 @@ def create_temp_image(app, session):
 
     for i in range(create_temp_image_.number):
         try:
-            os.remove(os.path.join(app.config['IMAGE_UPLOADS'], f'fake_filename{i+1}.png'))
+            os.remove(
+                os.path.join(
+                    app.config["IMAGE_UPLOADS"], f"fake_filename{i+1}.png"
+                )
+            )
         except FileNotFoundError:
             continue
         except Exception as e:
             raise e
 
 
-
 @pytest.fixture
 def create_temp_account(app, session):
-    from app.api.v1.user.account.model import AccountModel
     from app.api.v1.user.model import UserModel
+    from app import bcrypt
 
+    def create_temp_account_(profile_image=None, is_admin=False):
+        email = f"test_account_{create_temp_account_.number}@dsm.hs.kr"
+        username = f"test_user_{create_temp_account_.number}"
+        password = f"test_password_{create_temp_account_.number}"
+        user_explain = f"test_users_explain{create_temp_account_.number}"
 
-    def create_temp_account_(profile_image = None, is_admin = False):
-        email = f'test_account_{create_temp_account_.number}@dsm.hs.kr'
-        username = f'test_user_{create_temp_account_.number}'
-        password = f'test_password_{create_temp_account_.number}'
-        user_explain = f'test_users_explain{create_temp_account_.number}'
-
-        if(is_admin):
-            if not(create_temp_account_.test_admin_exist):
+        if is_admin:
+            if not (create_temp_account_.test_admin_exist):
                 create_temp_account_.test_admin_exist = True
-                email = 'test_admin'
+                email = "test_admin"
             else:
-                raise Exception('TestAdminOverError', 'Admin account for test cant exist more than one')
+                raise Exception(
+                    "TestAdminOverError",
+                    "Admin account for test cant exist more than one",
+                )
 
-        temp_account = AccountModel(email=email,
-                                    password_hash=AccountModel.hash_password(password))
-
-        session.add(temp_account)
-        session.commit()
-
-        temp_user = UserModel(username=username,
-                              explain=user_explain,
-                              account_id=temp_account.id)
+        temp_user = UserModel(
+            email=email,
+            username=username,
+            password_hash=bcrypt.generate_password_hash(password),
+            explain=user_explain,
+        )
 
         session.add(temp_user)
         session.commit()
 
-        if(profile_image):
-            profile_image.user_id = temp_user.id
+        if profile_image:
+            profile_image.user_id = temp_user.email
 
         create_temp_account_.number += 1
-        return temp_account
+        return temp_user
 
     create_temp_account_.test_admin_exist = False
     create_temp_account_.number = 1
     return create_temp_account_
+
 
 @pytest.fixture()
 def create_temp_gallery(app, session, create_temp_account):
     from app.api.v1.board.gallery.model import GalleryModel
 
     def create_temp_gallery_(manager_user=None):
-        if(manager_user==None):
+        if manager_user == None:
             manager_user = create_temp_account()
 
-        name = f'test_gallery{create_temp_gallery_.number}_name'
-        explain = f'test_gallery{create_temp_gallery_.number}_explain'
+        name = f"test_gallery{create_temp_gallery_.number}_name"
+        explain = f"test_gallery{create_temp_gallery_.number}_explain"
 
-        temp_gallery = GalleryModel(name=name, explain=explain, manager_user_id=manager_user.id)
+        temp_gallery = GalleryModel(
+            name=name, explain=explain, manager_user_id=manager_user.email
+        )
 
         session.add(temp_gallery)
         session.commit()
@@ -194,21 +207,34 @@ def create_temp_gallery(app, session, create_temp_account):
     create_temp_gallery_.number = 0
     return create_temp_gallery_
 
+
 @pytest.fixture()
 def create_temp_post(app, session):
     from app.api.v1.board.post.model import PostModel
 
-    def create_temp_post_(uploader_id, upload_gallery_id, is_anonymous=False, included_images = None):
-        title = f'test_post{create_temp_post_.number}_title'
-        content = f'test_post{create_temp_post_.number}_content'+'test\n'*10
+    def create_temp_post_(
+        uploader_id,
+        upload_gallery_id,
+        is_anonymous=False,
+        included_images=None,
+    ):
+        title = f"test_post{create_temp_post_.number}_title"
+        content = (
+            f"test_post{create_temp_post_.number}_content" + "test\n" * 10
+        )
 
-        temp_post = PostModel(uploader_id = uploader_id, gallery_id = upload_gallery_id,
-                              title=title, content=content, is_anonymous=is_anonymous)
+        temp_post = PostModel(
+            uploader_id=uploader_id,
+            gallery_id=upload_gallery_id,
+            title=title,
+            content=content,
+            is_anonymous=is_anonymous,
+        )
 
         session.add(temp_post)
         session.commit()
 
-        if(included_images):
+        if included_images:
             for image in included_images:
                 image.post_id = temp_post.id
 
@@ -219,20 +245,28 @@ def create_temp_post(app, session):
     create_temp_post_.number = 0
     return create_temp_post_
 
+
 @pytest.fixture()
 def create_temp_comment(app, session):
     from app.api.v1.board.comment.model import CommentModel
 
-    def create_temp_comment_(wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None):
-        content = f'test_post{create_temp_comment_.number}_content' + 'test\n' * 5
+    def create_temp_comment_(
+        wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None
+    ):
+        content = (
+            f"test_post{create_temp_comment_.number}_content" + "test\n" * 5
+        )
 
         import datetime
-        temp_comment = CommentModel(content=content,
-                                    wrote_user_id=wrote_user_id,
-                                    wrote_post_id=wrote_post_id,
-                                    upper_comment_id=upper_comment_id,
-                                    wrote_datetime=datetime.datetime.now(),
-                                    is_anonymous=is_anonymous)
+
+        temp_comment = CommentModel(
+            content=content,
+            wrote_user_id=wrote_user_id,
+            wrote_post_id=wrote_post_id,
+            upper_comment_id=upper_comment_id,
+            wrote_datetime=datetime.datetime.now(),
+            is_anonymous=is_anonymous,
+        )
 
         session.add(temp_comment)
         session.commit()
@@ -243,6 +277,7 @@ def create_temp_comment(app, session):
 
     create_temp_comment_.number = 0
     return create_temp_comment_
+
 
 @pytest.fixture
 def create_temp_postlike(app, session):
@@ -261,6 +296,7 @@ def create_temp_postlike(app, session):
     create_temp_postlike.number = 0
     return create_temp_postlike_
 
+
 @pytest.fixture
 def create_temp_report(app, session):
     from app.api.v1.board.gallery.report.model import ReportModel, ContentType
@@ -271,28 +307,29 @@ def create_temp_report(app, session):
         reported_content_type,
         post_id=None,
         comment_id=None,
-        reason=1
-        ):
+        reason=1,
+    ):
 
-        if(reported_content_type == ContentType.COMMENT.value):
-            if(post_id is not None or comment_id is None):
+        if reported_content_type == ContentType.COMMENT.value:
+            if post_id is not None or comment_id is None:
                 raise Exception()
-        elif(reported_content_type == ContentType.POST.value):
-            if(post_id is None or comment_id is not None):
+        elif reported_content_type == ContentType.POST.value:
+            if post_id is None or comment_id is not None:
                 raise Exception()
 
-        detail_reason = f'This is detail reason for temp port {create_temp_report.number}'
+        detail_reason = (
+            f"This is detail reason for temp port {create_temp_report.number}"
+        )
 
-        temp_report =\
-            ReportModel(
-                reason=reason,
-                detail_reason=detail_reason,
-                reported_user_id=reported_user_id,
-                gallery_id=gallery_id,
-                reported_content_type=reported_content_type,
-                post_id=post_id,
-                comment_id=comment_id
-            )
+        temp_report = ReportModel(
+            reason=reason,
+            detail_reason=detail_reason,
+            reported_user_id=reported_user_id,
+            gallery_id=gallery_id,
+            reported_content_type=reported_content_type,
+            post_id=post_id,
+            comment_id=comment_id,
+        )
 
         session.add(temp_report)
         session.commit()
@@ -306,27 +343,35 @@ def create_temp_report(app, session):
 
 @pytest.fixture
 def create_temp_register_account(app, session, redis_client):
-    import json
     from app.util import verification_code_generater
+    from app.api.v1.user.model import UserModel
+    from app.api.v1.user.view import Users
+    from app import bcrypt
 
     def create_temp_register_account_():
-        email = f'test_account_{create_temp_register_account_.number}@dsm.hs.kr'
-        username = f'test_user_{create_temp_register_account_.number}'
-        password = f'test_password_{create_temp_register_account_.number}'
+        email = (
+            f"test_account_{create_temp_register_account_.number}@dsm.hs.kr"
+        )
+        username = f"test_user_{create_temp_register_account_.number}"
+        password = f"test_password_{create_temp_register_account_.number}"
+        explain = f"test_user_explain_{create_temp_register_account_.number}"
 
-        verification_code = verification_code_generater.generate_verification_code()
-        registry_data = {
-            'email':email,
-            'username':username,
-            'password':password
-        }
-        redis_client.mset({verification_code:json.dumps(registry_data)})
+        temp_user = UserModel(
+            email=email,
+            username=username,
+            password_hash=bcrypt.generate_password_hash(password),
+            explain=explain,
+        )
+        verification_code = (
+            verification_code_generater.generate_verification_code()
+        )
 
-        registry_data['verification_code']=verification_code
+        Users().store_account_data_with_verification_code(
+            verification_code, temp_user
+        )
 
         create_temp_register_account_.number += 1
-        return registry_data
+        return {"verification_code": verification_code, "user": temp_user}
 
     create_temp_register_account_.number = 1
     return create_temp_register_account_
-

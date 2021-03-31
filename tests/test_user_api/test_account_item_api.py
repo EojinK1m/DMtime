@@ -1,56 +1,172 @@
-account_uri = '/api/v1/users/accounts'
+from pytest import fixture
 
 
-def delete_account(client, email, jwt = ''):
-    return client.delete(account_uri+'?email='+email,
-                       headers={'authorization':'Bearer '+jwt})
+@fixture
+def test_user(create_temp_account):
+    test_user = create_temp_account()
+    test_user.password = test_user.username.replace("user", "password")
+
+    return test_user
 
 
-def test_account_delete(client, create_temp_account):
-    temp_account = create_temp_account()
-    rv = delete_account(client, temp_account.email, jwt=temp_account.generate_access_token())
+def get_user_account_path(user):
+    return f"/api/v1/users/{user.username}/account"
+
+
+def get_access_token(user):
+    return user.generate_access_token()
+
+
+def delete_account(client, user, json, access_token):
+    return client.delete(
+        get_user_account_path(user),
+        json=json,
+        headers={"authorization": "Bearer " + access_token},
+    )
+
+
+def test_delete_account_correctly_response_200(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={"password": test_user.password},
+        access_token=get_access_token(test_user),
+    )
+
     assert rv.status_code == 200
 
-def test_account_delete_without_jwt_request_return_422(client, create_temp_account):
-    temp_account = create_temp_account()
-    rv = delete_account(client, temp_account.email)
+
+def test_delete_account_without_jwt_request_response_422(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={"password": test_user.password},
+        access_token="",
+    )
+
     assert rv.status_code == 422
 
-def test_get_account_information(client, create_temp_account):
-    temp_account = create_temp_account()
-    rv = client.get(account_uri,
-                    headers={'authorization':f'Bearer {temp_account.generate_access_token()}'})
-    assert rv.status_code == 200
-    account_info = rv.json['account_info']
-    assert account_info
-    assert account_info['email'] == temp_account.email
 
-def test_put_account_password(client, create_temp_account):
-    temp_account = create_temp_account()
-    password = temp_account.user.username.replace('user', 'password')
-    new_password = 'this_1s_new_passsword!'
+def test_delete_account_without_permission_response_403(
+    client, test_user, create_temp_account
+):
+    another_user = create_temp_account()
 
-    rv = client.put(account_uri+'/password',
-                    json={
-                        'password':password,
-                        'new_password':new_password
-                        },
-                    headers={'authorization':f'Bearer {temp_account.generate_access_token()}'})
-    
-    assert rv.status_code == 200
-    assert temp_account.verify_password(new_password)
-
-
-def test_put_account_incorrect_password(client, create_temp_account):
-    temp_account = create_temp_account()
-    password = temp_account.user.username.replace('user', 'password')
-    new_password = 'this_1s_new_passsword!'
-
-    rv = client.put(account_uri + '/password',
-                    json={
-                        'password': password+'1',
-                        'new_password': new_password
-                    },
-                    headers={'authorization': f'Bearer {temp_account.generate_access_token()}'})
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={"password": test_user.password},
+        access_token=get_access_token(another_user),
+    )
 
     assert rv.status_code == 403
+
+
+def test_delete_account_with_wrong_password_response_401(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={"password": test_user.password + "wrong"},
+        access_token=get_access_token(test_user),
+    )
+
+    assert rv.status_code == 401
+
+
+def test_delete_account_without_password_response_400(client, test_user):
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={},
+        access_token=get_access_token(test_user),
+    )
+
+    assert rv.status_code == 400
+
+
+def get_account_information(client, test_user, access_token):
+    return client.get(
+        get_user_account_path(test_user),
+        headers={"authorization": "Bearer " + access_token},
+    )
+
+
+def test_get_account_correctly_response_200(client, test_user):
+    rv = get_account_information(
+        client, test_user, get_access_token(test_user)
+    )
+
+    assert rv.status_code == 200
+    assert rv.json["email"] == test_user.email
+
+
+def test_get_account_without_permission_response_403(
+    client, test_user, create_temp_account
+):
+    another_user = create_temp_account()
+
+    rv = get_account_information(
+        client, test_user, get_access_token(another_user)
+    )
+
+    assert rv.status_code == 403
+
+
+def change_password(client, user, password, new_password, access_token):
+    return client.put(
+        get_user_account_path(user) + "/password",
+        headers={"authorization": "Bearer " + access_token},
+        json={"new_password": new_password, "password": password},
+    )
+
+
+def test_change_password_correctly_response_200(client, test_user):
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password,
+        "changepass123",
+        get_access_token(test_user),
+    )
+
+    assert rv.status_code == 200
+
+
+def test_change_password_without_permission_response_403(
+    client, test_user, create_temp_account
+):
+    another_user = create_temp_account()
+
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password,
+        "changePass1",
+        get_access_token(another_user),
+    )
+
+    assert rv.status_code == 403
+
+
+def test_change_password_forbidden_password_response_400(client, test_user):
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password,
+        "changepass",
+        get_access_token(test_user),
+    )
+
+    assert rv.status_code == 400
+
+
+def test_change_password_with_wrong_password_response_401(client, test_user):
+    rv = change_password(
+        client,
+        test_user,
+        test_user.password + "wrong",
+        "changePasss123",
+        get_access_token(test_user),
+    )
+
+    assert rv.status_code == 401

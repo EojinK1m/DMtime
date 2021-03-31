@@ -1,97 +1,85 @@
 import os
-from flask import jsonify, current_app as app
+from flask import current_app as app, abort
 
 from app import db
-from app.api.v1.image.model import ImageModel, ImageSchema
-
-
-
-
-def is_correct_image(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-def get_id_from_filename(filename):
-    return int(filename.rsplit('.', 1)[0].lower())
-
-def get_path_from_filename(filename):
-    return os.path.join(app.config['IMAGE_UPLOADS'], filename)
+from app.api.v1.image.model import ImageModel
 
 
 class ImageService:
+    @classmethod
+    def create_image(
+        cls, file_name="", user_id=None, post_id=None, gallery_id=None
+    ):
+        image = ImageModel(
+            filename=file_name,
+            user_id=user_id,
+            post_id=post_id,
+            gallery_id=gallery_id,
+        )
 
+        db.session.add(image)
+        db.session.flush()
 
-    @staticmethod
-    def image_upload(image):
-        if not image:
-            return jsonify({'msg':'No image'}), 400
+        return image
 
-        filename = image.filename
-        if filename == '':
-            return jsonify({'msg':'No selected file'}), 400
+    @classmethod
+    def update_image(
+        cls, image, file_name="", user_id=None, post_id=None, gallery_id=None
+    ):
+        image.filename = file_name
+        image.user_id = user_id
+        image.post_id = post_id
+        image.gallery_id = gallery_id
 
-        if not is_correct_image(filename):
-            return jsonify({'msg':'This image has tension that not supported'}), 400
+        db.session.flush()
 
-        image_column = ImageModel(filename='')
-        db.session.add(image_column)
-        db.session.commit()
-
-        saved_file_name = str(image_column.id) + '.' +filename.rsplit('.', 1)[1].lower()
-        image.save(os.path.join(app.config['IMAGE_UPLOADS'], saved_file_name))
-        image_column.filename = saved_file_name
-        db.session.commit()
-
-
-        return jsonify({'msg':'Upload succeed',\
-                        'image_info':ImageSchema(exclude=['filename']).dump(image_column)}), 200
-
-    @staticmethod
-    def get_filename_by_id(id):
-        find_image_column = ImageModel.query.filter_by(id=id).first
-        if not find_image_column:
-            return None
-        else:
-            return find_image_column.filename
-
-
-
-
-    @staticmethod
-    def delete_image(id):
-        delete_image_column = ImageModel.query.filter_by(id=id).first()
-
-        if not delete_image_column:
-            return False
-
-        file_name = delete_image_column.filename
-
-        os.remove(get_path_from_filename(file_name))
-        db.session.delete(delete_image_column)
-
-        return True
-
-
-    @staticmethod
-    def set_foreign_key(image_id, key, location):
+    @classmethod
+    def get_image_by_id(cls, image_id):
         image = ImageModel.query.filter_by(id=image_id).first()
 
-        if not image:
-            return False
-        if image.post_id or image.user_id:
-            return False
+        if image is None:
+            abort(404, f"Image{image_id} s not found.")
+
+        return image
+
+    @classmethod
+    def delete_image(cls, image):
+        def delete_file_from_storage(file_2_delete):
+            os.remove(get_path_from_filename(file_2_delete.filename))
+
+        def get_path_from_filename(filename):
+            return os.path.join(app.config["IMAGE_UPLOADS"], filename)
 
         try:
-            if location == 'user':
+            delete_file_from_storage(image)
+            db.session.delete(image)
+            db.session.flush()
+        except Exception:
+            db.session.rollback()
+            abort(500, "An error occur while deleting image.")
+
+    @classmethod
+    def delete_image_by_id(cls, id):
+        image = cls.get_image_by_id(id)
+        cls.delete_image(image)
+
+    @classmethod
+    def set_foreign_key(cls, image_id, key, location):
+        image = cls.get_image_by_id(image_id)
+
+        if image.post_id or image.user_id or image.gallery_id:
+            abort(409, "Image is included in other content.")
+
+        try:
+            if location == "user":
                 image.user_id = key
-            elif location == 'gallery':
+            elif location == "gallery":
                 image.gallery_id = key
-            elif location == 'post':
+            elif location == "post":
                 image.post_id = key
             else:
-                return False
+                raise ValueError()
         except:
-            return False
+            abort(500, "Exception while set image")
 
-        return True
-
+        db.session.flush()

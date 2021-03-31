@@ -4,9 +4,14 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.util.request_validator import RequestValidator
 from app.api.v1.board.gallery.service import GalleryService, GalleryListService
-from app.api.v1.board.gallery.model import galleries_schema, GalleryPostValidateSchema, gallery_schema
+from app.api.v1.board.gallery.model import (
+    galleries_schema,
+    GalleryPostValidateSchema,
+    gallery_schema,
+)
 
-from app.api.v1.user.account.service import AccountService
+from app.api.v1.user.service import AccountService
+
 
 class GalleryList(Resource):
     def get(self):
@@ -17,13 +22,15 @@ class GalleryList(Resource):
 
     @jwt_required
     def post(self):
-        post_account = AccountService.find_account_by_email(get_jwt_identity())
-        RequestValidator.validate_request(GalleryPostValidateSchema(), request.json)
+        post_account = AccountService.find_user_by_email(get_jwt_identity())
+        RequestValidator.validate_request(
+            GalleryPostValidateSchema(), request.json
+        )
 
         GalleryListService.create_new_gallery(
-            name=request.json['name'],
-            explain=request.json['explain'],
-            manager_user=post_account.user
+            name=request.json["name"],
+            explain=request.json["explain"],
+            manager_user=post_account,
         )
 
         return {}, 201
@@ -37,12 +44,14 @@ class Gallery(Resource):
 
     @GalleryService.gallery_manager_required
     def patch(self, gallery_id):
-        RequestValidator.validate_request(GalleryPostValidateSchema(), request.json)
+        RequestValidator.validate_request(
+            GalleryPostValidateSchema(), request.json
+        )
 
         GalleryService.modify_gallery_info(
             gallery=GalleryService.get_gallery_by_id(gallery_id),
-            name=request.json.get('name'),
-            explain=request.json.get('explain')
+            name=request.json.get("name"),
+            explain=request.json.get("explain"),
         )
 
         return {}, 200

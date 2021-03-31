@@ -4,5 +4,8 @@ from app.config import DevelopConfig
 application = create_app(DevelopConfig)
 
 
-if __name__ == '__main__':
-    application.run('0.0.0.0')
+if __name__ == "__main__":
+    application.run("0.0.0.0")
+
+
+"GIT TEST STRING"

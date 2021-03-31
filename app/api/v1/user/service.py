@@ -1,78 +1,57 @@
-from flask import jsonify
-from flask_jwt_extended import get_jwt_identity, jwt_required
+import json
+from smtplib import SMTPException
+from functools import wraps
 
-from app import db
-from app.api.v1.user.model import UserModel, user_schema
-from app.api.v1.user.account.model import AccountModel
+from flask import abort, current_app
+from flask_jwt_extended import (
+    get_jwt_identity,
+    verify_jwt_in_request,
+)
 
+from app import db, redis_client, email_sender
+from app.util import verification_code_generater
+
+from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
 
+
 class UserService:
-
-
     @staticmethod
-    def provide_user_info(username):
+    def get_user_by_username(username):
         find_user = UserModel.query.filter_by(username=username).first()
-        if not find_user:
-            return jsonify({'msg':'user not found'}), 404
+        if find_user is None:
+            abort(404, "User not found")
 
-        return jsonify({'msg':'query succeed',\
-                        'user_info':user_schema.dump(find_user)})
-
+        return find_user
 
     @staticmethod
-    @jwt_required
-    def modify_user_info(username, data):
-        from app.api.v1.user.model import UserPatchInputSchema
-        error = UserPatchInputSchema().validate(data)
-        if error:
-            return jsonify(msg= 'Bad request, json body is wrong'), 400
-
-        user = (AccountModel.query.filter_by(email=get_jwt_identity()).first()).user
-        if not user or not UserModel.query.filter_by(username=username).first():
-            return jsonify({'msg': 'user not found'}), 404
-        elif user.username != username:
-            return jsonify({'msg': f'access denied, you are not {username}'}), 403
-
-        new_username = data.get('username', None)
-        new_explain = data.get('user_explain', None)
-        new_profile_image_id = data.get('profile_image_id',
-                                        user.profile_image.id if user.profile_image else None)
-
-
-        if not (new_username == None):
-            if(UserModel.query.filter_by(username=new_username).first()):
-                return jsonify(msg='Bad request, same username exist'), 400
-            user.username = new_username
-        if not (new_explain == None):
-            user.explain = new_explain
-        if not UserService.set_profile_image(user, new_profile_image_id):
-            return jsonify({'msg': f'image not found, image {new_profile_image_id}is not exist'}), 404
-
-        db.session.commit()
-
-        return jsonify({'msg':'modification succeed'}), 200
+    def get_user_by_username_or_none(username):
+        return UserModel.query.filter_by(username=username).first()
 
     @staticmethod
-    def set_profile_image(user, profile_image_id):
-        print(user.id)
-        print(profile_image_id)
+    def get_user_by_email_or_404(email):
+        find_user = UserModel.query.filter_by(email=email).first()
+        if find_user is None:
+            abort(404, "User not found")
 
+        return find_user
 
-        if user.profile_image == None:
-            if profile_image_id == None:
-                return True
-        elif user.profile_image.id == profile_image_id:
-            return True
+    @staticmethod
+    def get_user_by_email_or_none(email):
+        return UserModel.query.filter_by(email=email).first()
 
-        if user.profile_image:
-            if not ImageService.delete_image(user.profile_image.id):
-                return False
-        if profile_image_id:
-            if not ImageService.set_foreign_key(profile_image_id, user.id, 'user'):
-                return False
+    @staticmethod
+    def update_user(
+        user, email, password_hash, username, explain, profile_image
+    ):
+        user.email = email
+        user.password_hash = password_hash
+        user.username = username
+        user.explain = explain
+        user.profile_image = profile_image
 
-        return True
+        db.session.flush()
+        return user
 
     @staticmethod
     def delete_user(user):
@@ -82,7 +61,98 @@ class UserService:
             ImageService.delete_image(profile_image.id)
         user.delete_user()
 
+    @staticmethod
+    def user_access_authorize_required(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            verify_jwt_in_request()
+            user_to_work = UserService.get_user_by_username(kwargs["username"])
+            request_user = UserService.get_user_by_email_or_none(
+                email=get_jwt_identity()
+            )
+
+            if not user_to_work == request_user:
+                abort(
+                    403, f"access denied, you are not {user_to_work.username}"
+                )
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def raise_401_if_not_password_verified(user, password):
+        if not user.verify_password(password):
+            abort(401, "password not match")
 
 
+class AccountService:
+    @staticmethod
+    def check_exist_same_username(username):
+        if UserModel.query.filter_by(username=username).first():
+            abort(409, "same username exist")
 
+    @staticmethod
+    def check_exist_same_email(email):
+        if UserModel.query.filter_by(email=email).first():
+            abort(409, "same email exist")
 
+    def store_register_data_temporally(verification_code, data):
+        with redis_client.pipeline() as pipe:
+            pipe.mset({verification_code: json.dumps(data)})
+            pipe.expire(
+                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
+            )
+            pipe.execute()
+
+    @staticmethod
+    def send_verification_by_email(verification_code, to_send_email):
+        mail_title = "[대마타임] 회원가입 인증 코드입니다."
+        mail = email_sender.make_mail(
+            subject=mail_title, message=verification_code
+        )
+
+        try:
+            email_sender.send_mail(to_email=to_send_email, message=mail)
+        except SMTPException as e:
+            abort(
+                500, "An error occurred while send e-mail, plz try again later"
+            )
+
+    @staticmethod
+    def generate_verification_code():
+        while True:
+            temp_code = verification_code_generater.generate_verification_code()
+
+            if not (redis_client.exists(temp_code)):
+                return temp_code
+
+    @staticmethod
+    def validate_verification_code(code):
+        if not (verification_code_generater.validate_verification_code(code)):
+            raise abort(400)
+
+    @staticmethod
+    def find_register_data_by_verification_code(verification_code):
+        AccountService.validate_verification_code(verification_code)
+        register_data = redis_client.get(verification_code)
+
+        if register_data is None:
+            abort(404, "Verification code not found.")
+
+        return json.loads(register_data.decode("utf-8"))
+
+    @staticmethod
+    def change_account_password(user, password):
+        user.password_hash = user.hash_password(password)
+
+    @staticmethod
+    def find_user_by_email(email):
+        found_account = UserModel.get_user_by_email(email)
+
+        if found_account is None:
+            abort(
+                404, "Account not found, there is no account include the email."
+            )
+
+        return found_account
