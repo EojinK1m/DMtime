@@ -4,8 +4,9 @@ url = "/api/v1/board/galleries"
 def test_create_gallery_correct(client, create_temp_account):
     admin_account = create_temp_account(is_admin=True)
     test_gallery_1 = {
-        "name": "test_gallery_1",
-        "explain": "this is explain of test_gallery1.",
+        "id": "test",
+        "name": "테스트",
+        "explain": "테스트를 위한 갤러리1입니다.",
     }
 
     rv = client.post(
@@ -19,15 +20,15 @@ def test_create_gallery_correct(client, create_temp_account):
     assert rv.status_code == 201
 
 
-def test_create_gallery_with_wrong_json_data(client, create_temp_account):
+def test_create_gallery_with_wrong_json_data_response_400(client, create_temp_account):
     admin_account = create_temp_account(is_admin=True)
     test_gallery_has_overlenth_name = {
-        "name": "t" * 31,
+        "name": "테" * 31,
         "explain": "this is explain of test_gallery.",
     }
     test_gallery_has_overlenth_explain = {
         "name": "overlenth_explain_gallery",
-        "explain": "t" * 256,
+        "explain": "테" * 256,
     }
 
     rv = client.post(
@@ -49,6 +50,9 @@ def test_create_gallery_with_wrong_json_data(client, create_temp_account):
     assert rv.status_code == 400
     assert rv2.status_code == 400
 
+
+
+def test_create_gallery_
 
 def test_get_gallery_list_correct(client, create_temp_gallery):
     temp_galleries = [create_temp_gallery() for i in range(10)]

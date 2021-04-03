@@ -192,14 +192,17 @@ def create_temp_gallery(app, session, create_temp_account):
 
         name = f"test_gallery{create_temp_gallery_.number}_name"
         explain = f"test_gallery{create_temp_gallery_.number}_explain"
+        gallery_id = f"테스트 갤러리 {create_temp_gallery_.number"}"
 
         temp_gallery = GalleryModel(
-            name=name, explain=explain, manager_user_id=manager_user.email
+            name=name,
+            explain=explain,
+            gallery_id=gallery_id,
+            manager_user_id=manager_user.email
         )
 
         session.add(temp_gallery)
         session.commit()
-
         create_temp_gallery_.number += 1
 
         return temp_gallery
