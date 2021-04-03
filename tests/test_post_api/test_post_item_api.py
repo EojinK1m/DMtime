@@ -7,7 +7,7 @@ def test_post_get_correct(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.get(url + f"{temp_post.id}")
@@ -40,7 +40,7 @@ def test_anonymous_post_get_correct(
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
         uploader_id=temp_account.email,
-        upload_gallery_id=temp_gallery.id,
+        upload_gallery_id=temp_gallery.gallery_id,
         is_anonymous=True,
     )
 
@@ -61,7 +61,7 @@ def test_post_delete_correct(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.delete(
@@ -81,7 +81,7 @@ def test_post_delete_with_admin_account(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.delete(
@@ -101,7 +101,7 @@ def test_post_delete_with_another_account(
     temp_account2 = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.delete(
@@ -120,7 +120,7 @@ def test_post_patch_correct(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     change_post_info = {
@@ -145,7 +145,7 @@ def test_post_patch_with_data_miss(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     change_post_info = {
@@ -170,7 +170,7 @@ def test_post_patch_with_another_account(
     temp_account2 = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     change_post_info = {
@@ -202,7 +202,7 @@ def test_post_patch_image_ids_correct(
     temp_image_2 = create_temp_image()
 
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.patch(
@@ -241,7 +241,7 @@ def test_post_patch_image_id_none(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.patch(
@@ -261,7 +261,7 @@ def test_post_like_post_correct(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
     access_token = temp_account.generate_access_token()
 
@@ -288,7 +288,7 @@ def test_post_like_post_without_access_token(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
 
     rv = client.post(url + f"{temp_post.id}/like")
@@ -305,7 +305,7 @@ def test_delete_post_have_like(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
     temp_postlike = create_temp_postlike(
         liker_id=temp_account.email, post_id=temp_post.id

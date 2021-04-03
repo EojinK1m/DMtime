@@ -19,7 +19,7 @@ def test_post(create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
-        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.id
+        uploader_id=temp_account.email, upload_gallery_id=temp_gallery.gallery_id
     )
     return temp_post
 

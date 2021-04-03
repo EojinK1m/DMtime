@@ -192,7 +192,7 @@ def create_temp_gallery(app, session, create_temp_account):
 
         name = f"test_gallery{create_temp_gallery_.number}_name"
         explain = f"test_gallery{create_temp_gallery_.number}_explain"
-        gallery_id = f"테스트 갤러리 {create_temp_gallery_.number"}"
+        gallery_id = f"test_gallery{create_temp_gallery_.number}_id"
 
         temp_gallery = GalleryModel(
             name=name,

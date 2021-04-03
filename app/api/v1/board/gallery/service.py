@@ -13,8 +13,9 @@ class GalleryListService:
         return GalleryModel.query.all()
 
     @staticmethod
-    def create_new_gallery(name, explain, manager_user):
+    def create_new_gallery(gallery_id, name, explain, manager_user):
         GalleryListService.abort_if_gallery_name_exist(name)
+        
 
         try:
             new_gallery = GalleryModel(
@@ -25,17 +26,27 @@ class GalleryListService:
         except:
             abort(500, "An error occurred while making gallery at db.")
 
-        return new_gallery.id
+        return new_gallery.gallery_id
 
     @staticmethod
     def abort_if_gallery_name_exist(name):
         if GalleryListService.is_gallery_name_exist(name):
             abort(409, "Same named gallery already exists.")
 
+    def abort_409_if_gallery_id_already_used(gallery_id):
+        if GalleryListService.is_gallery_id_used:
+            abort(409, "Same gallery id already exists.")
+    
     @staticmethod
     def is_gallery_name_exist(name):
         return GalleryModel.query.filter_by(name=name).first() is not None
 
+    @staticmethod
+    def is_gallery_id_used(gallery_id):
+        return \
+            GalleryModel.query.filter_by(gallery_id=gallery_id).first()\
+            is not None
+    
 
 class GalleryService:
     class gallery_manager_required:
@@ -84,7 +95,7 @@ class GalleryService:
 
     @staticmethod
     def get_gallery_by_id(gallery_id):
-        gallery = GalleryModel.query.filter_by(id=gallery_id).first()
+        gallery = GalleryModel.query.filter_by(gallery_id=gallery_id).first()
 
         if gallery is None:
             abort(404, f"Gallery{gallery_id} is not found.")

@@ -19,20 +19,20 @@ def default_ready(
                 manager_user=self.temp_account
             )
             self.temp_post = create_temp_post(
-                self.temp_account.email, self.temp_gallery.id
+                self.temp_account.email, self.temp_gallery.gallery_id
             )
             self.temp_comment = create_temp_comment(
                 self.temp_account.email, self.temp_post.id
             )
             self.temp_post_report = create_temp_report(
                 self.temp_account.email,
-                self.temp_gallery.id,
+                self.temp_gallery.gallery_id,
                 ContentType.POST.value,
                 post_id=self.temp_post.id,
             )
             self.temp_comment_report = create_temp_report(
                 self.temp_account.email,
-                self.temp_gallery.id,
+                self.temp_gallery.gallery_id,
                 ContentType.COMMENT.value,
                 comment_id=self.temp_comment.id,
             )
@@ -44,7 +44,7 @@ def default_ready(
                 "authorization": "Bearer "
                 + self.temp_non_manager_account.generate_access_token()
             }
-            self.url = f"api/v1/board/galleries/{self.temp_gallery.id}/reports"
+            self.url = f"api/v1/board/galleries/{self.temp_gallery.gallery_id}/reports"
             self.comment_report_uri = (
                 self.url + f"/{self.temp_comment_report.id}"
             )

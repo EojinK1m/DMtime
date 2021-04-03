@@ -8,7 +8,7 @@ def test_gallery_delete_correct(
     temp_gallery = create_temp_gallery(temp_account)
 
     rv = client.delete(
-        url + f"{temp_gallery.id}",
+        url + f"{temp_gallery.gallery_id}",
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
@@ -24,7 +24,7 @@ def test_gallery_delete_without_authority(
     temp_gallery = create_temp_gallery()
 
     rv = client.delete(
-        url + f"{temp_gallery.id}",
+        url + f"{temp_gallery.gallery_id}",
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
@@ -44,7 +44,7 @@ def test_gallery_patch_correct(
         "explain": "this is explain of changed gallery",
     }
     rv = client.patch(
-        url + f"{temp_gallery.id}",
+        url + f"{temp_gallery.gallery_id}",
         headers={
             "authorization": "Bearer " + admin_account.generate_access_token()
         },
@@ -66,7 +66,7 @@ def test_gallery_patch_with_data_miss(
 
     changing_gallery_info_explain_missed = {"name": "change_gallery_info"}
     rv = client.patch(
-        url + f"{temp_gallery.id}",
+        url + f"{temp_gallery.gallery_id}",
         headers={
             "authorization": "Bearer " + admin_account.generate_access_token()
         },
@@ -79,7 +79,7 @@ def test_gallery_patch_with_data_miss(
         "explain": "this is explain of changed gallery"
     }
     rv_2 = client.patch(
-        url + f"{temp_gallery.id}",
+        url + f"{temp_gallery.gallery_id}",
         headers={
             "authorization": "Bearer " + admin_account.generate_access_token()
         },
@@ -99,7 +99,7 @@ def test_gallery_patch_to_already_exist_gallery_name(
     )
 
     rv = client.patch(
-        url + f"{temp_gallery1.id}",
+        url + f"{temp_gallery1.gallery_id}",
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },

@@ -16,8 +16,8 @@ class ImageModel(db.Model):
         nullable=True,
     )
     gallery_id = db.Column(
-        db.Integer,
-        db.ForeignKey("gallery.id", ondelete="CASCADE"),
+        db.String(30),
+        db.ForeignKey("gallery.gallery_id", ondelete="CASCADE"),
         nullable=True,
     )
     post_id = db.Column(

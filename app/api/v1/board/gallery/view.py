@@ -28,6 +28,7 @@ class GalleryList(Resource):
         )
 
         GalleryListService.create_new_gallery(
+            gallery_id=request.json["gallery_id"],
             name=request.json["name"],
             explain=request.json["explain"],
             manager_user=post_account,

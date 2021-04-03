@@ -21,8 +21,8 @@ class PostModel(db.Model):
         nullable=False,
     )
     gallery_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("gallery.id", ondelete="CASCADE"),
+        db.String(30),
+        db.ForeignKey("gallery.gallery_id", ondelete="CASCADE"),
         nullable=False,
     )
 
@@ -72,7 +72,7 @@ class PostSchema(ma.SQLAlchemySchema):
         serialize="get_number_of_postlikes",
         deserialize="get_number_of_postlikes",
     )
-    posted_gallery = ma.Nested("GallerySchema", only=["name", "id"])
+    posted_gallery = ma.Nested("GallerySchema")
     number_of_comments = ma.Method(serialize="get_number_of_comments")
     whether_exist_image = ma.Method(serialize="get_whether_image_exist")
 

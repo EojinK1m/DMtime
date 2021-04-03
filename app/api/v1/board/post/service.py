@@ -416,7 +416,7 @@ class PostListService:
     @staticmethod
     def get_posts_by_gallery_with_paging(gallery, per_page, page):
         posts = PostListService.order_post_query_from_latest(
-            PostModel.query.filter_by(gallery_id=gallery.id)
+            PostModel.query.filter_by(gallery_id=gallery.gallery_id)
         ).paginate(page=page, per_page=per_page)
 
         return posts

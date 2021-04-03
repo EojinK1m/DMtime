@@ -5,7 +5,7 @@ from marshmallow.validate import Length
 class GalleryModel(db.Model):
     __tablename__ = "gallery"
 
-    id = db.Column(db.Integer(), primary_key=True)
+    gallery_id = db.Column(db.String(30), primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.String(255), nullable=True)
     manager_user_id = db.Column(
@@ -35,18 +35,20 @@ class GallerySchema(ma.SQLAlchemySchema):
 
     name = ma.auto_field()
     explain = ma.auto_field()
-    id = ma.auto_field()
+    gallery_id = ma.auto_field()
 
 
 gallery_schema = GallerySchema()
-galleries_schema = GallerySchema(many=True, only=("name", "id"))
+galleries_schema = GallerySchema(many=True, only=("name", "gallery_id"))
 
 
 class GalleryPostValidateSchema(ma.Schema):
     name = ma.Str(requierd=True, validate=Length(max=30, min=1))
     explain = ma.Str(requierd=True, validate=Length(max=255, min=0))
+    gallery_id = ma.Str(requierd=True, validate=Length(max=30, min=1))
 
 
 class GalleryPatchValidateSchema(ma.Schema):
     name = ma.Str(requierd=False, validate=Length(max=255, min=0))
     explain = ma.Str(requierd=False)
+    gallery_id = ma.Str(requierd=True, validate=Length(max=30, min=1))
