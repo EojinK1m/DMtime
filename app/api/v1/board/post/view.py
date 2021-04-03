@@ -72,7 +72,7 @@ class PostList(Resource):
         RequestValidator.validate_request(PostPostInputValidateSchema(), json)
 
         post_gallery = GalleryService.get_gallery_by_id(
-            args.get(key="gallery-id", type=int)
+            args.get(key="gallery-id")
         )
         uploader_account = AccountService.find_user_by_email(
             get_jwt_identity()

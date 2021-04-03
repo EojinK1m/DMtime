@@ -15,14 +15,16 @@ class GalleryListService:
     @staticmethod
     def create_new_gallery(gallery_id, name, explain, manager_user):
         GalleryListService.abort_if_gallery_name_exist(name)
-        
+        GalleryListService.abort_409_if_gallery_id_is_used(gallery_id)
 
         try:
             new_gallery = GalleryModel(
-                name=name, explain=explain, manager_user_id=manager_user.email
+                name=name,
+                explain=explain,
+                manager_user_id=manager_user.email,
+                gallery_id=gallery_id
             )
             db.session.add(new_gallery)
-            db.session.commit()
         except:
             abort(500, "An error occurred while making gallery at db.")
 
@@ -33,9 +35,10 @@ class GalleryListService:
         if GalleryListService.is_gallery_name_exist(name):
             abort(409, "Same named gallery already exists.")
 
-    def abort_409_if_gallery_id_already_used(gallery_id):
-        if GalleryListService.is_gallery_id_used:
-            abort(409, "Same gallery id already exists.")
+    @staticmethod
+    def abort_409_if_gallery_id_is_used(gallery_id):
+        if GalleryListService.is_gallery_id_used(gallery_id):
+            abort(409, "Same gallery id already used.")
     
     @staticmethod
     def is_gallery_name_exist(name):

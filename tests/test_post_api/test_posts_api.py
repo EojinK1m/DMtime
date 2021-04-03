@@ -33,7 +33,8 @@ def test_post_post_correct(
         temp_gallery.gallery_id,
         temp_account.generate_access_token(),
     )
-
+    print(temp_gallery.gallery_id)
+    print(rv.json)
     assert rv.status_code == 201
 
 

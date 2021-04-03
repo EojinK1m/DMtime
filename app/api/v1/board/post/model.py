@@ -125,7 +125,11 @@ class PostPostInputValidateSchema(ma.Schema):
 
 
 class PostResourceQueryParameterValidateSchema(ma.Schema):
-    gallery_id = ma.Integer(data_key="gallery-id", required=True)
+    gallery_id = ma.String(
+        data_key="gallery-id",
+        required=True,
+        validate=Length(min=1, max=30)
+        )
 
 
 class PostGetQueryParameterValidateSchema(ma.Schema):
@@ -134,8 +138,8 @@ class PostGetQueryParameterValidateSchema(ma.Schema):
         required=False, validate=Range(min=1), data_key="per-page"
     )
     username = ma.Str(required=False, validate=Length(min=2, max=20))
-    gallery_id = ma.Integer(
-        required=False, validate=Range(min=1), data_key="gallery-id"
+    gallery_id = ma.String(
+        required=False, validate=Length(min=1, max=30), data_key="gallery-id"
     )
 
 
