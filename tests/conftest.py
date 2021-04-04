@@ -186,7 +186,7 @@ def create_temp_account(app, session):
 def create_temp_gallery(app, session, create_temp_account):
     from app.api.v1.board.gallery.model import GalleryModel
 
-    def create_temp_gallery_(manager_user=Nonem, gallery_type=1):
+    def create_temp_gallery_(manager_user=None, gallery_type=1):
         if manager_user == None:
             manager_user = create_temp_account()
 
@@ -198,8 +198,8 @@ def create_temp_gallery(app, session, create_temp_account):
             name=name,
             explain=explain,
             gallery_id=gallery_id,
-            manager_user_id=manager_user.email
-            gallery_type=gallery_type
+            manager_user_id=manager_user.email,
+            gallery_type=gallery_type,
         )
 
         session.add(temp_gallery)
