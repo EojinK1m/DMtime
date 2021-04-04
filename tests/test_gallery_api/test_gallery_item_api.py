@@ -54,9 +54,6 @@ def test_gallery_patch_correct(
     assert rv.status_code == 200
 
 
-8
-
-
 def test_gallery_patch_with_data_miss(
     client, create_temp_account, create_temp_gallery
 ):
