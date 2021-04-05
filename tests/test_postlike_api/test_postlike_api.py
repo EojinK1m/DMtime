@@ -18,6 +18,16 @@ def post_postlike(client):
     return _post_postlike
 
 @fixture
+def post_dislike(client):
+    def _post_dislike(access_token, post_id):
+        return client.post(
+            create_dislike_uri(post_id),
+            headers={"authorization": "Bearer " + access_token},
+        )
+    
+    return _post_dislike
+
+@fixture
 def temp_post(create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
