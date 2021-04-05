@@ -3,6 +3,9 @@ from pytest import fixture
 def create_postlike_uri(post_id):
     return f'api/v1/board/posts/{post_id}/like'
 
+def create_dislike_uri(post_id):
+    return f'api/v1/board/posts/{post_id}/dislike'
+
 @fixture
 def post_postlike(client):
     
@@ -15,7 +18,7 @@ def post_postlike(client):
     return _post_postlike
 
 @fixture
-def test_post(create_temp_account, create_temp_gallery, create_temp_post):
+def temp_post(create_temp_account, create_temp_gallery, create_temp_post):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
@@ -24,7 +27,7 @@ def test_post(create_temp_account, create_temp_gallery, create_temp_post):
     return temp_post
 
 @fixture
-def test_user(create_temp_account):
+def temp_user(create_temp_account):
     user = create_temp_account()
     user.access_token = user.generate_access_token()
 
@@ -42,3 +45,33 @@ def test_post_postlike_succeess_response_201(
     )
 
     assert rv.status_code == 201
+
+def test_delete_like_when_ike_is_not_exist_reponse_404(
+    temp_post,
+    temp_user
+):
+    pass
+
+def test_post_dislike_success_reponse_201(
+    temp_post,
+    temp_user
+):
+    pass
+
+def test_post_dislike_when_already_like_exist_response_409(
+    temp_post,
+    temp_user
+):
+    pass
+
+def test_post_dislike_when_already_dislike_exist_response_409(
+    temp_post,
+    temp_user
+):
+    pass
+
+def test_delete_dislike_when_dislike_is_not_exist_response_404(
+    temp_post,
+    temp_user
+):
+    pass
