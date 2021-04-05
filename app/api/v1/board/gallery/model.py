@@ -1,5 +1,7 @@
 from app import db, ma
-from marshmallow.validate import Length
+from marshmallow.validate import Length, Range
+
+GALLERY_TYPES = {"special": 0, "default": 1, "user": 2}
 
 
 class GalleryModel(db.Model):
@@ -11,6 +13,7 @@ class GalleryModel(db.Model):
     manager_user_id = db.Column(
         db.String(320), db.ForeignKey("user.email"), nullable=False
     )
+    gallery_type = db.Column(db.Integer(), nullable=False)
 
     posts = db.relationship(
         "PostModel", passive_deletes=True, backref="posted_gallery"
@@ -36,16 +39,31 @@ class GallerySchema(ma.SQLAlchemySchema):
     name = ma.auto_field()
     explain = ma.auto_field()
     gallery_id = ma.auto_field()
+    gallery_type = ma.auto_field()
 
 
 gallery_schema = GallerySchema()
-galleries_schema = GallerySchema(many=True, only=("name", "gallery_id"))
+galleries_schema = GallerySchema(many=True)
 
 
-class GalleryPostValidateSchema(ma.Schema):
+class GetGalleriesQueryParameterValidateSchema(ma.Schema):
+    gallery_type = ma.Integer(
+        requierd=False,
+        allow_none=False,
+        validate=Range(min=0, max=2),
+        data_key="gallery-type",
+    )
+
+
+class PostGalleryValidateSchema(ma.Schema):
     name = ma.Str(requierd=True, validate=Length(max=30, min=1))
     explain = ma.Str(requierd=True, validate=Length(max=255, min=0))
     gallery_id = ma.Str(requierd=True, validate=Length(max=30, min=1))
+    gallery_type = ma.Integer(
+        requierd=True,
+        allow_none=False,
+        validate=Range(min=0, max=2),
+    )
 
 
 class GalleryPatchValidateSchema(ma.Schema):

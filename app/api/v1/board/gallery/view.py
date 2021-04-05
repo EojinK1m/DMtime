@@ -5,36 +5,51 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.util.request_validator import RequestValidator
 from app.api.v1.board.gallery.service import GalleryService, GalleryListService
 from app.api.v1.board.gallery.model import (
+    GALLERY_TYPES,
     galleries_schema,
-    GalleryPostValidateSchema,
     gallery_schema,
+    GetGalleriesQueryParameterValidateSchema,
+    PostGalleryValidateSchema,
 )
-
+from app.api.v1.general.service import verify_admin_jwt_in_request
 from app.api.v1.user.service import AccountService
 
 
 class GalleryList(Resource):
     def get(self):
-        galleries = GalleryListService.get_galleries()
-        response_body = galleries_schema.dump(galleries)
+        RequestValidator.validate_request(
+            schema=GetGalleriesQueryParameterValidateSchema(),
+            data=request.args,
+        )
 
-        return response_body, 200
+        galleries = GalleryListService.get_galleries(
+            gallery_type=request.args.get("gallery-type", type=int)
+        )
+        return galleries_schema.dump(galleries), 200
 
     @jwt_required
     def post(self):
         post_account = AccountService.find_user_by_email(get_jwt_identity())
         RequestValidator.validate_request(
-            GalleryPostValidateSchema(), request.json
+            PostGalleryValidateSchema(), request.json
         )
+        gallery_type = request.json["gallery_type"]
+
+        if self.is_gallery_type_for_admin(gallery_type):
+            verify_admin_jwt_in_request()
 
         GalleryListService.create_new_gallery(
             gallery_id=request.json["gallery_id"],
             name=request.json["name"],
             explain=request.json["explain"],
+            gallery_type=gallery_type,
             manager_user=post_account,
         )
 
         return {}, 201
+
+    def is_gallery_type_for_admin(self, gallery_type):
+        return gallery_type != GALLERY_TYPES["user"]
 
 
 class Gallery(Resource):

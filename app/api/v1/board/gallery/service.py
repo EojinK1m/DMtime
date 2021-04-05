@@ -9,11 +9,22 @@ from app.api.v1.user.model import UserModel
 
 class GalleryListService:
     @staticmethod
-    def get_galleries():
-        return GalleryModel.query.all()
+    def get_galleries(gallery_type=None):
+        gallery_query = GalleryModel.query
+
+        if gallery_type is not None:
+            gallery_query = gallery_query.filter_by(gallery_type=gallery_type)
+
+        return gallery_query.all()
 
     @staticmethod
-    def create_new_gallery(gallery_id, name, explain, manager_user):
+    def get_galleries_by_gallery_type(gallery_type):
+        return GalleryModel.query.filter_by(gallery_type=gallery_type).all()
+
+    @staticmethod
+    def create_new_gallery(
+        gallery_id, name, explain, manager_user, gallery_type
+    ):
         GalleryListService.abort_if_gallery_name_exist(name)
         GalleryListService.abort_409_if_gallery_id_is_used(gallery_id)
 
@@ -22,7 +33,8 @@ class GalleryListService:
                 name=name,
                 explain=explain,
                 manager_user_id=manager_user.email,
-                gallery_id=gallery_id
+                gallery_id=gallery_id,
+                gallery_type=gallery_type,
             )
             db.session.add(new_gallery)
         except:
@@ -39,17 +51,18 @@ class GalleryListService:
     def abort_409_if_gallery_id_is_used(gallery_id):
         if GalleryListService.is_gallery_id_used(gallery_id):
             abort(409, "Same gallery id already used.")
-    
+
     @staticmethod
     def is_gallery_name_exist(name):
         return GalleryModel.query.filter_by(name=name).first() is not None
 
     @staticmethod
     def is_gallery_id_used(gallery_id):
-        return \
-            GalleryModel.query.filter_by(gallery_id=gallery_id).first()\
+        return (
+            GalleryModel.query.filter_by(gallery_id=gallery_id).first()
             is not None
-    
+        )
+
 
 class GalleryService:
     class gallery_manager_required:
