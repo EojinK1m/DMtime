@@ -79,7 +79,7 @@ def temp_postlike(create_temp_postlike, temp_post, temp_user):
 def temp_postdislike(create_temp_postdislike, temp_post, temp_user):
     postdislike = create_temp_postdislike(
         liker_id=temp_user.email,
-        post_id=temp_post
+        post_id=temp_post.id
     )
 
     return {
@@ -172,7 +172,7 @@ def test_post_postdislike_when_already_postlike_exist_response_409(
 
 def test_post_postdislike_when_already_postdislike_exist_response_409(
     temp_postdislike,
-    post_dispostlike
+    post_postdislike
 ):
     rv = post_postdislike(
         access_token=temp_postdislike['user'].generate_access_token(),

@@ -300,6 +300,22 @@ def create_temp_postlike(app, session):
     create_temp_postlike.number = 0
     return create_temp_postlike_
 
+@pytest.fixture
+def create_temp_postdislike(app, session):
+    from app.api.v1.board.post.model import PostDislikeModel
+
+    def create_temp_postdislike_(post_id, liker_id):
+        temp_postdislike = PostDislikeModel(post_id=post_id, liker_id=liker_id)
+
+        session.add(temp_postdislike)
+        session.commit()
+
+        create_temp_postdislike.number += 1
+
+        return temp_postdislike
+
+    create_temp_postdislike.number = 0
+    return create_temp_postdislike_
 
 @pytest.fixture
 def create_temp_report(app, session):
