@@ -3,12 +3,11 @@ from pytest import fixture
 def create_postlike_uri(post_id):
     return f'api/v1/board/posts/{post_id}/like'
 
-def create_dislike_uri(post_id):
+def create_postdislike_uri(post_id):
     return f'api/v1/board/posts/{post_id}/dislike'
 
 @fixture
 def post_postlike(client):
-    
     def _post_postlike(access_token, post_id):
         return client.post(
             create_postlike_uri(post_id),
@@ -18,14 +17,34 @@ def post_postlike(client):
     return _post_postlike
 
 @fixture
-def post_dislike(client):
-    def _post_dislike(access_token, post_id):
+def postdislike(client):
+    def _post_postdislike(access_token, post_id):
         return client.post(
             create_dislike_uri(post_id),
-            headers={"authorization": "Bearer " + access_token},
+            headers={"authorization": "Bearer " + access_token}
         )
     
-    return _post_dislike
+    return _post_postdislike
+
+@fixture 
+def delete_postlike(client):
+    def _delete_postlike(access_token, post_id):
+        return client.delete(
+            create_postlike_uri(post_id),
+            headers={"authorization": "Bearer " + access_token}
+        )
+    
+    return _delete_postlike
+
+@fixture
+def delete_postdislike(client):
+    def _delete_postdislike(access_token, post_id):
+        return client.delete(
+            create_postdislike_uri(post_id),
+            headers={"authorization": "Bearer " + access_token}
+        )
+
+    return _delete_postdislike
 
 @fixture
 def temp_post(create_temp_account, create_temp_gallery, create_temp_post):
@@ -56,31 +75,31 @@ def test_post_postlike_succeess_response_201(
 
     assert rv.status_code == 201
 
-def test_delete_like_when_ike_is_not_exist_reponse_404(
+def test_delete_postlike_when_like_is_not_exist_reponse_404(
     temp_post,
     temp_user
 ):
     pass
 
-def test_post_dislike_success_reponse_201(
+def test_post_postdislike_success_reponse_201(
     temp_post,
     temp_user
 ):
     pass
 
-def test_post_dislike_when_already_like_exist_response_409(
+def test_post_postdislike_when_already_like_exist_response_409(
     temp_post,
     temp_user
 ):
     pass
 
-def test_post_dislike_when_already_dislike_exist_response_409(
+def test_post_postdislike_when_already_postdislike_exist_response_409(
     temp_post,
     temp_user
 ):
     pass
 
-def test_delete_dislike_when_dislike_is_not_exist_response_404(
+def test_delete_postdislike_when_postdislike_is_not_exist_response_404(
     temp_post,
     temp_user
 ):
