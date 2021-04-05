@@ -28,6 +28,7 @@ class PostModel(db.Model):
 
     images = db.relationship("ImageModel")
     postlikes = db.relationship("PostLikeModel", passive_deletes=True)
+    postdislikes = db.relationship("PostDislikeModel", passive_deletes=True)
     # posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):
@@ -50,9 +51,9 @@ class PostLikeModel(db.Model):
     liker_id = db.Column(
         db.String(320),
         db.ForeignKey("user.email", ondelete="CASCADE"),
-        nullable=False,
+        nullable=False
     )
-
+    
 class PostDislikeModel(db.Model):
     __tablename__ = "postdislike"
 
