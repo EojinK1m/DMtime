@@ -17,7 +17,7 @@ def post_postlike(client):
     return _post_postlike
 
 @fixture
-def postdislike(client):
+def post_postdislike(client):
     def _post_postdislike(access_token, post_id):
         return client.post(
             create_dislike_uri(post_id),
@@ -62,12 +62,37 @@ def temp_user(create_temp_account):
 
     return user
 
+@fixture
+def temp_postlike(create_temp_postlike, temp_post, temp_user):
+    postlike = create_temp_postlike(
+        liker_id=temp_user.email,
+        post_id=temp_post
+    )
+
+    return {
+        "postlike":postlike,
+        "user":temp_user,
+        "post":temp_post
+    }
+
+@fixture
+def temp_postdislike(create_temp_postdislike, temp_post, temp_user):
+    postdislike = create_temp_postdislike(
+        liker_id=temp_user.email,
+        post_id=temp_post
+    )
+
+    return {
+        "postdislike":postdislike,
+        "user":temp_user,
+        "post":temp_post
+    }
+
 def test_post_postlike_succeess_response_201(
     post_postlike,
     test_post,
     test_user
-    ):
-    
+):    
     rv = post_postlike(
         test_user.access_token,
         test_post.id
@@ -75,11 +100,52 @@ def test_post_postlike_succeess_response_201(
 
     assert rv.status_code == 201
 
-def test_delete_postlike_when_like_is_not_exist_reponse_404(
-    temp_post,
-    temp_user
+def test_post_postlike_when_already_postlike_exist_response_409(
+    post_postlike,
+    temp_postlike
 ):
-    pass
+    rv = post_postlike(
+        access_token=temp_postlike['user'].generate_access_token(),
+        post_id=temp_postlike['post'].id
+    )
+    
+    assert rv.status_code == 409
+
+def test_post_postlike_when_already_postdislike_exist_response_409(
+    temp_postdislike,
+    post_postlike
+):
+    rv = post_postdislike(
+        access_token=temp_postdislike['user'].generate_access_token(),
+        post_id=temp_postdislike['post'].id
+    )
+
+    assert rv.status_code == 409
+
+    
+def test_delete_postlike_success_response_200(
+    temp_postlike,
+    delete_postlike
+):
+    rv = delete_postlike(
+        temp_postlike['user'].generate_access_token(),
+        temp_postlike['post'].id
+    )
+
+    assert rv.status_code == 200
+
+def test_delete_postlike_when_postlike_is_not_exist_reponse_404(
+    temp_post,
+    temp_user,
+    delete_postlike
+):
+    rv = delete_postlike(
+        post_id=temp_post.id,
+        access_token=temp_user.generate_access_token()
+    )
+    assert rv.status_code == 404
+
+###TEST postdislike API
 
 def test_post_postdislike_success_reponse_201(
     temp_post,
