@@ -314,7 +314,7 @@ def create_temp_postdislike(app, session):
 
         return temp_postdislike
 
-    create_temp_postdislike.number = 0
+    create_temp_postdis like.number = 0
     return create_temp_postdislike_
 
 @pytest.fixture
