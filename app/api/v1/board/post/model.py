@@ -126,10 +126,8 @@ class PostPostInputValidateSchema(ma.Schema):
 
 class PostResourceQueryParameterValidateSchema(ma.Schema):
     gallery_id = ma.String(
-        data_key="gallery-id",
-        required=True,
-        validate=Length(min=1, max=30)
-        )
+        data_key="gallery-id", required=True, validate=Length(min=1, max=30)
+    )
 
 
 class PostGetQueryParameterValidateSchema(ma.Schema):

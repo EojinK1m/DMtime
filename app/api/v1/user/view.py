@@ -10,10 +10,7 @@ from app import email_sender
 
 from app.util.request_validator import RequestValidator
 
-from app.api.v1.user.service import (
-    UserService,
-    AccountService
-)
+from app.api.v1.user.service import UserService, AccountService
 from app.api.v1.user.model import (
     user_schema,
     UserPutInputSchema,
