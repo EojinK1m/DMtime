@@ -1,7 +1,6 @@
-
 from app import db
 
-class PostLikeModel(db.Model):
+class PostlikeModel(db.Model):
     __tablename__ = "postlike"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -16,7 +15,7 @@ class PostLikeModel(db.Model):
         nullable=False
     )
     
-class PostDislikeModel(db.Model):
+class PostdislikeModel(db.Model):
     __tablename__ = "postdislike"
 
     id = db.Column(db.Integer(), primary_key=True)
