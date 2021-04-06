@@ -1,7 +1,9 @@
 from app import ma
 
+from marshmallow.validate import Range
+
 class RequestPostlikeApiQueryParameterVaidateSchema(ma.Schema):
     post_id = ma.Integer(
-        data_key="post-id", required=True, validate=Range(min=0)
+        required=True, validate=Range(min=0)
     )
     
