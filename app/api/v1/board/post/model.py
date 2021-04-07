@@ -1,9 +1,8 @@
 from app import db, ma
 from datetime import datetime
 
-
 from marshmallow.validate import Length, Range
-
+from ..postlike.model import PostdislikeModel, PostlikeModel
 
 class PostModel(db.Model):
     __tablename__ = "post"
@@ -27,8 +26,8 @@ class PostModel(db.Model):
     )
 
     images = db.relationship("ImageModel")
-    postlikes = db.relationship("PostLikeModel", passive_deletes=True)
-    postdislikes = db.relationship("PostDislikeModel", passive_deletes=True)
+    likes = db.relationship("PostlikeModel", passive_deletes=True)
+    dislikes = db.relationship("PostdislikeModel", passive_deletes=True)
     # posted_gallery = db.relationship('GalleryModel')
 
     def delete_post(self):
@@ -38,36 +37,6 @@ class PostModel(db.Model):
         self.views = self.views + 1
         db.session.flush()
 
-
-class PostLikeModel(db.Model):
-    __tablename__ = "postlike"
-
-    id = db.Column(db.Integer(), primary_key=True)
-    post_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("post.id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    liker_id = db.Column(
-        db.String(320),
-        db.ForeignKey("user.email", ondelete="CASCADE"),
-        nullable=False
-    )
-    
-class PostDislikeModel(db.Model):
-    __tablename__ = "postdislike"
-
-    id = db.Column(db.Integer(), primary_key=True)
-    post_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("post.id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    liker_id = db.Column(
-        db.String(320),
-        db.ForeignKey("user.email", ondelete="CASCADE"),
-        nullable=False,
-    )
 
 class PostSchema(ma.SQLAlchemySchema):
     class Meta:

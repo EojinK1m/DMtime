@@ -8,7 +8,6 @@ from app import db
 
 from app.api.v1.board.post.model import (
     PostModel,
-    PostLikeModel,
     posts_schema,
     post_schema,
     posts_schema_user,
@@ -443,23 +442,3 @@ class PostListService:
         )
 
         return posts.order_by(o)
-
-
-class PostLikeService:
-    @classmethod
-    def get_postlike_by_post_and_account(cls, post, account):
-        return PostLikeModel.query.filter_by(
-            post_id=post.id, liker_id=account.email
-        ).first()
-
-    @classmethod
-    def delete_postlike(cls, postlike):
-        db.session.delete(postlike)
-        db.session.flush()
-
-    @classmethod
-    def create_postlike(cls, post, account):
-        new_postlike = PostLikeModel(liker_id=account.email, post_id=post.id)
-
-        db.session.add(new_postlike)
-        db.session.flush()
