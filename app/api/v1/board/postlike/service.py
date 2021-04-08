@@ -6,9 +6,7 @@ from app.api.v1.board.postlike.model import PostlikeModel, PostdislikeModel
 
 
 class PostlikeService():
-    def __init__(self):
-        self.postlike_repository = PostlikeRepository()
-
+    
     @classmethod
     def get_postlike(cls, user_id, post_id):
         return PostlikeModel.query\
