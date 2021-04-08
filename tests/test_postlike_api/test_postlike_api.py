@@ -115,7 +115,7 @@ def test_post_postlike_when_already_postdislike_exist_response_409(
     temp_postdislike,
     post_postlike
 ):
-    rv = post_postdislike(
+    rv = post_postlike(
         access_token=temp_postdislike['user'].generate_access_token(),
         post_id=temp_postdislike['post'].id
     )
