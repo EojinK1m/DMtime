@@ -61,7 +61,7 @@ class Gallery(Resource):
     @GalleryService.gallery_manager_required
     def patch(self, gallery_id):
         RequestValidator.validate_request(
-            GalleryPostValidateSchema(), request.json
+            PostGalleryValidateSchema(), request.json
         )
 
         GalleryService.modify_gallery_info(
