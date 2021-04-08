@@ -285,10 +285,10 @@ def create_temp_comment(app, session):
 
 @pytest.fixture
 def create_temp_postlike(app, session):
-    from app.api.v1.board.post.model import PostLikeModel
+    from app.api.v1.board.post.model import PostlikeModel
 
     def create_temp_postlike_(post_id, liker_id):
-        temp_postlike = PostLikeModel(post_id=post_id, liker_id=liker_id)
+        temp_postlike = PostlikeModel(post_id=post_id, liker_id=liker_id)
 
         session.add(temp_postlike)
         session.commit()
@@ -302,10 +302,10 @@ def create_temp_postlike(app, session):
 
 @pytest.fixture
 def create_temp_postdislike(app, session):
-    from app.api.v1.board.post.model import PostDislikeModel
+    from app.api.v1.board.post.model import PostdislikeModel
 
     def create_temp_postdislike_(post_id, liker_id):
-        temp_postdislike = PostDislikeModel(post_id=post_id, liker_id=liker_id)
+        temp_postdislike = PostdislikeModel(post_id=post_id, liker_id=liker_id)
 
         session.add(temp_postdislike)
         session.commit()
