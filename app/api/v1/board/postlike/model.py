@@ -14,6 +14,9 @@ class PostlikeModel(db.Model):
         db.ForeignKey("user.email", ondelete="CASCADE"),
         primary_key=True
     )
+
+    def delete(self):
+        db.session.delete(self)
     # included_post = db.relationship(
     #     'PostModel',
     #     back_populates='dislikes'
@@ -33,6 +36,9 @@ class PostdislikeModel(db.Model):
         db.ForeignKey("user.email", ondelete="CASCADE"),
         primary_key=True
     )
+
+    def delete(self):
+        db.session.delete(self)
 
     # included_post = db.relationship(
     #     'PostModel',
