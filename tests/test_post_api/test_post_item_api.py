@@ -320,7 +320,7 @@ def test_delete_post_have_like(
         uploader_id=temp_account.email,
         upload_gallery_id=temp_gallery.gallery_id,
     )
-    temp_postlike = create_temp_postlike(
+    create_temp_postlike(
         liker_id=temp_account.email, post_id=temp_post.id
     )
 

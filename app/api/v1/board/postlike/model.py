@@ -23,6 +23,7 @@ class PostlikeModel(db.Model):
     # )
     # included_post = db.relationship('PostModel', back_populates="likes")
 
+
 class PostdislikeModel(db.Model):
     __tablename__ = "postdislike"
 
