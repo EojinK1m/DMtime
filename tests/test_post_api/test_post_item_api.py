@@ -23,7 +23,8 @@ def test_post_get_correct(
         "content",
         "posted_datetime",
         "uploader",
-        "likes",
+        "number_of_likes",
+        "number_of_dislikes",
         "views",
         "is_anonymous",
     )
@@ -281,7 +282,7 @@ def test_post_like_post_correct(
     )
 
     assert rv.status_code == 201
-    assert rv.json["likes"] == 1
+    assert rv.json["number_of_likes"] == 1
 
     rv2 = client.post(
         url + f"{temp_post.id}/like",
@@ -289,7 +290,7 @@ def test_post_like_post_correct(
     )
 
     assert rv2.status_code == 201
-    assert rv2.json["likes"] == 0
+    assert rv2.json["number_of_likes"] == 0
 
 
 def test_post_like_post_without_access_token(
