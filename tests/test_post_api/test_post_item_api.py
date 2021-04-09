@@ -284,12 +284,12 @@ def test_post_like_post_correct(
     assert rv.status_code == 201
     assert rv.json["number_of_likes"] == 1
 
-    rv2 = client.post(
+    rv2 = client.delete(
         url + f"{temp_post.id}/like",
         headers={"authorization": "Bearer " + access_token},
     )
 
-    assert rv2.status_code == 201
+    assert rv2.status_code == 200
     assert rv2.json["number_of_likes"] == 0
 
 
