@@ -54,7 +54,7 @@ class PostLike(Resource):
         number_of_likes = \
             len(self.postlike_service.get_postlikes_by_post_id(post_id))
 
-        return {number_of_likes: number_of_likes}, 201
+        return {"number_of_likes": number_of_likes}, 201
 
         '''
             validate_post_id
@@ -123,7 +123,7 @@ class PostDislike(Resource):
         number_of_dislikes = \
             len(self.postdislike_service.get_postdislikes_by_post_id(post_id))
 
-        return {number_of_dislikes: number_of_dislikes}, 201
+        return {"number_of_dislikes": number_of_dislikes}, 201
 
 
         '''
