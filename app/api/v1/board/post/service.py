@@ -128,39 +128,6 @@ class PostService:
             abort(403, "Access denied.")
 
     @staticmethod
-    @jwt_required
-    def post_like(post_id):
-        post = PostModel.query.get(post_id)
-        request_user = (
-            UserModel.query.filter_by(email=get_jwt_identity()).first().user
-        )
-
-        if not post:
-            return 404
-
-        postlikes = PostLikeModel.query.filter_by(post_id=post_id)
-        request_user_postlike = postlikes.filter_by(
-            liker_id=request_user.id
-        ).first()
-
-        if request_user_postlike:
-            db.session.delete(request_user_postlike)
-            db.session.commit()
-
-            return (
-                jsonify(msg="cancel post like", likes=len(postlikes.all())),
-                200,
-            )
-        else:
-            new_postlike = PostLikeModel(
-                liker_id=request_user.id, post_id=post.id
-            )
-            db.session.add(new_postlike)
-            db.session.commit()
-
-            return jsonify(msg="post like", likes=len(postlikes.all())), 200
-
-    @staticmethod
     def abort_if_not_exist_post_id(post_id):
         if PostModel.query.get(post_id) == None:
             abort(404, "post not found")
