@@ -79,8 +79,10 @@ class PostLike(Resource):
         
         postlike_to_delete.delete()
 
-        return {}, 200
+        number_of_likes = \
+            len(self.postlike_service.get_postlikes_by_post_id(post_id))
 
+        return {"number_of_likes": number_of_likes}, 200
         '''
             validate_post_id
 
@@ -150,7 +152,10 @@ class PostDislike(Resource):
         
         postdislike_to_delete.delete()
 
-        return {}, 200
+        number_of_dislikes = \
+            len(self.postdislike_service.get_postdislikes_by_post_id(post_id))
+
+        return {"number_of_dislikes": number_of_dislikes}, 200
 
         '''
             validate_post_id

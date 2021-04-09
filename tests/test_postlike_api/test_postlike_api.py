@@ -84,6 +84,7 @@ def temp_postlike(create_temp_postlike, temp_post, temp_user):
         "post": temp_post
     }
 
+
 @fixture
 def temp_postdislike(create_temp_postdislike, temp_post, temp_user):
     postdislike = create_temp_postdislike(
@@ -184,6 +185,7 @@ def test_post_postdislike_when_already_postlike_exist_response_409(
     )
     
     assert rv.status_code == 409
+
 
 def test_post_postdislike_when_already_postdislike_exist_response_409(
     temp_postdislike,

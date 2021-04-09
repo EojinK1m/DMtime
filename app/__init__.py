@@ -6,8 +6,11 @@ from flask_jwt_extended import JWTManager
 from flask_redis import FlaskRedis
 from redis import ConnectionError
 
-from app import config
 from app.util.email_sender import EmailSender
+
+import time
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.sql import text
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -39,10 +42,6 @@ def create_app(config):
         db.create_all()
 
     return app
-
-import time
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.sql import text
 
 
 def wait_db_ready(app):

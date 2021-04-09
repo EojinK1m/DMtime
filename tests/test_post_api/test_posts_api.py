@@ -150,7 +150,6 @@ def test_posts_get(
         "whether_exist_image",
         "posted_datetime",
         "uploader",
-        "likes",
         "number_of_comments",
         "views",
     )
