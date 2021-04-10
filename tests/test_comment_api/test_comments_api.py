@@ -21,7 +21,7 @@ def test_comment_post_correct(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
 
     rv = client.post(
         url + f"?post-id={temp_post.id}",
@@ -71,7 +71,7 @@ def test_comment_post_without_access_token(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
 
     test_comment_info = {"content": "This Is my Test Comment yeah~"}
 
@@ -85,7 +85,7 @@ def test_comment_post_over_size(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
 
     test_comment_info = {"content": "t" * 101}
 
@@ -112,7 +112,7 @@ def test_comment_post_lower_correct(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comment = create_temp_comment(
         wrote_user_id=temp_account.email, wrote_post_id=temp_post.id
     )
@@ -139,7 +139,7 @@ def test_comment_post_lower_with_wrong_upper_comment_id(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
 
     default_comment_data["upper_comment_id"] = 1
 
@@ -163,7 +163,7 @@ def test_comment_get_on_post_correct(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comments = [
         create_temp_comment(
             wrote_user_id=temp_account.email, wrote_post_id=temp_post.id
@@ -199,7 +199,7 @@ def test_comment_get_on_user_correct(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comments = [
         create_temp_comment(
             wrote_user_id=temp_account.email, wrote_post_id=temp_post.id
@@ -228,7 +228,7 @@ def test_comment_get_with_paging(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comments = [
         create_temp_comment(
             wrote_user_id=temp_account.email, wrote_post_id=temp_post.id
@@ -257,7 +257,7 @@ def test_comment_get_with_username_post_id_together(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
 
     rv = client.get(
         url + f"?post-id={temp_post.id}&username=" + temp_account.username
@@ -275,7 +275,7 @@ def test_get_anonymous_comment(
 ):
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
-    temp_post = create_temp_post(temp_account.email, temp_gallery.id)
+    temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comment = create_temp_comment(
         wrote_user_id=temp_account.email,
         wrote_post_id=temp_post.id,

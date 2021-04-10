@@ -8,7 +8,6 @@ from app import db
 
 from app.api.v1.board.post.model import (
     PostModel,
-    PostLikeModel,
     posts_schema,
     post_schema,
     posts_schema_user,
@@ -127,39 +126,6 @@ class PostService:
 
         if permission is False:
             abort(403, "Access denied.")
-
-    @staticmethod
-    @jwt_required
-    def post_like(post_id):
-        post = PostModel.query.get(post_id)
-        request_user = (
-            UserModel.query.filter_by(email=get_jwt_identity()).first().user
-        )
-
-        if not post:
-            return 404
-
-        postlikes = PostLikeModel.query.filter_by(post_id=post_id)
-        request_user_postlike = postlikes.filter_by(
-            liker_id=request_user.id
-        ).first()
-
-        if request_user_postlike:
-            db.session.delete(request_user_postlike)
-            db.session.commit()
-
-            return (
-                jsonify(msg="cancel post like", likes=len(postlikes.all())),
-                200,
-            )
-        else:
-            new_postlike = PostLikeModel(
-                liker_id=request_user.id, post_id=post.id
-            )
-            db.session.add(new_postlike)
-            db.session.commit()
-
-            return jsonify(msg="post like", likes=len(postlikes.all())), 200
 
     @staticmethod
     def abort_if_not_exist_post_id(post_id):
@@ -416,7 +382,7 @@ class PostListService:
     @staticmethod
     def get_posts_by_gallery_with_paging(gallery, per_page, page):
         posts = PostListService.order_post_query_from_latest(
-            PostModel.query.filter_by(gallery_id=gallery.id)
+            PostModel.query.filter_by(gallery_id=gallery.gallery_id)
         ).paginate(page=page, per_page=per_page)
 
         return posts
@@ -443,23 +409,3 @@ class PostListService:
         )
 
         return posts.order_by(o)
-
-
-class PostLikeService:
-    @classmethod
-    def get_postlike_by_post_and_account(cls, post, account):
-        return PostLikeModel.query.filter_by(
-            post_id=post.id, liker_id=account.email
-        ).first()
-
-    @classmethod
-    def delete_postlike(cls, postlike):
-        db.session.delete(postlike)
-        db.session.flush()
-
-    @classmethod
-    def create_postlike(cls, post, account):
-        new_postlike = PostLikeModel(liker_id=account.email, post_id=post.id)
-
-        db.session.add(new_postlike)
-        db.session.flush()

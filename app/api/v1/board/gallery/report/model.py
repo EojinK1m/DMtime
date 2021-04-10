@@ -16,8 +16,8 @@ class ReportModel(db.Model):
         nullable=False,
     )
     gallery_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("gallery.id", ondelete="CASCADE"),
+        db.String(30),
+        db.ForeignKey("gallery.gallery_id", ondelete="CASCADE"),
         nullable=False,
     )
     reported_content_type = db.Column(db.Integer(), nullable=False)

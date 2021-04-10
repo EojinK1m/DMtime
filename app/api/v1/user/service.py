@@ -122,7 +122,9 @@ class AccountService:
     @staticmethod
     def generate_verification_code():
         while True:
-            temp_code = verification_code_generater.generate_verification_code()
+            temp_code = (
+                verification_code_generater.generate_verification_code()
+            )
 
             if not (redis_client.exists(temp_code)):
                 return temp_code
@@ -152,7 +154,8 @@ class AccountService:
 
         if found_account is None:
             abort(
-                404, "Account not found, there is no account include the email."
+                404,
+                "Account not found, there is no account include the email.",
             )
 
         return found_account

@@ -6,8 +6,11 @@ from flask_jwt_extended import JWTManager
 from flask_redis import FlaskRedis
 from redis import ConnectionError
 
-from app import config
 from app.util.email_sender import EmailSender
+
+import time
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.sql import text
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -38,39 +41,7 @@ def create_app(config):
     with app.app_context():
         db.create_all()
 
-    # from app.api.v1.image import image_blueprint
-    # from app.api.v1.board import board_blueprint
-    # from app.api.v1.user import user_blueprint
-    # from app.api.v1.user import account
-    #
-    # app.register_blueprint(board_blueprint, url_prefix='/api/board')
-    # app.register_blueprint(user_blueprint, url_prefix='/api/users')
-    # app.register_blueprint(image_blueprint, url_prefix='/api/images')
-
     return app
-
-
-from functools import wraps
-from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
-
-
-def admin_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
-        claims = get_jwt_claims()
-        if not claims["roles"] == "admin":
-            return jsonify(msg="Access denied, admin only!"), 403
-        else:
-            return fn(*args, **kwargs)
-
-    return wrapper
-
-
-import time
-from sqlalchemy.exc import OperationalError
-from sqlalchemy.sql import text
 
 
 def wait_db_ready(app):
