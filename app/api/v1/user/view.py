@@ -2,6 +2,7 @@ import pickle
 from smtplib import SMTPException
 
 from flask import request, current_app, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 
 from app import redis_client
@@ -199,3 +200,11 @@ class DuplicateCheckUsername(Resource):
         usable = UserService.get_user_by_username_or_none(username) is None
 
         return {"usable": usable}, 200
+
+
+class Me(Resource):
+    @jwt_required
+    def get(self):
+        user = UserService.get_user_by_email_or_none(get_jwt_identity())
+
+        return user_schema.dump(user)
