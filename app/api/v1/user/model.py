@@ -106,14 +106,14 @@ class AccountRegisterSchema(ma.Schema):
         required=True,
         validate=[
             validate.Length(min=2, max=20),
-            validate.Regexp(re.compile("^[가-힣\w]+$")),
+            validate.Regexp(re.compile(r"^[가-힣\w]+$")),
         ],
     )
     password = ma.Str(
         required=True,
         validate=validate.Regexp(
             re.compile(
-                "^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\\]{8,36}$"
+                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
             )
         )
         # 비밀번호 8자리 이상 36자리 이하 숫자, 알파벳 1개씩 포함
@@ -130,7 +130,7 @@ class AccountChangePasswordInputSchema(ma.Schema):
         required=True,
         validate=validate.Regexp(
             re.compile(
-                "^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\]{8,36}$"
+                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
             )
         ),
     )
@@ -139,7 +139,7 @@ class AccountChangePasswordInputSchema(ma.Schema):
         required=True,
         validate=validate.Regexp(
             re.compile(
-                "^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\\[\\]:;<>,.?/~_+-=|\\\]{8,36}$"
+                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
             )
         ),
     )
