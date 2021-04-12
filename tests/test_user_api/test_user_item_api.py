@@ -31,7 +31,7 @@ def test_get_user_information_response_200(client, test_user):
     assert user_info
     assert user_info["username"] == test_user.username
     assert user_info["explain"] == test_user.explain
-    assert user_info["profile_image"]["id"] == test_user.profile_image.id
+    assert user_info["profile_image"]["filename"] == test_user.profile_image.id
 
 
 def test_put_user(client, test_user):

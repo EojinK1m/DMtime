@@ -31,6 +31,9 @@ class GalleryModel(db.Model):
 
         db.session.commit()
 
+    @property
+    def id(self):
+        return self.gallery_id
 
 class GallerySchema(ma.SQLAlchemySchema):
     class Meta:

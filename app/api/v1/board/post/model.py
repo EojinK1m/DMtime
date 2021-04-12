@@ -49,7 +49,7 @@ class PostSchema(ma.SQLAlchemySchema):
     class Meta:
         model = PostModel
 
-    image_ids = ma.Method(
+    images = ma.Method(
         serialize="get_image_ids", deserialize="get_image_ids"
     )
     id = ma.auto_field()
@@ -70,7 +70,7 @@ class PostSchema(ma.SQLAlchemySchema):
     posted_gallery = ma.Nested("GallerySchema")
     number_of_comments = ma.Method(serialize="get_number_of_comments")
     whether_exist_image = ma.Method(serialize="get_whether_image_exist")
-    # requested_user_reaction = ma.Method(serialize="get_user_reaction")
+    my_reaction = ma.Method(serialize="get_user_reaction")
 
     def get_abbreviated_datetime_as_string(self, obj):
         def _get_abbreviated_datetime_as_string(dt):
@@ -115,24 +115,24 @@ class PostSchema(ma.SQLAlchemySchema):
         else:
             return True
 
-    # def get_user_reaction(self, obj):
-    #     user_id = get_jwt_identity()
-        
-    #     for like in obj.likes:
-    #         if like.liker_id == user_id:
-    #             return 'like'
+    def get_user_reaction(self, obj):
+        user_id = get_jwt_identity()
 
-    #     for dislike in obj.dislikes:
-    #         if dislike.liker_id == user_id:
-    #             return 'dislike'
-        
-    #     return 'none'
+        for like in obj.likes:
+            if like.liker_id == user_id:
+                return 'like'
+
+        for dislike in obj.dislikes:
+            if dislike.liker_id == user_id:
+                return 'dislike'
+
+        return 'none'
 
 
 class PostPostInputValidateSchema(ma.Schema):
     content = ma.Str(required=True, validate=Length(min=1))
     title = ma.Str(required=True, validate=Length(min=1, max=30))
-    image_ids = ma.List(ma.Integer, required=True)
+    images = ma.List(ma.String(validate=Length(max=100), required=True))
     is_anonymous = ma.Boolean(required=True)
 
 
@@ -163,13 +163,13 @@ class HotPostGetQueryParameterValidateSchema(ma.Schema):
 class PostPatchInputValidateSchema(ma.Schema):
     content = ma.Str(required=False, validate=Length(min=1))
     title = ma.Str(required=False, validate=Length(min=1, max=30))
-    image_ids = ma.List(ma.Integer, required=False)
+    images = ma.List(ma.String(validate=Length(max=100)), required=False)
 
 
 post_schema = PostSchema(
     many=False, exclude=["whether_exist_image", "number_of_comments"]
 )
-posts_schema = PostSchema(many=True, exclude=["image_ids", "content"])
+posts_schema = PostSchema(many=True, exclude=["images", "content"])
 posts_schema_user = PostSchema(
-    many=True, exclude=["content", "image_ids", "uploader"]
+    many=True, exclude=["content", "images", "uploader"]
 )

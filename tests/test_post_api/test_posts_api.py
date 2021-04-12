@@ -8,7 +8,7 @@ def default_post_data():
     return {
         "title": "this is test post tile_1",
         "content": "Why dont you recognize. Im so rare?",
-        "image_ids": [],
+        "images": [],
         "is_anonymous": False,
     }
 
@@ -48,7 +48,8 @@ def test_post_post_correct_with_image(
     temp_account = create_temp_account()
     temp_gallery = create_temp_gallery()
     temp_image = create_temp_image()
-    default_post_data["image_ids"].append(temp_image.id)
+    default_post_data["images"].append(temp_image.id)
+    print(default_post_data)
 
     rv = post_post(
         client,
@@ -57,6 +58,7 @@ def test_post_post_correct_with_image(
         temp_account.generate_access_token(),
     )
 
+    print(rv.json)
     assert rv.status_code == 201
 
 
@@ -66,11 +68,15 @@ def test_post_post_without_access_token(client, create_temp_gallery):
     test_post_info = {
         "title": "this is test post tile_1",
         "content": "Why dont you recognize. Im so rare?",
+        "images": []
     }
 
-    rv = post_post(client, test_post_info, temp_gallery.gallery_id)
+    rv = client.post(
+        url + f"?gallery-id={temp_gallery.id}",
+        json=test_post_info
+    )
 
-    rv.status_code == 403
+    assert rv.status_code == 401
 
 
 # Todo

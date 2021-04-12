@@ -86,7 +86,7 @@ class PostList(Resource):
             posted_datetime=datetime.now(),
         )
 
-        for image_id in json["image_ids"]:
+        for image_id in json["images"]:
             ImageService.set_foreign_key(
                 image_id=image_id, key=created_post.id, location="post"
             )
@@ -115,6 +115,7 @@ class HotPostList(Resource):
 
 
 class Post(Resource):
+    @jwt_required
     def get(self, post_id):
         post = PostService.get_post_by_post_id(post_id)
 

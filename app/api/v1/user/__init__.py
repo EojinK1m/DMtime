@@ -7,6 +7,7 @@ from app.api.v1.user.view import (
     DuplicateCheckEmail,
     DuplicateCheckUsername,
     Users,
+    Me
 )
 
 user_api = Api()
@@ -17,3 +18,4 @@ user_api.add_resource(Account, "/users/<username>/account")
 user_api.add_resource(AccountPassword, "/users/<username>/account/password")
 user_api.add_resource(DuplicateCheckEmail, "/users/email-duplication")
 user_api.add_resource(DuplicateCheckUsername, "/users/username-duplication")
+user_api.add_resource(Me, "/me")

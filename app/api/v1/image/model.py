@@ -8,8 +8,7 @@ from marshmallow import ValidationError
 class ImageModel(db.Model):
     __tablename__ = "image"
 
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(100), nullable=False)
+    filename = db.Column(db.String(100), primary_key=True)
     user_id = db.Column(
         db.String(320),
         db.ForeignKey("user.email", ondelete="CASCADE"),
@@ -24,6 +23,10 @@ class ImageModel(db.Model):
         db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=True
     )
 
+    @property
+    def id(self):
+        return self.filename
+
 
 class ImageSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -31,7 +34,6 @@ class ImageSchema(ma.SQLAlchemySchema):
 
     url = ma.Method(serialize="get_uri", deserialize="get_uri")
     filename = ma.auto_field()
-    id = ma.auto_field()
 
     def get_uri(self, obj):
         return current_app.config["IMAGES_URL"] + obj.filename

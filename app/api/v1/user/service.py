@@ -9,7 +9,7 @@ from flask_jwt_extended import (
 )
 
 from app import db, redis_client, email_sender
-from app.util import verification_code_generater
+from app.util import random_string_generator
 
 from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
@@ -97,6 +97,7 @@ class AccountService:
         if UserModel.query.filter_by(email=email).first():
             abort(409, "same email exist")
 
+    @staticmethod
     def store_register_data_temporally(verification_code, data):
         with redis_client.pipeline() as pipe:
             pipe.mset({verification_code: json.dumps(data)})
@@ -123,7 +124,7 @@ class AccountService:
     def generate_verification_code():
         while True:
             temp_code = (
-                verification_code_generater.generate_verification_code()
+                random_string_generator.generate_verification_code()
             )
 
             if not (redis_client.exists(temp_code)):
@@ -131,7 +132,7 @@ class AccountService:
 
     @staticmethod
     def validate_verification_code(code):
-        if not (verification_code_generater.validate_verification_code(code)):
+        if not (random_string_generator.validate_verification_code(code)):
             raise abort(400)
 
     @staticmethod
