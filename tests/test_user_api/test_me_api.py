@@ -26,11 +26,3 @@ def test_get_me_success_response_200(temp_user, get_me):
 
     assert rv.status_code == 200
     assert rv.json
-
-
-def test_get_me_without_access_token_response_401(get_me):
-    rv = get_me(
-        ''
-    )
-
-    assert rv.status_code == 401
