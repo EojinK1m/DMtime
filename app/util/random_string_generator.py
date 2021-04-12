@@ -43,15 +43,19 @@ code_characters = [
 RANDOM_TOKEN_LENGTH = 10
 
 
-def generate_verification_code():
-    random.shuffle(code_characters)
-    code_list = code_characters[0:RANDOM_TOKEN_LENGTH]
-    return "".join(code_list)
-
-
 def validate_verification_code(code):
     if not isinstance(code, str):
         raise TypeError("code is not string")
 
     p = re.compile("[0-9A-Z]{10}")
     return p.match(code) != None
+
+
+def generate_random_string(length):
+    random.shuffle(code_characters)
+    code_list = code_characters[0:length]
+    return "".join(code_list)
+
+
+def generate_verification_code():
+    return generate_random_string(RANDOM_TOKEN_LENGTH)
