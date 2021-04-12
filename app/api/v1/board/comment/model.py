@@ -44,7 +44,7 @@ class CommentSchema(ma.SQLAlchemySchema):
     content = ma.auto_field()
     wrote_datetime = ma.Method("get_abbreviated_datetime_as_string")
     upper_comment_id = ma.auto_field()
-    writer = ma.Method("get_writer_username_with_check_anonymous")
+    writer = ma.Method("get_writer_with_check_anonymous")
     is_anonymous = ma.auto_field()
     wrote_post = ma.Nested("PostSchema", only=["id"])
 
@@ -62,13 +62,16 @@ class CommentSchema(ma.SQLAlchemySchema):
 
         return _get_abbreviated_datetime_as_string(obj.wrote_datetime)
 
-    def get_writer_username_with_check_anonymous(self, obj):
+    def get_writer_with_check_anonymous(self, obj):
         if obj.is_anonymous:
-            return {"username": "익명의 대마인"}
+            return {
+                "username": "익명의 대마인",
+                "profile_image": None
+            }
         else:
             from app.api.v1.user.model import UserSchema
 
-            return UserSchema(only=["username"]).dump(obj.writer)
+            return UserSchema(only=["username", "profile_image"]).dump(obj.writer)
 
 
 class CommentInputSchema(ma.Schema):

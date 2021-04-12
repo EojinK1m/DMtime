@@ -72,8 +72,14 @@ class UserSchema(ma.SQLAlchemySchema):
 
     username = ma.auto_field()
     explain = ma.auto_field()
-    profile_image = ma.Nested("ImageSchema", only=["url", "filename"])
+    # profile_image = ma.Nested("ImageSchema", only=["url", "filename"])
+    profile_image = ma.Method(
+        serialize="get_profile_image"
+    )
     email = ma.auto_field()
+
+    def get_profile_image(self, obj):
+        return obj.profile_image.id
 
 
 user_schema = UserSchema(exclude=["email"])
