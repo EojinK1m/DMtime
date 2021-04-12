@@ -72,7 +72,7 @@ class UserSchema(ma.SQLAlchemySchema):
 
     username = ma.auto_field()
     explain = ma.auto_field()
-    profile_image = ma.Nested("ImageSchema", only=["url", "id"])
+    profile_image = ma.Nested("ImageSchema", only=["url", "filename"])
     email = ma.auto_field()
 
 
@@ -85,13 +85,13 @@ account_schema = UserSchema(only=["email"])
 class UserPatchInputSchema(ma.Schema):
     username = ma.Str(required=False, validate=validate.Length(min=2, max=20))
     user_explain = ma.Str(required=False, validate=validate.Length(max=400))
-    profile_image_id = ma.Int(required=False, allow_null=True)
+    profile_image_id = ma.String(required=False, allow_null=True, validate=validate.Length(max=100))
 
 
 class UserPutInputSchema(ma.Schema):
     username = ma.Str(required=True, validate=validate.Length(min=2, max=20))
     user_explain = ma.Str(required=True, validate=validate.Length(max=400))
-    profile_image_id = ma.Int(required=False, allow_null=True)
+    profile_image_id = ma.String(required=False, allow_null=True, validate=validate.Length(max=100))
 
 
 class AccountRegisterSchema(ma.Schema):

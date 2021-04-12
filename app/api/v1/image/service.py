@@ -35,10 +35,10 @@ class ImageService:
 
     @classmethod
     def get_image_by_id(cls, image_id):
-        image = ImageModel.query.filter_by(id=image_id).first()
+        image = ImageModel.query.filter_by(filename=image_id).first()
 
         if image is None:
-            abort(404, f"Image{image_id} s not found.")
+            abort(404, f"Image {image_id} s not found.")
 
         return image
 
@@ -65,6 +65,7 @@ class ImageService:
 
     @classmethod
     def set_foreign_key(cls, image_id, key, location):
+        print(image_id)
         image = cls.get_image_by_id(image_id)
 
         if image.post_id or image.user_id or image.gallery_id:

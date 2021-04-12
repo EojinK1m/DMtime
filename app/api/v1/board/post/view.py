@@ -86,7 +86,7 @@ class PostList(Resource):
             posted_datetime=datetime.now(),
         )
 
-        for image_id in json["image_ids"]:
+        for image_id in json["images"]:
             ImageService.set_foreign_key(
                 image_id=image_id, key=created_post.id, location="post"
             )

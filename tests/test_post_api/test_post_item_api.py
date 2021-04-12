@@ -249,7 +249,7 @@ def test_post_patch_with_another_account(
     assert rv.status_code == 403
 
 
-def test_post_patch_image_ids_correct(
+def test_post_patch_images_correct(
     client,
     create_temp_account,
     create_temp_gallery,
@@ -268,7 +268,7 @@ def test_post_patch_image_ids_correct(
 
     rv = client.patch(
         url + f"{temp_post.id}",
-        json={"image_ids": [temp_image.id]},
+        json={"images": [temp_image.id]},
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
@@ -277,23 +277,23 @@ def test_post_patch_image_ids_correct(
 
     rv2 = client.patch(
         url + f"{temp_post.id}",
-        json={"image_ids": [temp_image.id, temp_image_2.id]},
+        json={"images": [temp_image.id, temp_image_2.id]},
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
     )
     assert (
         rv2.status_code == 200
-    ), "image_ids = [temp_image.id, temp_image_2.id]"
+    ), "images = [temp_image.id, temp_image_2.id]"
 
     rv4 = client.patch(
         url + f"{temp_post.id}",
-        json={"image_ids": []},
+        json={"images": []},
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
     )
-    assert rv4.status_code == 200, "image_ids = []"
+    assert rv4.status_code == 200, "images = []"
 
 
 def test_post_patch_image_id_none(
@@ -308,13 +308,13 @@ def test_post_patch_image_id_none(
 
     rv = client.patch(
         url + f"{temp_post.id}",
-        json={"image_ids": None},
+        json={"images": None},
         headers={
             "authorization": "Bearer " + temp_account.generate_access_token()
         },
     )
 
-    assert rv.status_code == 400, "image_ids = None"
+    assert rv.status_code == 400, "images = None"
 
 
 def test_post_like_post_correct(
