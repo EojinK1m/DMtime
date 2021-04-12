@@ -363,7 +363,7 @@ def create_temp_report(app, session):
 
 @pytest.fixture
 def create_temp_register_account(app, session, redis_client):
-    from app.util import verification_code_generater
+    from app.util import random_string_generator
     from app.api.v1.user.model import UserModel
     from app.api.v1.user.view import Users
     from app import bcrypt
@@ -383,7 +383,7 @@ def create_temp_register_account(app, session, redis_client):
             explain=explain,
         )
         verification_code = (
-            verification_code_generater.generate_verification_code()
+            random_string_generator.generate_verification_code()
         )
 
         Users().store_account_data_with_verification_code(
