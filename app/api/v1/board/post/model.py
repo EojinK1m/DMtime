@@ -70,7 +70,7 @@ class PostSchema(ma.SQLAlchemySchema):
     posted_gallery = ma.Nested("GallerySchema")
     number_of_comments = ma.Method(serialize="get_number_of_comments")
     whether_exist_image = ma.Method(serialize="get_whether_image_exist")
-    # requested_user_reaction = ma.Method(serialize="get_user_reaction")
+    my_reaction = ma.Method(serialize="get_user_reaction")
 
     def get_abbreviated_datetime_as_string(self, obj):
         def _get_abbreviated_datetime_as_string(dt):
@@ -115,18 +115,18 @@ class PostSchema(ma.SQLAlchemySchema):
         else:
             return True
 
-    # def get_user_reaction(self, obj):
-    #     user_id = get_jwt_identity()
-        
-    #     for like in obj.likes:
-    #         if like.liker_id == user_id:
-    #             return 'like'
+    def get_user_reaction(self, obj):
+        user_id = get_jwt_identity()
 
-    #     for dislike in obj.dislikes:
-    #         if dislike.liker_id == user_id:
-    #             return 'dislike'
-        
-    #     return 'none'
+        for like in obj.likes:
+            if like.liker_id == user_id:
+                return 'like'
+
+        for dislike in obj.dislikes:
+            if dislike.liker_id == user_id:
+                return 'dislike'
+
+        return 'none'
 
 
 class PostPostInputValidateSchema(ma.Schema):
