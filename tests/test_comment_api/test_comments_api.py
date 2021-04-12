@@ -160,8 +160,10 @@ def test_comment_get_on_post_correct(
     create_temp_gallery,
     create_temp_post,
     create_temp_comment,
+    create_temp_image
 ):
-    temp_account = create_temp_account()
+    temp_image = create_temp_image()
+    temp_account = create_temp_account(profile_image=temp_image)
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(temp_account.email, temp_gallery.gallery_id)
     temp_comments = [
@@ -176,7 +178,7 @@ def test_comment_get_on_post_correct(
     assert rv.status_code == 200
 
     comments = rv.json["comments"]
-    assert comments != None
+    assert comments is not None
 
     expected_keys = (
         "id",
@@ -188,6 +190,8 @@ def test_comment_get_on_post_correct(
     )
     for expect_key in expected_keys:
         assert expect_key in comments[0].keys()
+
+    assert comments[0]["writer"]["profile_image"] == temp_image.filename
 
 
 def test_comment_get_on_user_correct(
@@ -286,4 +290,5 @@ def test_get_anonymous_comment(
 
     assert rv.status_code == 200
     assert rv.json["comments"][0]["writer"]["username"] == "익명의 대마인"
-    assert rv.json["comments"][0]["is_anonymous"] == True
+    assert rv.json["comments"][0]["is_anonymous"] is True
+    assert rv.json["comments"][0]["writer"]["profile_image"] is None
