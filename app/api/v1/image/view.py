@@ -5,6 +5,7 @@ from flask import request, current_app
 from flask_restful import Resource
 
 from app import db
+from app.util.random_string_generator import generate_random_string
 
 from app.util.request_validator import RequestValidator
 from app.api.v1.image.service import ImageService
@@ -30,19 +31,21 @@ class ImageUpload(Resource):
             )
 
         image_file = validate_image_file(request.files.get("image"))
+        file_name_for_save = self.generate_filename(get_extension_from_image(image_file))
 
-        temp_image_model = ImageService.create_image()
-        file_name_for_save = (
-            f"{temp_image_model.id}.{get_extension_from_image(image_file)}"
-        )
-
-        ImageService.update_image(
-            image=temp_image_model, file_name=file_name_for_save
-        )
+        ImageService.create_image(file_name=file_name_for_save)
         image_file.filename = file_name_for_save
         save_image_file_2_storage(image_file)
 
         return {}, 201
+
+    @staticmethod
+    def generate_filename(extension):
+        while True:
+            filename = generate_random_string(10) + '.' + extension
+
+            if ImageService.get_image_by_id_or_none(filename) is None:
+                return filename
 
 
 class Image(Resource):
