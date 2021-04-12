@@ -115,6 +115,7 @@ class HotPostList(Resource):
 
 
 class Post(Resource):
+    @jwt_required
     def get(self, post_id):
         post = PostService.get_post_by_post_id(post_id)
 
