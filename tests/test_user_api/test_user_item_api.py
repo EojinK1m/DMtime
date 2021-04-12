@@ -31,7 +31,7 @@ def test_get_user_information_response_200(client, test_user):
     assert user_info
     assert user_info["username"] == test_user.username
     assert user_info["explain"] == test_user.explain
-    assert user_info["profile_image"]["filename"] == test_user.profile_image.id
+    assert user_info["profile_image"] == test_user.profile_image.id
 
 
 def test_put_user(client, test_user):
@@ -43,7 +43,7 @@ def test_put_user(client, test_user):
         access_token=get_access_token_of_user(test_user),
         json={
             "username": change_username,
-            "profile_image_id": test_user.profile_image.id,
+            "profile_image": test_user.profile_image.id,
             "user_explain": test_user.explain,
         },
     )
@@ -72,7 +72,7 @@ def test_patch_user_information_with_exist_data(client, test_user):
         json={
             "username": test_user.username,
             "user_explain": test_user.explain,
-            "profile_image_id": test_user.profile_image.id,
+            "profile_image": test_user.profile_image.id,
         },
     )
 
