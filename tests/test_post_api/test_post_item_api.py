@@ -16,9 +16,9 @@ def get_post(client):
 
 
 def test_post_get_correct(
-    client, create_temp_account, create_temp_gallery, create_temp_post, get_post
+    client, create_temp_account, create_temp_gallery, create_temp_post, get_post, create_temp_image
 ):
-    temp_account = create_temp_account()
+    temp_account = create_temp_account(profile_image=create_temp_image())
     temp_gallery = create_temp_gallery()
     temp_post = create_temp_post(
         uploader_id=temp_account.email,
@@ -51,6 +51,7 @@ def test_post_get_correct(
 
     assert rv.json["posted_gallery"]["name"] == temp_gallery.name
     assert rv.json["uploader"]["username"] == temp_account.username
+    assert rv.json["uploader"]["profile_image"] == temp_account.profile_image.filename
     assert rv.json["my_reaction"] == 'none'
 
 

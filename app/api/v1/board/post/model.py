@@ -53,7 +53,7 @@ class PostSchema(ma.SQLAlchemySchema):
         serialize="get_image_ids", deserialize="get_image_ids"
     )
     id = ma.auto_field()
-    uploader = ma.Method("get_uploader_with_check_anonymous")
+    uploader = ma.Method("get_writer_with_check_anonymous")
     content = ma.auto_field()
     title = ma.auto_field()
     views = ma.auto_field()
@@ -86,13 +86,16 @@ class PostSchema(ma.SQLAlchemySchema):
 
         return _get_abbreviated_datetime_as_string(obj.posted_datetime)
 
-    def get_uploader_with_check_anonymous(self, obj):
+    def get_writer_with_check_anonymous(self, obj):
         if obj.is_anonymous:
-            return {"username": "익명의 대마인"}
+            return {
+                "username": "익명의 대마인",
+                "profile_image": None
+            }
         else:
             from app.api.v1.user.model import UserSchema
 
-            return UserSchema(only=["username"]).dump(obj.uploader)
+            return UserSchema(only=["username", "profile_image"]).dump(obj.uploader)
 
     def get_image_ids(self, obj):
         list = []
