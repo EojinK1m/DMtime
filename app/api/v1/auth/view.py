@@ -27,8 +27,7 @@ class Token(Resource):
 
         if login_user and login_user.verify_password(password):
             return {
-                "access_token": login_user.generate_access_token(),
-                "refresh_token": login_user.generate_refresh_token(),
+                "access_token": login_user.generate_access_token()
             }, 201
 
         abort(401, "incorrect username or password")

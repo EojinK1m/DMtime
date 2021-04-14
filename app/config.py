@@ -24,7 +24,7 @@ class DefaultConfig(object):
     EMAIL_SERVER = os.environ["DMTIME_EMAIL_SERVER"]
     EMAIL_PORT = os.environ["DMTIME_EMAIL_PORT"]
     EMAIL_VERIFY_DEADLINE = 300
-
+    JWT_ACCESS_TOKEN_EXPIRES = 60 * 24 * 30
 
 class ProductConfig(DefaultConfig):
     pass
