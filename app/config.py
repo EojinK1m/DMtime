@@ -26,6 +26,12 @@ class DefaultConfig(object):
     EMAIL_VERIFY_DEADLINE = 300
     JWT_ACCESS_TOKEN_EXPIRES = 60 * 24 * 30
 
+    STATIC_DATA_STORAGE = os.environ["DMTIME_STATIC_DATA_STORAGE"]
+
+    S3_BUCKET_NAME = os.environ.get("DMTIME_S3_BUCKET_NAME", "")
+    S3_IMAGES_STORAGE_PATH = os.environ.get("DMTIME_S3_IMAGES_STORAGE_PATH", "")
+
+
 class ProductConfig(DefaultConfig):
     pass
 

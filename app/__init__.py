@@ -7,6 +7,7 @@ from flask_redis import FlaskRedis
 from redis import ConnectionError
 
 from app.util.email_sender import EmailSender
+from app.util.file_saver import FileSaver
 
 import time
 from sqlalchemy.exc import OperationalError
@@ -18,6 +19,7 @@ bcrypt = Bcrypt()
 jwt = JWTManager()
 redis_client = FlaskRedis()
 email_sender = EmailSender()
+file_saver = FileSaver()
 
 
 def create_app(config):
@@ -34,6 +36,7 @@ def create_app(config):
     jwt.init_app(app)
     redis_client.init_app(app)
     email_sender.init_app(app)
+    file_saver.init_app(app)
 
     wait_db_ready(app)
     wait_redis_ready(app)
