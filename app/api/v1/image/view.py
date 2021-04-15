@@ -1,10 +1,9 @@
-import os
 import imghdr
 
-from flask import request, current_app
+from flask import request, abort
 from flask_restful import Resource
 
-from app import db
+from app import db, file_saver
 from app.util.random_string_generator import generate_random_string
 
 from app.util.request_validator import RequestValidator
@@ -23,19 +22,18 @@ class ImageUpload(Resource):
         def get_extension_from_image(file):
             return imghdr.what(file.stream)
 
-        def save_image_file_2_storage(image):
-            image.save(
-                os.path.join(
-                    current_app.config["IMAGE_UPLOADS"], image.filename
-                )
-            )
+        def save_image_file_2_storage(image, name):
+            try:
+                file_saver.save_file(image, name)
+            except Exception as e:
+                abort(500, str(e))
 
         image_file = validate_image_file(request.files.get("image"))
         file_name_for_save = self.generate_filename(get_extension_from_image(image_file))
 
         ImageService.create_image(file_name=file_name_for_save)
-        image_file.filename = file_name_for_save
-        save_image_file_2_storage(image_file)
+
+        save_image_file_2_storage(image_file, file_name_for_save)
 
         return {}, 201
 
