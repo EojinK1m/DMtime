@@ -8,7 +8,7 @@ from app.util.random_string_generator import generate_random_string
 
 from app.util.request_validator import RequestValidator
 from app.api.v1.image.service import ImageService
-from app.api.v1.image.model import PostImageValidateSchema
+from app.api.v1.image.model import PostImageValidateSchema, ImageSchema
 
 
 class ImageUpload(Resource):
@@ -31,11 +31,11 @@ class ImageUpload(Resource):
         image_file = validate_image_file(request.files.get("image"))
         file_name_for_save = self.generate_filename(get_extension_from_image(image_file))
 
-        ImageService.create_image(file_name=file_name_for_save)
+        image = ImageService.create_image(file_name=file_name_for_save)
 
         save_image_file_2_storage(image_file, file_name_for_save)
 
-        return {}, 201
+        return ImageSchema().dump(image), 201
 
     @staticmethod
     def generate_filename(extension):

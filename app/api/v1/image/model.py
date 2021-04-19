@@ -2,7 +2,7 @@ import imghdr
 
 from app import db, ma
 from flask import current_app
-from marshmallow import ValidationError
+from marshmallow import ValidationError, fields
 
 
 class ImageModel(db.Model):
@@ -30,13 +30,14 @@ class ImageModel(db.Model):
 
 class ImageSchema(ma.SQLAlchemySchema):
     class Meta:
-        model = ImageModel()
+        model = ImageModel
 
-    url = ma.Method(serialize="get_uri", deserialize="get_uri")
-    filename = ma.auto_field()
+    image = fields.String(attribute="filename")
 
-    def get_uri(self, obj):
-        return current_app.config["IMAGES_URL"] + obj.filename
+    # url = ma.Method(serialize="get_uri", deserialize="get_uri")
+    #
+    # def get_uri(self, obj):
+    #     return current_app.config["IMAGES_URL"] + obj.filename
 
 
 class PostImageValidateSchema(ma.Schema):
