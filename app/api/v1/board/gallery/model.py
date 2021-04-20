@@ -59,11 +59,11 @@ class GetGalleriesQueryParameterValidateSchema(ma.Schema):
 
 
 class PostGalleryValidateSchema(ma.Schema):
-    name = ma.Str(requierd=True, validate=Length(max=30, min=1))
-    explain = ma.Str(requierd=True, validate=Length(max=255, min=0))
-    gallery_id = ma.Str(requierd=True, validate=Length(max=30, min=1))
+    name = ma.Str(required=True, validate=Length(max=30, min=1), allow_none=False)
+    explain = ma.Str(required=True, validate=Length(max=255, min=0))
+    gallery_id = ma.Str(required=True, validate=Length(max=30, min=1))
     gallery_type = ma.Integer(
-        requierd=True,
+        required=True,
         allow_none=False,
         validate=Range(min=0, max=2),
     )
