@@ -36,6 +36,21 @@ def temp_account(create_temp_account):
     return create_temp_account()
 
 
+def test_create_gallery_without_name_key_response_400(client, temp_account):
+
+    rv = client.post(
+        url,
+        json={
+            "gallery_id": "galleryid",
+            "explain": "explain",
+            "gallery_type": 2,
+        },
+        headers={"authorization": "Bearer " + temp_account.generate_access_token()},
+    )
+
+    assert rv.status_code == 400
+
+
 def test_create_gallery_correct_expect_response_201(
     post_gallery, temp_admin_account
 ):
