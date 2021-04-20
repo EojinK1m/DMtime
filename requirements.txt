@@ -21,7 +21,7 @@ marshmallow-sqlalchemy==0.22.2
 more-itertools==8.2.0
 packaging==20.3
 pluggy==0.13.1
-py==1.8.1
+py==1.10.0
 pycparser==2.19
 PyJWT==1.7.1
 PyMySQL==0.9.3
