@@ -31,7 +31,7 @@ class PostList(Resource):
             PostGetQueryParameterValidateSchema(), request.args
         )
 
-        gallery_id = request.args.get(key="gallery-id", default=None, type=int)
+        gallery_id = request.args.get(key="gallery-id", default=None, type=str)
         username = request.args.get(key="username", default=None, type=str)
         page = request.args.get(key="page", default=1, type=int)
         per_page = request.args.get(key="per-page", default=20, type=int)

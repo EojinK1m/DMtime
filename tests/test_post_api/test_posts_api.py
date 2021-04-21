@@ -225,10 +225,12 @@ def test_posts_get_with_not_exist_page(
 
 
 def test_posts_get_to_no_posts_gallery(
-    client, create_temp_gallery, create_temp_account
+    client, create_temp_gallery, create_temp_account, create_temp_post
 ):
     temp_gallery = create_temp_gallery()
-    create_temp_account()
+    gallery_having_post = create_temp_gallery()
+    temp_account = create_temp_account()
+    create_temp_post(uploader_id=temp_account.email, upload_gallery_id=gallery_having_post.id)
 
     rv = client.get(
         url + f"?gallery-id={temp_gallery.gallery_id}&per-page={5}"
