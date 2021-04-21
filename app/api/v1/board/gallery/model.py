@@ -69,7 +69,6 @@ class PostGalleryValidateSchema(ma.Schema):
     )
 
 
-class GalleryPatchValidateSchema(ma.Schema):
-    name = ma.Str(requierd=False, validate=Length(max=255, min=0))
-    explain = ma.Str(requierd=False)
-    gallery_id = ma.Str(requierd=True, validate=Length(max=30, min=1))
+class PatchGalleryValidateSchema(ma.Schema):
+    name = ma.Str(required=False, validate=Length(max=255, min=0))
+    explain = ma.Str(required=False)

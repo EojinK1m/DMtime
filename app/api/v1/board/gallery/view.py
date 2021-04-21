@@ -10,6 +10,7 @@ from app.api.v1.board.gallery.model import (
     gallery_schema,
     GetGalleriesQueryParameterValidateSchema,
     PostGalleryValidateSchema,
+    PatchGalleryValidateSchema
 )
 from app.api.v1.general.service import verify_admin_jwt_in_request
 from app.api.v1.user.service import AccountService
@@ -62,7 +63,7 @@ class Gallery(Resource):
     @GalleryService.gallery_manager_required
     def patch(self, gallery_id):
         RequestValidator.validate_request(
-            PostGalleryValidateSchema(), request.json
+            PatchGalleryValidateSchema(), request.json
         )
 
         GalleryService.modify_gallery_info(
