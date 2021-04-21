@@ -1,3 +1,4 @@
+from flask_jwt_extended import get_jwt_identity
 from marshmallow.validate import Length, Range
 from datetime import datetime
 
@@ -47,6 +48,7 @@ class CommentSchema(ma.SQLAlchemySchema):
     writer = ma.Method("get_writer_with_check_anonymous")
     is_anonymous = ma.auto_field()
     wrote_post = ma.Nested("PostSchema", only=["id"])
+    is_mine = ma.Method("is_users")
 
     def get_abbreviated_datetime_as_string(self, obj):
         def _get_abbreviated_datetime_as_string(dt):
@@ -72,6 +74,9 @@ class CommentSchema(ma.SQLAlchemySchema):
             from app.api.v1.user.model import UserSchema
 
             return UserSchema(only=["username", "profile_image"]).dump(obj.writer)
+
+    def is_users(self, obj):
+        return obj.uploader.email == get_jwt_identity()
 
 
 class CommentInputSchema(ma.Schema):

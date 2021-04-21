@@ -187,6 +187,7 @@ def test_comment_get_on_post_correct(
         "upper_comment_id",
         "writer",
         "is_anonymous",
+        "is_mine"
     )
     for expect_key in expected_keys:
         assert expect_key in comments[0].keys()
@@ -218,7 +219,15 @@ def test_comment_get_on_user_correct(
     comments = rv.json["comments"]
     assert comments != None
 
-    expected_keys = ("id", "content", "wrote_datetime", "writer")
+    expected_keys = (
+        "id",
+        "content",
+        "wrote_datetime",
+        "upper_comment_id",
+        "writer",
+        "is_anonymous",
+        "is_mine"
+    )
     for expect_key in expected_keys:
         assert expect_key in comments[0].keys()
 
