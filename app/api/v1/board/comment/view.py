@@ -7,13 +7,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.util.request_validator import RequestValidator
 from app.api.v1.board.comment.service import CommentService, CommentListService
 from app.api.v1.board.comment.model import (
-    comments_schema_user,
     comments_schema,
     CommentInputSchema,
     PostCommentParameterSchema,
     CommentPatchInputSchema,
 )
-from app.api.v1.user.service import UserService
 from app.api.v1.board.post.service import PostService
 from app.api.v1.user.service import AccountService
 
@@ -26,27 +24,20 @@ class CommentList(Resource):
         per_page = request.args.get("per-page", default=20, type=int)
 
         if post_id is not None and username is not None:
-            abort(
-                400,
-                "post_id and username cant be given together, u must give one of both",
-            )
+            abort(400, "post_id and username cant be given together, u must give one of both")
         elif post_id is None and username is None:
             abort(400, "Parameter missed")
 
-        if post_id:
-            PostService.get_post_by_post_id(post_id)
-            comments = CommentListService.get_comments_by_post_id_and_paging_order_by_latest(
-                post_id=post_id, page=page, per_page=per_page
-            )
-        elif username:
-            found_user = UserService.get_user_by_username(username)
-            comments = CommentListService.get_comments_by_user_id_and_paging_order_by_latest(
-                user_id=found_user.email, page=page, per_page=per_page
-            )
+        paged_comments = CommentListService.get_paged_comments(
+            post_id=post_id,
+            username=username,
+            page=page,
+            per_page=per_page
+        )
 
         return {
-            "comments": comments_schema.dump(comments.items),
-            "number_of_pages": comments.pages,
+            "comments": comments_schema.dump(paged_comments.items),
+            "number_of_pages": paged_comments.pages,
         }, 200
 
     @jwt_required

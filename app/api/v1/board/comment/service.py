@@ -3,6 +3,7 @@ from flask import abort
 from app import db
 
 from app.api.v1.board.comment.model import CommentModel
+from app.api.v1.user.model import UserModel
 
 
 class CommentService:
@@ -44,25 +45,30 @@ class CommentService:
 
 
 class CommentListService:
-    @staticmethod
-    def get_comments_by_post_id_and_paging_order_by_latest(
-        post_id, per_page, page
-    ):
-        return (
-            CommentModel.query.filter_by(wrote_post_id=post_id)
-            .order_by(CommentModel.wrote_datetime.desc())
-            .paginate(per_page=per_page, page=page)
-        )
 
     @staticmethod
-    def get_comments_by_user_id_and_paging_order_by_latest(
-        user_id, per_page, page
+    def get_paged_comments(
+        post_id=None,
+        username=None,
+        page=1,
+        per_page=20,
     ):
-        return (
-            CommentModel.query.filter_by(wrote_user_id=user_id)
-            .order_by(CommentModel.wrote_datetime.desc())
-            .paginate(per_page=per_page, page=page)
-        )
+        query = CommentModel.query
+
+        if post_id:
+            query = query.filter_by(wrote_post_id=post_id)
+        if username:
+            user = UserModel.query.filter_by(username=username).first()
+            if not user:
+                abort(404, 'User not found')
+
+            query = query.filter_by(wrote_user_id=user.email)
+
+        paged_comments = query\
+            .order_by(CommentModel.wrote_datetime.desc())\
+            .paginate(per_page=per_page, page=page)\
+
+        return paged_comments
 
     @staticmethod
     def create_comment(
