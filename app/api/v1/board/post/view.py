@@ -62,7 +62,7 @@ class PostList(Resource):
 
     @jwt_required
     def post(self):
-        json = request.get_json()
+        json = request.json
         args = request.args
 
         RequestValidator.validate_request(
