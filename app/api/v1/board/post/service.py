@@ -18,7 +18,6 @@ from app.api.v1.board.post.model import (
 
 from app.api.v1.board.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
-from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
 
 
@@ -399,6 +398,31 @@ class PostListService:
         ).paginate(page=page, per_page=per_page)
 
         return posts
+
+    @staticmethod
+    def get_paged_posts(
+        gallery_id=None,
+        username=None,
+        page=1,
+        per_page=20,
+    ):
+        query = PostModel.query
+
+        if username:
+            user = UserModel.query.filter_by(username=username).first()
+            if not user:
+                abort(404, "User not found")
+
+            query = query.filter_by(uploader_id=user.email)
+
+        if gallery_id:
+            query = query.filter_by(gallery_id=gallery_id)
+
+        paged_posts = query\
+            .order_by(PostModel.posted_datetime.desc())\
+            .paginate(per_page=per_page, page=page)\
+
+        return paged_posts
 
     @staticmethod
     def order_post_query_from_latest(posts, reverse=False):

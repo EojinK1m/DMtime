@@ -36,28 +36,16 @@ class PostList(Resource):
         page = request.args.get(key="page", default=1, type=int)
         per_page = request.args.get(key="per-page", default=20, type=int)
 
-        if gallery_id and username:
-            abort(400)
-        elif gallery_id is None and username is None:
-            posts = PostListService.get_posts_with_paging(
-                per_page=per_page, page=page
-            )
-        elif gallery_id is not None:
-            posts = PostListService.get_posts_by_gallery_with_paging(
-                gallery=GalleryService.get_gallery_by_id(gallery_id),
-                per_page=per_page,
-                page=page,
-            )
-        elif username is not None:
-            posts = PostListService.get_posts_by_user_with_paging(
-                user=UserService.get_user_by_username(username),
-                per_page=per_page,
-                page=page,
-            )
+        paged_posts = PostListService.get_paged_posts(
+            gallery_id=gallery_id,
+            username=username,
+            page=page,
+            per_page=per_page
+        )
 
         return {
-            "posts": posts_schema.dump(posts.items),
-            "number_of_pages": posts.pages,
+            "posts": posts_schema.dump(paged_posts.items),
+            "number_of_pages": paged_posts.pages,
         }, 200
 
     @jwt_required
