@@ -13,6 +13,7 @@ from app.api.v1.board.comment.model import (
     CommentPatchInputSchema,
 )
 from app.api.v1.board.post.service import PostService
+from app.api.v1.user.service import UserService
 from app.api.v1.user.service import AccountService
 
 
@@ -28,9 +29,17 @@ class CommentList(Resource):
         elif post_id is None and username is None:
             abort(400, "Parameter missed")
 
-        paged_comments = CommentListService.get_paged_comments(
-            post_id=post_id,
-            username=username,
+        post = None
+        user = None
+
+        if post_id:
+            post = PostService.get_post_by_post_id(post_id)
+        if username:
+            user = UserService.get_user_by_username(username)
+
+        paged_comments = CommentListService.get_paginated_comments(
+            post=post,
+            user=user,
             page=page,
             per_page=per_page
         )

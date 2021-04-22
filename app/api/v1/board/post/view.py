@@ -36,9 +36,12 @@ class PostList(Resource):
         page = request.args.get(key="page", default=1, type=int)
         per_page = request.args.get(key="per-page", default=20, type=int)
 
-        paged_posts = PostListService.get_paged_posts(
-            gallery_id=gallery_id,
-            username=username,
+        gallery = GalleryService.get_gallery_by_id(gallery_id) if gallery_id else None
+        user = UserService.get_user_by_username(username) if username else None
+
+        paged_posts = PostListService.get_paginated_posts(
+            gallery=gallery,
+            user=user,
             page=page,
             per_page=per_page
         )

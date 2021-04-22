@@ -47,21 +47,17 @@ class CommentService:
 class CommentListService:
 
     @staticmethod
-    def get_paged_comments(
-        post_id=None,
-        username=None,
+    def get_paginated_comments(
+        post=None,
+        user=None,
         page=1,
         per_page=20,
     ):
         query = CommentModel.query
 
-        if post_id:
-            query = query.filter_by(wrote_post_id=post_id)
-        if username:
-            user = UserModel.query.filter_by(username=username).first()
-            if not user:
-                abort(404, 'User not found')
-
+        if post:
+            query = query.filter_by(wrote_post_id=post.id)
+        if user:
             query = query.filter_by(wrote_user_id=user.email)
 
         paged_comments = query\

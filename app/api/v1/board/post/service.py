@@ -400,23 +400,19 @@ class PostListService:
         return posts
 
     @staticmethod
-    def get_paged_posts(
-        gallery_id=None,
-        username=None,
+    def get_paginated_posts(
+        gallery=None,
+        user=None,
         page=1,
         per_page=20,
     ):
         query = PostModel.query
 
-        if username:
-            user = UserModel.query.filter_by(username=username).first()
-            if not user:
-                abort(404, "User not found")
-
+        if user:
             query = query.filter_by(uploader_id=user.email)
 
-        if gallery_id:
-            query = query.filter_by(gallery_id=gallery_id)
+        if gallery:
+            query = query.filter_by(gallery_id=gallery.id)
 
         paged_posts = query\
             .order_by(PostModel.posted_datetime.desc())\
