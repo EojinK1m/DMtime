@@ -395,3 +395,55 @@ def create_temp_register_account(app, session, redis_client):
 
     create_temp_register_account_.number = 1
     return create_temp_register_account_
+
+
+@pytest.fixture
+def create_temp_post_report(app, session):
+    from app.api.v1.board.report.model import PostReport
+
+    def create_temp_post_report_(user, post, reason=1, detail_reason='None'):
+        if not detail_reason:
+            detail_reason = f'test post report detail reason {create_temp_post_report_.number}'
+
+        temp_post_report = PostReport(
+            post_id=post.id,
+            user_id=user.email,
+            gallery_id=post.gallery_id,
+            reason=reason,
+            detail_reason=detail_reason
+        )
+
+        session.add(temp_post_report)
+        session.commit()
+
+        create_temp_post_report_.number += 1
+        return temp_post_report
+
+    create_temp_post_report_.number = 1
+    return create_temp_post_report_
+
+
+@pytest.fixture
+def create_temp_comment_report(app, session):
+    from app.api.v1.board.report.model import CommentReport
+
+    def create_temp_comment_report_(user, comment, reason=1, detail_reason='None'):
+        if not detail_reason:
+            detail_reason = f'test post report detail reason {create_temp_comment_report_.number}'
+
+        temp_comment_report = CommentReport(
+            comment_id=comment.id,
+            user_id=user.email,
+            gallery_id=comment.wrote_post.gallery_id,
+            reason=reason,
+            detail_reason=detail_reason
+        )
+
+        session.add(temp_comment_report)
+        session.commit()
+
+        create_temp_comment_report_.number += 1
+        return temp_comment_report
+
+    create_temp_comment_report_.number = 1
+    return create_temp_comment_report_
