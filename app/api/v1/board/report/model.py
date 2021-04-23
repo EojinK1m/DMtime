@@ -31,6 +31,9 @@ class CommentReport(db.Model):
     reporter = db.relationship("UserModel")
     reported_comment = db.relationship("PostModel")
 
+    def add(self):
+        db.session.add(self)
+
 
 class PostReport(db.Model):
     __tablename__ = "post_report"
@@ -57,3 +60,5 @@ class PostReport(db.Model):
     reporter = db.relationship("UserModel")
     reported_post = db.relationship("PostModel")
 
+    def add(self):
+        db.session.add(self)
