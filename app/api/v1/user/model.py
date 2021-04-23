@@ -31,6 +31,14 @@ class UserModel(db.Model):
     profile_image = db.relationship("ImageModel", uselist=False)
     managing_gallery = db.relationship("GalleryModel", backref="manager")
 
+    @property
+    def id(self):
+        return self.email
+
+    @id.setter
+    def id(self, email):
+        self.email = email
+
     def delete_user(self):
         db.session.delete(self)
 
