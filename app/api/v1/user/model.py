@@ -115,7 +115,7 @@ class AccountRegisterSchema(ma.Schema):
         required=True,
         validate=[
             validate.Email(error="Email parameter is not email"),
-            validate.Regexp(".*@dsm.hs.kr", error="Email is not of dsm"),
+            validate.Regexp(".*@dsm.hs.kr$", error="Email is not of dsm"),
         ],
     )
     username = ma.Str(
