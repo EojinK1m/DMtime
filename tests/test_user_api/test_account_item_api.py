@@ -36,6 +36,18 @@ def test_delete_account_correctly_response_200(client, test_user):
     assert rv.status_code == 200
 
 
+def test_delete_account_have_gallery_response_200(client, test_user, create_temp_gallery):
+    create_temp_gallery(manager_user=test_user)
+
+    rv = delete_account(
+        client=client,
+        user=test_user,
+        json={"password": test_user.password},
+        access_token=get_access_token(test_user),
+    )
+
+    assert rv.status_code == 200
+
 def test_delete_account_without_jwt_request_response_422(client, test_user):
     rv = delete_account(
         client=client,
