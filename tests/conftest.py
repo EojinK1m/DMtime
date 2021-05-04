@@ -408,7 +408,6 @@ def create_temp_post_report(app, session):
         temp_post_report = PostReport(
             post_id=post.id,
             user_id=user.email,
-            gallery_id=post.gallery_id,
             reason=reason,
             detail_reason=detail_reason
         )
@@ -434,7 +433,6 @@ def create_temp_comment_report(app, session):
         temp_comment_report = CommentReport(
             comment_id=comment.id,
             user_id=user.email,
-            gallery_id=comment.wrote_post.gallery_id,
             reason=reason,
             detail_reason=detail_reason
         )
