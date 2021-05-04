@@ -18,6 +18,7 @@ from app.api.v1.user.service import AccountService
 
 
 class CommentList(Resource):
+    @jwt_required
     def get(self):
         post_id = request.args.get("post-id", None)
         username = request.args.get("username", None)
