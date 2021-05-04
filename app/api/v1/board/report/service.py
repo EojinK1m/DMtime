@@ -1,77 +1,81 @@
 from flask import abort
 
+from app import db
+
 from .model import PostReport, CommentReport
 
+from ..post.model import PostModel
+from ..comment.model import CommentModel
+from ..gallery.model import GalleryModel
 
 class CommentReportService:
-    @staticmethod
-    def delete_report(report_id):
-        target_report = ReportService.get_report_by_id(report_id)
+    @classmethod
+    def delete_report(cls, report_id):
+        target_report = cls.get_report_by_id(report_id)
 
         try:
             target_report.delete_report()
         except:
             abort(500)
 
-    @staticmethod
-    def get_report_by_id(report_id):
-        report = ReportModel.query.get(report_id)
+    @classmethod
+    def get_report_by_id(cls, report_id):
+        report = CommentReport.query.get(report_id)
 
         if report is None:
-            abort(404)
+            abort(404, f'Comment report {report_id} is not found')
 
         return report
 
-    @staticmethod
-    def raise_if_not_report_of_gallery(report, gallery_id):
+    @classmethod
+    def raise_if_not_report_of_gallery(cls, report, gallery_id):
         if not (report.gallery_id == int(gallery_id)):
             raise Exception(f"{report.gallery_id}, {gallery_id}")
 
 
 class CommentReportListService:
-    @staticmethod
+
+    @classmethod
+    def get_all_comment_reports(cls):
+        return CommentReport.query.all()
+
+    @classmethod
     def create_new_report(
-        gallery_id,
-        reported_content_type,
-        comment_id,
-        post_id,
+        cls,
+        comment,
         reason,
         detail_reason,
         reporter,
     ):
         try:
-            new_report = ReportModel(
-                reported_content_type=reported_content_type,
-                comment_id=comment_id,
-                post_id=post_id,
+            new_report = CommentReport(
                 reason=reason,
                 detail_reason=detail_reason,
-                gallery_id=gallery_id,
-                reporter=reporter,
+                user_id=reporter.email,
+                comment_id=comment.id
             )
-            new_report.add_report()
-            db.session.commit()
+
+            new_report.add()
 
             return new_report
         except:
             abort(500, "An error occurred in server")
 
-    @staticmethod
-    def provide_report_list(gallery_id):
-        reports = ReportListService.get_reports_by_gallery_id(gallery_id)
-        return (
-            jsonify(
-                msg="query_succceed", reports=reports_schema.dumps(reports)
-            ),
-            200,
-        )
-
-    @staticmethod
-    def get_reports_by_gallery_id(gallery_id):
+    @classmethod
+    def get_reports_by_gallery_id(cls, gallery_id):
         try:
-            return ReportModel.query.filter_by(gallery_id=gallery_id)
+            return CommentReport.query.filter_by(gallery_id=gallery_id)
         except:
             abort(500, "An error occurred ")
+
+    @classmethod
+    def get_comment_reports_in_gallery(cls, gallery):
+        return db.session.query(CommentReport).\
+            join(CommentModel).\
+            join(PostModel).\
+            join(GalleryModel).\
+            filter_by(gallery_id=gallery.id).\
+            all()
 
 
 class PostReportService:
