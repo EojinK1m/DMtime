@@ -12,16 +12,6 @@ class CommentReport(db.Model):
         db.ForeignKey("user.email", ondelete="CASCADE"),
         nullable=False,
     )
-    gallery_id = db.Column(
-        db.String(30),
-        db.ForeignKey("gallery.gallery_id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    post_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("post.id", ondelete="SET NULL"),
-        nullable=True,
-    )
     comment_id = db.Column(
         db.Integer(),
         db.ForeignKey("comment.id", ondelete="SET NULL"),
@@ -29,10 +19,18 @@ class CommentReport(db.Model):
     )
 
     reporter = db.relationship("UserModel")
-    reported_comment = db.relationship("PostModel")
+    reported_comment = db.relationship("CommentModel", back_populates="reports")
+
+    @property
+    def nested_gallery(self):
+        return self.reported_comment.wrote_post.posted_gallery
 
     def add(self):
         db.session.add(self)
+
+    def delete(self):
+        db.session.delete(self)
+
 
 
 class PostReport(db.Model):
@@ -46,11 +44,6 @@ class PostReport(db.Model):
         db.ForeignKey("user.email", ondelete="CASCADE"),
         nullable=False,
     )
-    gallery_id = db.Column(
-        db.String(30),
-        db.ForeignKey("gallery.gallery_id", ondelete="CASCADE"),
-        nullable=False,
-    )
     post_id = db.Column(
         db.Integer(),
         db.ForeignKey("post.id", ondelete="SET NULL"),
@@ -60,5 +53,12 @@ class PostReport(db.Model):
     reporter = db.relationship("UserModel")
     reported_post = db.relationship("PostModel")
 
+    @property
+    def nested_gallery(self):
+        return self.reported_post.posted_gallery
+
     def add(self):
         db.session.add(self)
+
+    def delete(self):
+        db.session.delete(self)
