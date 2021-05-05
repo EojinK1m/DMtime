@@ -31,7 +31,7 @@ class CommentModel(db.Model):
     writer = db.relationship("UserModel", backref="comments")
     wrote_post = db.relationship("PostModel", backref="comments")
 
-    report = db.relationship("ReportModel", backref="reported_comment")
+    reports = db.relationship("CommentReport", back_populates="reported_comment")
 
     def delete_comment(self):
         db.session.delete(self)
@@ -76,7 +76,7 @@ class CommentSchema(ma.SQLAlchemySchema):
             return UserSchema(only=["username", "profile_image"]).dump(obj.writer)
 
     def is_users(self, obj):
-        return obj.uploader.email == get_jwt_identity()
+        return obj.wrote_user_id == get_jwt_identity()
 
 
 class CommentInputSchema(ma.Schema):
