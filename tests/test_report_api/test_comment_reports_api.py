@@ -1,11 +1,11 @@
 from pytest import fixture
 
-url = "/api/v1/comment-reports/"
+url = "/api/v1/comment-reports"
 
 
 @fixture
 def temp_resources(
-        create_temp_comment_report,
+         create_temp_comment_report,
         create_temp_account,
         create_temp_gallery,
         create_temp_post,
@@ -114,56 +114,5 @@ def test_get_all_comment_reports_by_admin_success(get_comment_reports, temp_reso
 
 def test_get_all_comment_reports_by_not_admin_user_response_403(get_comment_reports, temp_resources):
     rv = get_comment_reports(temp_resources['access_token'])
-
-    assert rv.status_code == 403
-
-
-def test_get_comment_reports_of_gallery_by_manager_success(get_comment_reports_included_in_gallery, temp_resources):
-    rv = get_comment_reports_included_in_gallery(
-        gallery_id=temp_resources['gallery'],
-        access_token=temp_resources['access_token']
-    )
-
-    assert rv.status_code == 200
-
-
-def test_get_comment_reports_of_gallery_by_admin_success(
-        get_comment_reports_included_in_gallery,
-        temp_resources,
-        create_temp_account
-):
-    admin_user = create_temp_account(is_admin=True)
-
-    rv = get_comment_reports_included_in_gallery(
-        gallery_id=temp_resources['gallery'],
-        access_token=admin_user.generate_access_token()
-    )
-
-    assert rv.status_code == 200
-
-
-def test_get_comment_reports_of_gallery_with_not_exist_gallery_id_response_404(
-        get_comment_reports_included_in_gallery,
-        temp_resources
-):
-    rv = get_comment_reports_included_in_gallery(
-        gallery_id="notexistGallery",
-        access_token=temp_resources['access_token']
-    )
-
-    assert rv.status_code == 404
-
-
-def test_get_comment_reports_of_gallery_without_permission_response_403(
-        get_comment_reports_included_in_gallery,
-        temp_resources,
-        create_temp_account
-):
-    admin_user = create_temp_account()
-
-    rv = get_comment_reports_included_in_gallery(
-        gallery_id=temp_resources['gallery'],
-        access_token=admin_user.generate_access_token()
-    )
 
     assert rv.status_code == 403
