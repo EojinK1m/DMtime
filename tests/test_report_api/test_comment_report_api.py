@@ -58,18 +58,18 @@ def temp_resources(
 
 def test_get_comment_report_success_response_200(get_comment_report, temp_resources):
     rv = get_comment_report(
-        report_id=temp_resources['report'],
+        report_id=temp_resources['report'].id,
         access_token=temp_resources['user'].generate_access_token()
     )
 
     assert rv.status_code == 200
 
 
-def test_get_comment_report_by_admin_success(get_comment_report, temp_resources, create_temp_account):
+def test_get_comment_report_by_admin_response_200(get_comment_report, temp_resources, create_temp_account):
     admin_user = create_temp_account(is_admin=True)
 
     rv = get_comment_report(
-        report_id=temp_resources['report'],
+        report_id=temp_resources['report'].id,
         access_token=admin_user.generate_access_token()
     )
 
@@ -96,7 +96,7 @@ def test_get_comment_report_by_without_permission_403(get_comment_report, temp_r
     assert rv.status_code == 403
 
 
-def test_delete_comment_report_success(delete_comment_report, temp_resources):
+def test_delete_comment_report_success_200(delete_comment_report, temp_resources):
     rv = delete_comment_report(
         report_id=temp_resources['report'].id,
         access_token=temp_resources['access_token']
@@ -105,7 +105,7 @@ def test_delete_comment_report_success(delete_comment_report, temp_resources):
     assert rv.status_code == 200
 
 
-def test_delete_comment_report_with_admin_success(delete_comment_report, temp_resources, create_temp_account):
+def test_delete_comment_report_with_admin_response_200(delete_comment_report, temp_resources, create_temp_account):
     admin = create_temp_account(is_admin=True)
 
     rv = delete_comment_report(
