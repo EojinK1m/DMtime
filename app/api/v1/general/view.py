@@ -7,7 +7,5 @@ def commit_session_after_request(response):
 
 
 def rollback_session_when_error(error=None):
-    print(f"rollback_session_when_error is executed \n arg is {error}")
-
     if error is not None:
         db.session.rollback()
