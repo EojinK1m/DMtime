@@ -159,7 +159,7 @@ class Post(Resource):
         return {}, 200
 
 
-class UserLikedPostList(Resource):
+class PostListUserLiked(Resource):
     def get(self, username):
 
         user_liked_posts = PostListService.get_user_liked_posts(
@@ -169,7 +169,7 @@ class UserLikedPostList(Resource):
         return posts_schema.dump(user_liked_posts)
 
 
-class RequestUserLikedPostList(Resource):
+class PostListRequestUserLiked(Resource):
     @jwt_required
     def get(self):
         user_liked_posts = PostListService.get_user_liked_posts(
