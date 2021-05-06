@@ -23,6 +23,7 @@ from app.api.v1.board.gallery.service import GalleryService
 from app.api.v1.user.service import AccountService
 from app.api.v1.user.service import UserService
 from app.api.v1.image.service import ImageService
+from ...auth.service import TokenService
 
 
 class PostList(Resource):
@@ -156,3 +157,23 @@ class Post(Resource):
 
         db.session.commit()
         return {}, 200
+
+
+class UserLikedPostList(Resource):
+    def get(self, username):
+
+        user_liked_posts = PostListService.get_user_liked_posts(
+            UserService.get_user_by_username(username)
+        )
+
+        return posts_schema.dump(user_liked_posts)
+
+
+class RequestUserLikedPostList(Resource):
+    @jwt_required
+    def get(self):
+        user_liked_posts = PostListService.get_user_liked_posts(
+            TokenService.get_user_from_token()
+        )
+
+        return posts_schema.dump(user_liked_posts)
