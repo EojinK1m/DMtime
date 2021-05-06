@@ -69,14 +69,3 @@ def test_get_requested_user_liked_posts_without_access_token_response_422(
     )
 
     assert rv.status_code == 422
-
-
-def test_get_requested_user_liked_posts_with_not_exists_username_response_404(
-        get_requested_user_liked_posts,
-        temp_resources
-):
-    rv = get_requested_user_liked_posts(
-        access_token=''
-    )
-
-    assert rv.status_code == 422
