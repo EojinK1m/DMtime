@@ -19,6 +19,7 @@ from app.api.v1.board.post.model import (
 from app.api.v1.board.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
+from ..postlike.model import PostlikeModel
 
 
 def check_user_permission(post):
@@ -429,3 +430,10 @@ class PostListService:
         )
 
         return posts.order_by(o)
+
+    @classmethod
+    def get_user_liked_posts(cls, user):
+        return PostModel.query.\
+            join(PostlikeModel).\
+            join(UserModel).filter_by(email=user.email)\
+            .all()
