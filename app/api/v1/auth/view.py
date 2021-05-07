@@ -40,7 +40,7 @@ class EmailVerificationCode(Resource):
         )
         verification_code = request.args["verification-code"]
 
-        user_to_register = self.find_user_by_verificatino_code(
+        user_to_register = self.find_user_by_verification_code(
             verification_code
         )
         self.delete_from_temporary_storage(verification_code)
@@ -48,7 +48,7 @@ class EmailVerificationCode(Resource):
         DBHelper.add_model(user_to_register)
         return {}, 200
 
-    def find_user_by_verificatino_code(self, verification_code):
+    def find_user_by_verification_code(self, verification_code):
         dumped_user_data = redis_client.get(verification_code)
 
         if dumped_user_data is None:
