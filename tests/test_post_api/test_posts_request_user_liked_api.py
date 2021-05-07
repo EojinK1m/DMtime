@@ -46,6 +46,10 @@ def test_get_requested_user_liked_posts_success_response_200(
         create_temp_post,
         create_temp_account
 ):
+    expect_keys = (
+        'number_of_pages', 'posts'
+    )
+
     another_temp_user = create_temp_account()
     create_temp_post(
         upload_gallery_id=temp_resources["gallery"].id,
@@ -57,7 +61,8 @@ def test_get_requested_user_liked_posts_success_response_200(
     )
 
     assert rv.status_code == 200
-    assert len(rv.json) == 1
+    from pprint import pprint
+    pprint(rv.json)
 
 
 def test_get_requested_user_liked_posts_without_access_token_response_422(

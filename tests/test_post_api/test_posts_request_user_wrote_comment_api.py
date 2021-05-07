@@ -58,7 +58,7 @@ def test_get_posts_request_user_wrote_comment_success_response_200(
     )
 
     assert rv.status_code == 200
-    assert len(rv.json) == 1
+    assert len(rv.json["posts"]) == 1
 
 
 def test_get_posts_request_user_wrote_comment_without_access_token_response_422(

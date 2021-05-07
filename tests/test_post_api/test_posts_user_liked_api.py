@@ -56,7 +56,7 @@ def test_get_user_liked_posts_success_response_200(
     )
 
     assert rv.status_code == 200
-    assert len(rv.json) == 1
+    assert len(rv.json["posts"]) == 1
 
 
 def test_get_user_liked_posts_with_not_exists_username_response_404(
