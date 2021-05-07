@@ -1,5 +1,10 @@
 from flask_restful import Api
 
+from app.api.v1.board.comment import model
+from app.api.v1.board.post import model
+from app.api.v1.board.gallery import model
+from app.api.v1.image import model
+
 from app.api.v1.user.view import (
     User,
     Account,
