@@ -1,7 +1,8 @@
 from flask_restful import Api
 
 from app.api.v1.board.post.view import (
-    Post, PostList, HotPostList, PostListUserLiked, PostListRequestUserLiked
+    Post, PostList, HotPostList, PostListUserLiked, PostListRequestUserLiked,\
+    PostListUserWroteComment, PostListRequestUserWroteComment
 )
 from app.api.v1.board.gallery.view import Gallery, GalleryList
 from .report.view import CommentReport, CommentReports, CommentReportsNestedInGallery
@@ -26,7 +27,9 @@ resource_routes = {
     "/comment-reports/<report_id>": CommentReport,
     "/comment-reports": CommentReports,
     "/users/<username>/liked-posts": PostListUserLiked,
-    "/me/liked-posts": PostListRequestUserLiked
+    "/users/<username>/posts-wrote-comment": PostListUserWroteComment,
+    "/me/liked-posts": PostListRequestUserLiked,
+    "/me/posts-wrote-comment": PostListRequestUserWroteComment,
 }
 
 for path, resource in resource_routes.items():
