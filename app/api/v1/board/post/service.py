@@ -5,7 +5,6 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app import db
-
 from app.api.v1.board.post.model import (
     PostModel,
     posts_schema,
@@ -16,8 +15,11 @@ from app.api.v1.board.post.model import (
     PostGetQueryParameterValidateSchema,
 )
 
-from app.api.v1.board.gallery.model import GalleryModel
+from ..comment.model import CommentModel
 from app.api.v1.user.model import UserModel
+
+from app.api.v1.board.gallery.model import GalleryModel
+
 from app.api.v1.image.service import ImageService
 from ..postlike.model import PostlikeModel
 
@@ -169,8 +171,8 @@ class PostListService:
         new_post = PostModel(
             content=content,
             title=title,
-            uploader=upload_user,
-            posted_gallery=post_gallery,
+            uploader_id=upload_user.email,
+            gallery_id=post_gallery.id,
             is_anonymous=is_anonymous,
             posted_datetime=posted_datetime,
         )
@@ -432,8 +434,19 @@ class PostListService:
         return posts.order_by(o)
 
     @classmethod
-    def get_user_liked_posts(cls, user):
+    def get_user_liked_posts(cls, user, per_page=20, page=1):
         return PostModel.query.\
             join(PostlikeModel).\
             join(UserModel).filter_by(email=user.email)\
-            .all()
+            .order_by(PostModel.posted_datetime.desc())\
+            .paginate(per_page=per_page, page=page)
+
+    @classmethod
+    def get_post_user_wrote_comment(cls, user, per_page=20, page=1):
+        return PostModel.query.\
+            join(CommentModel).\
+            join(UserModel, CommentModel.wrote_user_id == UserModel.email).\
+            filter_by(email=user.email) \
+            .order_by(PostModel.posted_datetime.desc()) \
+            .paginate(per_page=per_page, page=page)
+
