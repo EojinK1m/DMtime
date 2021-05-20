@@ -2,7 +2,7 @@ from flask_jwt_extended import get_jwt_identity
 from marshmallow.validate import Length, Range
 from datetime import datetime
 
-from app import db, ma
+from app.extentions import db, ma
 
 
 class CommentModel(db.Model):
@@ -28,10 +28,8 @@ class CommentModel(db.Model):
     wrote_datetime = db.Column(db.DateTime(), nullable=False)
     is_anonymous = db.Column(db.Boolean, nullable=False)
 
-    writer = db.relationship("UserModel", backref="comments")
     wrote_post = db.relationship("PostModel", backref="comments")
-
-    reports = db.relationship("CommentReport", back_populates="reported_comment")
+    reports = db.relationship("CommentReport", backref="reported_comment")
 
     def delete_comment(self):
         db.session.delete(self)
