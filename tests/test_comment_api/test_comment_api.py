@@ -120,6 +120,7 @@ def test_comment_patch_with_oversize_content(
 
     assert rv.status_code == 400
 
+
 def test_comment_patch_to_not_exist_comment(client, create_temp_account):
     temp_account = create_temp_account()
 
