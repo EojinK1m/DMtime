@@ -199,12 +199,9 @@ def test_delete_post_have_like(
 
     assert rv.status_code == 200
 
-#
-# def test_get_deleted_post_response_409(temp_user, temp_post, get_post):
-#     get_post(
-#
-#
-#     )
+
+def test_get_deleted_post_response_404(temp_user, temp_post, get_post):
+    raise Exception('not implemented')
 
 
 def test_post_patch_correct(
