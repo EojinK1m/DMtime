@@ -28,6 +28,7 @@ class UserModel(db.Model):
     posts = db.relationship("PostModel", backref="uploader")
     profile_image = db.relationship("ImageModel", uselist=False)
     managing_gallery = db.relationship("GalleryModel", backref="manager")
+    comments = db.relationship("CommentModel", backref="writer")
 
     @property
     def id(self):
@@ -95,67 +96,64 @@ users_schema = UserSchema(many=True, only=["username", "profile_image"])
 
 account_schema = UserSchema(only=["email"])
 
+# 비밀번호
+# 8자리 이상 36자리 이하
+# 숫자, 알파벳 최소 1개씩 포함
+password_validates = \
+    validate.Regexp(
+        re.compile(
+            r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
+        )
+    )
 
-class UserPatchInputSchema(ma.Schema):
-    username = ma.Str(required=False, validate=validate.Length(min=2, max=20))
-    user_explain = ma.Str(required=False, validate=validate.Length(max=400))
-    profile_image = ma.String(required=False, allow_null=True, validate=validate.Length(max=100))
+username_validates = \
+    [
+        validate.Length(min=2, max=20),
+        validate.Regexp(re.compile(r"^[가-힣\w]+$")),
+    ]
+
+email_validates = \
+    [
+        validate.Email(error="Email parameter is not email"),
+        validate.Regexp(".*@dsm.hs.kr$", error="Email is not email of dsm"),
+    ]
 
 
 class UserPutInputSchema(ma.Schema):
-    username = ma.Str(required=True, validate=validate.Length(min=2, max=20))
+    username = ma.Str(required=True, validate=username_validates)
     user_explain = ma.Str(required=True, validate=validate.Length(max=400))
-    profile_image = ma.String(required=False, allow_null=True, validate=validate.Length(max=100))
+    profile_image = ma.String(required=True, allow_none=True, validate=validate.Length(max=100))
 
 
 class AccountRegisterSchema(ma.Schema):
     email = ma.Str(
         required=True,
-        validate=[
-            validate.Email(error="Email parameter is not email"),
-            validate.Regexp(".*@dsm.hs.kr$", error="Email is not of dsm"),
-        ],
+        validate=email_validates
     )
     username = ma.Str(
         required=True,
-        validate=[
-            validate.Length(min=2, max=20),
-            validate.Regexp(re.compile(r"^[가-힣\w]+$")),
-        ],
+        validate=username_validates
     )
     password = ma.Str(
         required=True,
-        validate=validate.Regexp(
-            re.compile(
-                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
-            )
-        )
-        # 비밀번호 8자리 이상 36자리 이하 숫자, 알파벳 1개씩 포함
+        validate=password_validates
     )
 
 
 class AccountLoginInputSchema(ma.Schema):
-    password = ma.Str(required=True, validate=validate.Length(min=8))
+    password = ma.Str(required=True, validate=password_validates)
     email = ma.Str(required=True, validate=validate.Email())
 
 
 class AccountChangePasswordInputSchema(ma.Schema):
     password = ma.Str(
         required=True,
-        validate=validate.Regexp(
-            re.compile(
-                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
-            )
-        ),
+        validate=password_validates
     )
 
     new_password = ma.Str(
         required=True,
-        validate=validate.Regexp(
-            re.compile(
-                r"^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z*.!@$%^&(){}\[\]:;<>,.?/~_+-=|\\]{8,36}$"
-            )
-        ),
+        validate=password_validates
     )
 
 
