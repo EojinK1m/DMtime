@@ -33,6 +33,8 @@ class PostModel(db.Model):
     dislikes = db.relationship("PostdislikeModel", passive_deletes=True)
     # posted_gallery = db.relationship('GalleryModel')
 
+    reports = db.relationship("PostReport", backref="reported_post")
+
     @property
     def postlikes(self):
         return self.likes
