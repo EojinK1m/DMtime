@@ -79,10 +79,8 @@ def test_post_post_without_access_token(client, create_temp_gallery):
     assert rv.status_code == 401
 
 
-# Todo
-# def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
-#     raise Exception('NotMakeError', 'We didnt think its detail yet')
-#     pass
+def test_post_post_too_fast(client, create_temp_account, create_temp_gallery):
+    raise Exception('NotMakeError', 'We didnt think its detail yet')
 
 
 def test_post_post_with_unsuitable_post_data(

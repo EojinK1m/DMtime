@@ -1,6 +1,6 @@
 from flask_jwt_extended import get_jwt_identity
 
-from app import db, ma
+from app.extentions import db, ma
 from datetime import datetime
 
 from marshmallow.validate import Length, Range

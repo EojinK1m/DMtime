@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
-from app import db
+from app.extentions import db
 from app.api.v1.board.post.model import (
     PostModel,
     posts_schema,

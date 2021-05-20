@@ -5,9 +5,9 @@ from flask import request, current_app, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 
-from app import redis_client
-from app import bcrypt
-from app import email_sender
+from app.extentions import redis_client
+from app.extentions import bcrypt
+from app.extentions import email_sender
 
 from app.util.request_validator import RequestValidator
 

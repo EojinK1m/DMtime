@@ -1,4 +1,4 @@
-from app import db
+from app.extentions import db
 
 
 class CommentReport(db.Model):

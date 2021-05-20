@@ -2,7 +2,7 @@ from functools import update_wrapper, partial
 from flask import abort
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
-from app import db
+from app.extentions import db
 from app.api.v1.board.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
 

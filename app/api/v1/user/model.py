@@ -3,9 +3,9 @@ from flask import current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
 from marshmallow import validate
 
-from app import bcrypt
-from app import db, ma
-from app import jwt
+from app.extentions import bcrypt
+from app.extentions import db, ma
+from app.extentions import jwt
 
 
 @jwt.user_claims_loader

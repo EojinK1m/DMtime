@@ -1,6 +1,6 @@
 from marshmallow.validate import Range, Length
 
-from app import ma
+from app.extentions import ma
 
 from .model import PostReport, CommentReport
 #

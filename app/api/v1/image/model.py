@@ -1,6 +1,6 @@
 import imghdr
 
-from app import db, ma
+from app.extentions import db, ma
 from flask import current_app
 from marshmallow import ValidationError, fields
 

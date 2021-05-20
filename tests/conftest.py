@@ -1,25 +1,9 @@
 import pytest
 
-# @pytest.fixture(scope='session')
-# def app():
-#     from app import create_app
-#     from app.config import TestConfig
-#     return create_app(TestConfig)
-#
-# @pytest.fixture(scope='function', autouse=True)
-# def db(app):
-#     from app import db as _db
-#     with app.app_context():
-#         _db.create_all()
-#
-#     yield _db
-#
-#     with app.app_context():
-#         _db.drop_all()
 from app import create_app
 from app.config import TestConfig
-from app import db as _db
-from app import redis_client as _redis_client
+from app.extentions import db as _db
+from app.extentions import redis_client as _redis_client
 from sqlalchemy import event
 
 
@@ -143,7 +127,7 @@ def create_temp_image(app, session):
 @pytest.fixture
 def create_temp_account(app, session):
     from app.api.v1.user.model import UserModel
-    from app import bcrypt
+    from app.extentions import bcrypt
 
     def create_temp_account_(profile_image=None, is_admin=False):
         email = f"test_account_{create_temp_account_.number}@dsm.hs.kr"
@@ -300,6 +284,7 @@ def create_temp_postlike(app, session):
     create_temp_postlike.number = 0
     return create_temp_postlike_
 
+
 @pytest.fixture
 def create_temp_postdislike(app, session):
     from app.api.v1.board.post.model import PostdislikeModel
@@ -316,6 +301,7 @@ def create_temp_postdislike(app, session):
 
     create_temp_postdislike.number = 0
     return create_temp_postdislike_
+
 
 @pytest.fixture
 def create_temp_report(app, session):
@@ -366,7 +352,7 @@ def create_temp_register_account(app, session, redis_client):
     from app.util import random_string_generator
     from app.api.v1.user.model import UserModel
     from app.api.v1.user.view import Users
-    from app import bcrypt
+    from app.extentions import bcrypt
 
     def create_temp_register_account_():
         email = (

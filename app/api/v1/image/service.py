@@ -1,7 +1,7 @@
 import os
 from flask import current_app as app, abort
 
-from app import db
+from app.extentions import db
 from app.api.v1.image.model import ImageModel
 
 

@@ -124,9 +124,6 @@ def test_create_default_gallery_with_normal_user_response_403(
     assert rv.status_code == 403
 
 
-# TEST get galleries
-
-
 @fixture
 def temp_galleries(create_temp_gallery):
     temp_galleries = [

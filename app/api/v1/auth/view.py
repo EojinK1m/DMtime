@@ -3,7 +3,7 @@ import pickle
 from flask import request, abort
 from flask_restful import Resource
 
-from app import redis_client
+from app.extentions import redis_client
 
 from app.util.request_validator import RequestValidator
 from app.util.db_helper import DBHelper

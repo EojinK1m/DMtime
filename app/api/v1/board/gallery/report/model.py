@@ -1,7 +1,7 @@
 import enum
 from marshmallow.validate import Length, Range
 
-from app import db, ma
+from app.extentions import db, ma
 
 
 class ReportModel(db.Model):

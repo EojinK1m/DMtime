@@ -1,6 +1,6 @@
 from flask import abort
 
-from app import db
+from app.extentions import db
 
 from .model import PostReport, CommentReport
 

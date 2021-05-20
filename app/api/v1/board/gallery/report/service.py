@@ -2,7 +2,7 @@ from werkzeug import exceptions
 from flask import jsonify, abort
 from flask_jwt_extended import get_jwt_identity
 
-from app import db
+from app.extentions import db
 from app.api.v1.board.gallery.report.model import (
     ReportModel,
     reports_schema,

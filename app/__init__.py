@@ -1,9 +1,13 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
-from flask_redis import FlaskRedis
+from .extentions import (
+    file_saver,
+    ma,
+    db,
+    jwt,
+    redis_client,
+    email_sender,
+    bcrypt
+)
 from redis import ConnectionError
 
 from app.util.email_sender import EmailSender
@@ -12,14 +16,6 @@ from app.util.file_saver import FileSaver
 import time
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
-
-db = SQLAlchemy()
-ma = Marshmallow()
-bcrypt = Bcrypt()
-jwt = JWTManager()
-redis_client = FlaskRedis()
-email_sender = EmailSender()
-file_saver = FileSaver()
 
 
 def create_app(config):

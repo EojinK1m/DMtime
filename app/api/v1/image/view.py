@@ -3,7 +3,7 @@ import imghdr
 from flask import request, abort
 from flask_restful import Resource
 
-from app import db, file_saver
+from app.extentions import db, file_saver
 from app.util.random_string_generator import generate_random_string
 
 from app.util.request_validator import RequestValidator
