@@ -161,19 +161,69 @@ class Post(Resource):
 
 class PostListUserLiked(Resource):
     def get(self, username):
+        page = request.args.get(key="page", default=1, type=int)
+        per_page = request.args.get(key="per-page", default=20, type=int)
 
-        user_liked_posts = PostListService.get_user_liked_posts(
-            UserService.get_user_by_username(username)
+        posts = PostListService.get_user_liked_posts(
+            UserService.get_user_by_username(username),
+            per_page,
+            page
         )
 
-        return posts_schema.dump(user_liked_posts)
+        return {
+            "posts": posts_schema.dump(posts.items),
+            "number_of_pages": posts.pages,
+        }, 200
 
 
 class PostListRequestUserLiked(Resource):
     @jwt_required
     def get(self):
-        user_liked_posts = PostListService.get_user_liked_posts(
-            TokenService.get_user_from_token()
+        page = request.args.get(key="page", default=1, type=int)
+        per_page = request.args.get(key="per-page", default=20, type=int)
+
+        posts = PostListService.get_user_liked_posts(
+            TokenService.get_user_from_token(),
+            per_page,
+            page
         )
 
-        return posts_schema.dump(user_liked_posts)
+        return {
+            "posts": posts_schema.dump(posts.items),
+            "number_of_pages": posts.pages,
+        }, 200
+
+
+class PostListUserWroteComment(Resource):
+    def get(self, username):
+        page = request.args.get(key="page", default=1, type=int)
+        per_page = request.args.get(key="per-page", default=20, type=int)
+
+        posts = PostListService.get_post_user_wrote_comment(
+            UserService.get_user_by_username(username),
+            per_page,
+            page
+        )
+
+        return {
+            "posts": posts_schema.dump(posts.items),
+            "number_of_pages": posts.pages,
+        }, 200
+
+
+class PostListRequestUserWroteComment(Resource):
+    @jwt_required
+    def get(self):
+        page = request.args.get(key="page", default=1, type=int)
+        per_page = request.args.get(key="per-page", default=20, type=int)
+
+        posts = PostListService.get_post_user_wrote_comment(
+            TokenService.get_user_from_token(),
+            per_page,
+            page
+        )
+
+        return {
+            "posts": posts_schema.dump(posts.items),
+            "number_of_pages": posts.pages,
+        }, 200
