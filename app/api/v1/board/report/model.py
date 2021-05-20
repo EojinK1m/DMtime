@@ -18,9 +18,6 @@ class CommentReport(db.Model):
         nullable=True,
     )
 
-    reporter = db.relationship("UserModel")
-    reported_comment = db.relationship("CommentModel", back_populates="reports")
-
     @property
     def nested_gallery(self):
         return self.reported_comment.wrote_post.posted_gallery
@@ -49,9 +46,6 @@ class PostReport(db.Model):
         db.ForeignKey("post.id", ondelete="SET NULL"),
         nullable=True,
     )
-
-    reporter = db.relationship("UserModel")
-    reported_post = db.relationship("PostModel")
 
     @property
     def nested_gallery(self):
