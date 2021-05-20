@@ -1,5 +1,6 @@
 from app import create_app
-from app.config import DevelopConfig
+
+from config import DevelopConfig
 
 application = create_app(DevelopConfig)
 
