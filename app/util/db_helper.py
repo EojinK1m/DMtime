@@ -1,5 +1,5 @@
 from flask import abort
-from app.extentions import db
+from app.extensions import db
 
 
 class DBHelper:

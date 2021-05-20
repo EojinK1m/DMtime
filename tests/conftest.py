@@ -1,7 +1,7 @@
 import pytest
 
 from app import create_app
-from app.config import TestConfig
+from config import TestConfig
 from app.extentions import db as _db
 from app.extentions import redis_client as _redis_client
 from sqlalchemy import event

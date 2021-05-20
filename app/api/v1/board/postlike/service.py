@@ -1,6 +1,6 @@
 from flask import abort
 
-from app.extentions import db
+from app.extensions import db
 
 from app.api.v1.board.postlike.model import PostlikeModel, PostdislikeModel
 

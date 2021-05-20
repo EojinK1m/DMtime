@@ -1,4 +1,4 @@
-from app.extentions import db, ma
+from app.extensions import db, ma
 from marshmallow.validate import Length, Range
 
 GALLERY_TYPES = {"special": 0, "default": 1, "user": 2}

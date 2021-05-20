@@ -1,4 +1,4 @@
-from app.extentions import ma
+from app.extensions import ma
 from marshmallow import validate, ValidationError
 
 

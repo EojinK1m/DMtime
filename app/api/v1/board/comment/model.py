@@ -2,7 +2,7 @@ from flask_jwt_extended import get_jwt_identity
 from marshmallow.validate import Length, Range
 from datetime import datetime
 
-from app.extentions import db, ma
+from app.extensions import db, ma
 
 
 class CommentModel(db.Model):

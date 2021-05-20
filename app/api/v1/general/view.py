@@ -1,4 +1,4 @@
-from app.extentions import db
+from app.extensions import db
 
 
 def commit_session_after_request(response):

@@ -8,7 +8,7 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 
-from app.extentions import db, redis_client, email_sender
+from app.extensions import db, redis_client, email_sender
 from app.util import random_string_generator
 
 from app.api.v1.user.model import UserModel

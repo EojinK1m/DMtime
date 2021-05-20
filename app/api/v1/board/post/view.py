@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
-from app.extentions import db
+from app.extensions import db
 from app.api.v1.board.post.service import (
     PostService,
     PostListService
