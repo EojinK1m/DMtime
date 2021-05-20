@@ -50,6 +50,23 @@ def test_put_user(client, test_user):
 
     assert rv.status_code == 200
     assert test_user.username == change_username
+    assert test_user.profile_image is test_user.profile_image
+
+
+def test_put_user_with_none_as_profile_image_success(client, test_user):
+    rv = patch_user(
+        client=client,
+        user=test_user,
+        access_token=get_access_token_of_user(test_user),
+        json={
+            "username": test_user.username,
+            "profile_image": None,
+            "user_explain": test_user.explain,
+        },
+    )
+
+    assert rv.status_code == 200
+    assert test_user.profile_image is None
 
 
 def test_patch_user_information_with_wrong_data(client, test_user):
@@ -64,13 +81,15 @@ def test_patch_user_information_with_wrong_data(client, test_user):
     assert rv.status_code == 400
 
 
-def test_patch_user_information_with_exist_data(client, test_user):
+def test_patch_user_information_with_exist_data(client, test_user, create_temp_account):
+    temp_user = create_temp_account()
+
     rv = patch_user(
         client=client,
         user=test_user,
         access_token=get_access_token_of_user(test_user),
         json={
-            "username": test_user.username,
+            "username": temp_user.username,
             "user_explain": test_user.explain,
             "profile_image": test_user.profile_image.id,
         },
