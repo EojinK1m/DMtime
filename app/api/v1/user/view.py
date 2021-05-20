@@ -23,6 +23,7 @@ from app.api.v1.user.model import (
     account_schema,
     AccountChangePasswordInputSchema,
 )
+from ..image.service import ImageService
 
 
 class Users(Resource):
@@ -95,14 +96,22 @@ class User(Resource):
         json = request.json
 
         RequestValidator.validate_request(UserPutInputSchema(), json)
-        AccountService.check_exist_same_username(json["username"])
+
+        username = json["username"]
+        explain = json["user_explain"]
+        profile_image = json["profile_image"]
+
+        if profile_image is not None:
+            profile_image = ImageService.get_image_by_id(profile_image)
+        if user.username != username:
+            AccountService.check_exist_same_username(json["username"])
 
         UserService.update_user(
             user=user,
-            username=json["username"],
-            explain=json["user_explain"],
+            username=username,
+            explain=explain,
             email=user.email,
-            profile_image=user.profile_image,
+            profile_image=profile_image,
             password_hash=user.password_hash,
         )
 
