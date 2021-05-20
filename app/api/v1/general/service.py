@@ -2,6 +2,7 @@ from flask import abort
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
 from functools import wraps
 
+
 def verify_admin_jwt_in_request():
     verify_jwt_in_request()
 
