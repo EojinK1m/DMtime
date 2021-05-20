@@ -11,7 +11,10 @@ from app.api.v1.board.comment.model import (
     CommentInputSchema,
     PostCommentParameterSchema,
     CommentPatchInputSchema,
-)
+)    # if post_id is not None and username is not None:
+        #     abort(400, "post_id and username cant be given together, u must give one of both")
+        # elif post_id is None and username is None:
+        #     abort(400, "Parameter missed")
 from app.api.v1.board.post.service import PostService
 from app.api.v1.user.service import UserService
 from app.api.v1.user.service import AccountService
@@ -24,11 +27,6 @@ class CommentList(Resource):
         username = request.args.get("username", None)
         page = request.args.get("page", default=1, type=int)
         per_page = request.args.get("per-page", default=20, type=int)
-
-        if post_id is not None and username is not None:
-            abort(400, "post_id and username cant be given together, u must give one of both")
-        elif post_id is None and username is None:
-            abort(400, "Parameter missed")
 
         post = None
         user = None
