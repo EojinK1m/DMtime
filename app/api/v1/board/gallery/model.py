@@ -11,7 +11,11 @@ class GalleryModel(db.Model):
     name = db.Column(db.String(30), nullable=False)
     explain = db.Column(db.String(255), nullable=True)
     manager_user_id = db.Column(
-        db.String(320), db.ForeignKey("user.email"), nullable=False
+        db.String(320),
+        db.ForeignKey(
+            "user.email",
+            ondelete="CASCADE"
+        )
     )
     gallery_type = db.Column(db.Integer(), nullable=False)
 
