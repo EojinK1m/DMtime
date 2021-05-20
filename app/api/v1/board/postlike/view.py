@@ -10,14 +10,14 @@ from app.api.v1.board.postlike.service import (
 )
 from app.api.v1.user.service import UserService
 from app.api.v1.board.postlike.schema import (
-    RequestPostlikeApiQueryParameterVaidateSchema
+    RequestPostlikeApiQueryParameterValidateSchema
 )
 
 
 def validate_post_id(post_id):
     RequestValidator.validate_request(
         data={"post_id": post_id},
-        schema=RequestPostlikeApiQueryParameterVaidateSchema()
+        schema=RequestPostlikeApiQueryParameterValidateSchema()
     )
 
 
