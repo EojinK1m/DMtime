@@ -14,6 +14,7 @@ from app.util import random_string_generator
 from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
 
+from .repository import UserRepository
 
 class UserService:
     @staticmethod
@@ -87,6 +88,38 @@ class UserService:
 
 
 class AccountService:
+
+    def __init__(self, user_repository):
+        self.user_repository: UserRepository = user_repository
+
+    def registry_user(self, email, username):
+        self.abort_409_if_username_is_using(username)
+        self.abort_409_if_email_is_using(email)
+
+
+    def abort_409_if_username_is_using(self, username):
+        if self.user_repository.get_user_by_username(username) is not None:
+            abort(409)
+
+    def abort_409_if_email_is_using(self, email):
+        if self.user_repository.get_user_by_email(email) is not None:
+            abort(409)
+
+    # AccountService.check_exist_same_email(email)
+    # AccountService.check_exist_same_username(username)
+    #
+    # new_user = self.create_new_user(
+    #     username=username,
+    #     email=email,
+    #     password=request.json.get("password"),
+    # )
+    # verification_code = AccountService.generate_verification_code()
+    #
+    # self.store_account_data_with_verification_code(
+    #     verification_code, new_user
+    # )
+    # self.send_verification_code_by_email(verification_code, email)
+
     @staticmethod
     def check_exist_same_username(username):
         if UserModel.query.filter_by(username=username).first():
@@ -160,3 +193,4 @@ class AccountService:
             )
 
         return found_account
+
