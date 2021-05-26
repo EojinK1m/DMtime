@@ -1,9 +1,7 @@
 from flask import current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-from app.extensions import bcrypt
-from app.extensions import db
-from app.extensions import jwt
+from app.extensions import bcrypt, db, jwt
 
 
 @jwt.user_claims_loader
@@ -41,10 +39,12 @@ class UserModel(db.Model):
             email: str,
             password: str,
             username: str,
-            explain: str = None
+            explain: str = ""
     ):
         self.email = email
-        self.password = password
+        self.password = bcrypt.generate_password_hash(password)
+        self.username = username
+        self.explain: str = explain
 
     def delete_user(self):
         db.session.delete(self)
