@@ -92,7 +92,7 @@ class AccountService:
     def __init__(self, user_repository):
         self.user_repository: UserRepository = user_repository
 
-    def registry_user(self, email, username):
+    def register_user(self, email, username):
         self.abort_409_if_username_is_using(username)
         self.abort_409_if_email_is_using(email)
 
