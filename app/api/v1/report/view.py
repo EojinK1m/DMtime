@@ -12,8 +12,8 @@ from .schema import CommentReportSchema, CommentReportInputSchema
 from ..gallery.service import GalleryService
 from ..comment.service import CommentService
 
-from ...auth.service import TokenService
-from ...general.service import admin_required
+from app.api.v1.auth.service import TokenService
+from app.api.v1.general.service import admin_required
 
 
 def permission_required(fn):

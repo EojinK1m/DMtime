@@ -2,8 +2,7 @@ from flask import abort
 
 from app.extensions import db
 
-from app.api.v1.board.comment.model import CommentModel
-from app.api.v1.user.model import UserModel
+from app.api.v1.comment.model import CommentModel
 
 
 class CommentService:

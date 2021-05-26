@@ -3,7 +3,7 @@ from flask import abort
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 from app.extensions import db
-from app.api.v1.board.gallery.model import GalleryModel
+from app.api.v1.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
 
 

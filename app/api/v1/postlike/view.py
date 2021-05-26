@@ -1,15 +1,14 @@
-from flask import abort
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
-from app.api.v1.board.postlike.service import (
+from app.api.v1.postlike.service import (
     PostdislikeService,
     PostlikeService
 )
 from app.api.v1.user.service import UserService
-from app.api.v1.board.postlike.schema import (
+from app.api.v1.postlike.schema import (
     RequestPostlikeApiQueryParameterValidateSchema
 )
 

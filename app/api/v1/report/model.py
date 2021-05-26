@@ -29,7 +29,6 @@ class CommentReport(db.Model):
         db.session.delete(self)
 
 
-
 class PostReport(db.Model):
     __tablename__ = "post_report"
 

@@ -13,16 +13,10 @@ from app.util.request_validator import RequestValidator
 
 from app.api.v1.user.service import UserService, AccountService
 from app.api.v1.user.model import (
-    user_schema,
-    UserPutInputSchema,
-    AccountRegisterSchema,
     UserModel,
-    GetUsernameDuplicationSchema,
-    GetEmailDuplicationSchema,
-    DeleteUserSchema,
-    account_schema,
-    AccountChangePasswordInputSchema,
 )
+from .schema import user_schema, account_schema, UserPutInputSchema, AccountRegisterSchema, \
+    AccountChangePasswordInputSchema, GetEmailDuplicationSchema, GetUsernameDuplicationSchema, DeleteUserSchema
 from ..image.service import ImageService
 
 
