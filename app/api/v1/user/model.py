@@ -36,6 +36,16 @@ class UserModel(db.Model):
     def id(self, email):
         self.email = email
 
+    def __init__(
+            self,
+            email: str,
+            password: str,
+            username: str,
+            explain: str = None
+    ):
+        self.email = email
+        self.password = password
+
     def delete_user(self):
         db.session.delete(self)
 
