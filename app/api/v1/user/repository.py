@@ -1,6 +1,8 @@
+from ..base_classes import BaseRepository
 from .model import UserModel
 
-class UserRepository:
+
+class UserRepository(BaseRepository):
 
     @classmethod
     def get_user_by_username(cls, username):
@@ -9,9 +11,3 @@ class UserRepository:
     @classmethod
     def get_user_by_email(cls, email):
         return UserModel.query.filter_by(email=email).first()
-
-    def save(self, user):
-        pass
-
-    def delete_user(self, user):
-        pass
