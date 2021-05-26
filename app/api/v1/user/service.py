@@ -8,6 +8,8 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 
+import pickle
+
 from app.extensions import db, redis_client, email_sender
 from app.util import random_string_generator
 
@@ -15,6 +17,7 @@ from app.api.v1.user.model import UserModel
 from app.api.v1.image.service import ImageService
 
 from .repository import UserRepository
+
 
 class UserService:
     @staticmethod
@@ -89,14 +92,55 @@ class UserService:
 
 class AccountService:
 
-    def __init__(self, user_repository):
+    def __init__(self, user_repository, temp_saver, random_string_generator):
         self.user_repository: UserRepository = user_repository
+        self.temp_saver = temp_saver
+        self.random_string_generator = random_string_generator
 
-    def register_user(self, email, username):
-        self.abort_409_if_username_is_using(username)
+    def register_user_temporarily(self, email: str, password: str, username: str):
+        new_user = self.create_user(email, password, username)
+        verification_code = self.generate_verification_code()
+
+        self.store_user_with_verification_code_temporarily(new_user, verification_code)
+        self.send_verification_code_by_email(verification_code, email)
+
+    def create_user(self, email, password, username):
         self.abort_409_if_email_is_using(email)
+        self.abort_409_if_username_is_using(username)
 
+        return UserModel(
+            email=email,
+            password=password,
+            username=username
+        )
+    
+    def generate_verification_code(self):
+        return self.random_string_generator.generate_random_string()
 
+    def store_user_temporarily_with_verification_code(user, verification_code):
+        with redis_client.pipeline() as pipe:
+            pipe.mset({verification_code: pickle.dumps(user)})
+            pipe.expire(
+                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
+            )
+            pipe.execute()
+
+    def send_verification_code_by_email(self, verification_code, email):
+        mail_title = "[대마타임] 회원가입 인증 코드입니다."
+        mail = email_sender.make_mail(
+            subject=mail_title, message=verification_code
+        )
+
+        try:
+            email_sender.send_mail(to_email=email, message=mail)
+        except SMTPException:
+            abort(
+                500, "An error occurred while send e-mail, plz try again later"
+            )
+
+    def store_user_temporarily(user):
+        self.
+        
     def abort_409_if_username_is_using(self, username):
         if self.user_repository.get_user_by_username(username) is not None:
             abort(409)
@@ -104,6 +148,9 @@ class AccountService:
     def abort_409_if_email_is_using(self, email):
         if self.user_repository.get_user_by_email(email) is not None:
             abort(409)
+    
+    def store_user_temporarily(user):
+        
 
     # AccountService.check_exist_same_email(email)
     # AccountService.check_exist_same_username(username)
@@ -114,7 +161,6 @@ class AccountService:
     #     password=request.json.get("password"),
     # )
     # verification_code = AccountService.generate_verification_code()
-    #
     # self.store_account_data_with_verification_code(
     #     verification_code, new_user
     # )
