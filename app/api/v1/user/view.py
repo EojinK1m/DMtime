@@ -21,61 +21,22 @@ from ..image.service import ImageService
 
 
 class Users(Resource):
+    def __init__(self) -> None:
+        self.user_service = AccountService()
+
     def post(self):
         RequestValidator.validate_request(
             AccountRegisterSchema(), request.json
         )
-
         email = request.json.get("email")
+        password = request.json.get("password")
         username = request.json.get("username")
 
-        AccountService.check_exist_same_email(email)
-        AccountService.check_exist_same_username(username)
-
-        new_user = self.create_new_user(
-            username=username,
-            email=email,
-            password=request.json.get("password"),
+        self.user_service.register_user_temporarily(
+            email, password, username
         )
-        verification_code = AccountService.generate_verification_code()
-
-        self.store_account_data_with_verification_code(
-            verification_code, new_user
-        )
-        self.send_verification_code_by_email(verification_code, email)
 
         return {}, 201
-
-    def create_new_user(self, username, email, password):
-        return UserModel(
-            username=username,
-            email=email,
-            password_hash=bcrypt.generate_password_hash(password),
-        )
-
-    def send_verification_code_by_email(self, verification_code, email):
-        mail_title = "[대마타임] 회원가입 인증 코드입니다."
-        mail = email_sender.make_mail(
-            subject=mail_title, message=verification_code
-        )
-
-        try:
-            email_sender.send_mail(to_email=email, message=mail)
-        except SMTPException:
-            abort(
-                500, "An error occurred while send e-mail, plz try again later"
-            )
-
-    def store_account_data_with_verification_code(
-        self, verification_code, account
-    ):
-        with redis_client.pipeline() as pipe:
-            pipe.mset({verification_code: pickle.dumps(account)})
-            pipe.expire(
-                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
-            )
-            pipe.execute()
-
 
 class User(Resource):
     def get(self, username):
@@ -95,19 +56,19 @@ class User(Resource):
         explain = json["user_explain"]
         profile_image = json["profile_image"]
 
-        if profile_image is not None:
-            profile_image = ImageService.get_image_by_id(profile_image)
-        if user.username != username:
-            AccountService.check_exist_same_username(json["username"])
-
-        UserService.update_user(
-            user=user,
-            username=username,
-            explain=explain,
-            email=user.email,
-            profile_image=profile_image,
-            password_hash=user.password_hash,
-        )
+        # if profile_image is not None:
+        #     profile_image = ImageService.get_image_by_id(profile_image)
+        # if user.username != username:
+        #     AccountService.check_exist_same_username(json["username"])
+        #
+        # UserService.update_user(
+        #     user=user,
+        #     username=username,
+        #     explain=explain,
+        #     email=user.email,
+        #     profile_image=profile_image,
+        #     password_hash=user.password_hash,
+        # )
 
         return {}, 200
 
