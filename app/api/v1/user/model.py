@@ -26,6 +26,21 @@ class UserModel(db.Model):
     managing_gallery = db.relationship("GalleryModel", backref="manager")
     comments = db.relationship("CommentModel", backref="writer")
 
+    def __init__(
+            self,
+            email,
+            password,
+            username,
+            explain=""
+    ):
+        kwargs = {
+            email: email,
+            password: bcrypt.generate_password_hash(password),
+            username: username,
+            explain: explain
+        }
+        super().__init__(**kwargs)
+
     @property
     def id(self):
         return self.email
@@ -33,18 +48,6 @@ class UserModel(db.Model):
     @id.setter
     def id(self, email):
         self.email = email
-
-    def __init__(
-            self,
-            email: str,
-            password: str,
-            username: str,
-            explain: str = ""
-    ):
-        self.email = email
-        self.password = bcrypt.generate_password_hash(password)
-        self.username = username
-        self.explain: str = explain
 
     def delete_user(self):
         db.session.delete(self)
