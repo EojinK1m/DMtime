@@ -8,7 +8,7 @@ from .model import UserModel
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
-        model = UserModel()
+        model = UserModel
 
     username = ma.auto_field()
     explain = ma.auto_field()
