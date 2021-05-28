@@ -34,10 +34,10 @@ class UserModel(db.Model):
             explain=""
     ):
         kwargs = {
-            email: email,
-            password: bcrypt.generate_password_hash(password),
-            username: username,
-            explain: explain
+            "email": email,
+            "password_hash": bcrypt.generate_password_hash(password),
+            "username": username,
+            "explain": explain
         }
         super().__init__(**kwargs)
 
