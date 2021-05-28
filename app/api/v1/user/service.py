@@ -145,9 +145,6 @@ class AccountService:
                 500, "An error occurred while send e-mail, plz try again later"
             )
 
-        if self.user_repository.get_user_by_email(email) is not None:
-            abort(409)
-
     @staticmethod
     def check_exist_same_username(username):
         if UserModel.query.filter_by(username=username).first():
