@@ -10,31 +10,40 @@ from .post.view import (
     PostListUserWroteComment,
     PostListRequestUserWroteComment
 )
-from .gallery.view import Gallery, \
+from .gallery.view import (
+    Gallery,
     GalleryList
-from .report.view import \
-    CommentReport, \
-    CommentReports, \
+)
+from .report.view import (
+    CommentReport, 
+    CommentReports, 
     CommentReportsNestedInGallery
-from .comment.view import \
-    Comment, \
+)
+from .comment.view import (
+    Comment, 
     CommentList
-from .postlike.view import \
-    PostLike, \
+)
+from .postlike.view import (
+    PostLike, 
     PostDislike
-from .image.view import \
-    ImageUpload, \
+)
+from .image.view import (
+    ImageUpload, 
     Image
+)
 from .user.view import (
     User,
+    Users,
     Account,
     AccountPassword,
     DuplicateCheckEmail,
     DuplicateCheckUsername,
-    Users,
     Me
 )
-from app.api.v1.auth.view import Token, EmailVerificationCode
+from app.api.v1.auth.view import (
+    Token,
+    EmailVerificationCode
+)
 from app.api.v1.general import view
 
 
@@ -50,6 +59,7 @@ account_url = user_url + "/account"
 
 user_api_routes = {
     User: user_url,
+    Users: users_url,
     DuplicateCheckUsername: users_url + "/username-duplication",
     DuplicateCheckEmail: users_url + "/email-duplication",
     Account: account_url,
