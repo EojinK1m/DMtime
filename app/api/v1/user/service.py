@@ -92,9 +92,8 @@ class UserService:
 
 class AccountService:
 
-    def __init__(self, user_repository, temp_saver, random_string_generator):
-        self.user_repository: UserRepository = user_repository
-        self.temp_saver = temp_saver
+    def __init__(self):
+        self.user_repository: UserRepository = UserRepository()
         self.random_string_generator = random_string_generator
 
     def register_user_temporarily(self, email: str, password: str, username: str):
@@ -123,9 +122,9 @@ class AccountService:
             abort(409)
 
     def generate_verification_code(self):
-        return self.random_string_generator.generate_random_string()
+        return self.random_string_generator.generate_random_string(10)
 
-    def store_user_temporarily_with_verification_code(user, verification_code):
+    def store_user_temporarily_with_verification_code(self, user, verification_code):
         with redis_client.pipeline() as pipe:
             pipe.mset({verification_code: pickle.dumps(user)})
             pipe.expire(
