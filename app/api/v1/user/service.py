@@ -122,7 +122,13 @@ class AccountService:
             abort(409)
 
     def generate_verification_code(self):
-        return self.random_string_generator.generate_random_string(10)
+        while True:
+            temp_code = (
+                random_string_generator.generate_verification_code()
+            )
+
+            if not (redis_client.exists(temp_code)):
+                return temp_code
 
     def store_user_temporarily_with_verification_code(self, user, verification_code):
         with redis_client.pipeline() as pipe:
@@ -144,49 +150,6 @@ class AccountService:
             abort(
                 500, "An error occurred while send e-mail, plz try again later"
             )
-
-    @staticmethod
-    def check_exist_same_username(username):
-        if UserModel.query.filter_by(username=username).first():
-            abort(409, "same username exist")
-
-    @staticmethod
-    def check_exist_same_email(email):
-        if UserModel.query.filter_by(email=email).first():
-            abort(409, "same email exist")
-
-    @staticmethod
-    def store_register_data_temporally(verification_code, data):
-        with redis_client.pipeline() as pipe:
-            pipe.mset({verification_code: json.dumps(data)})
-            pipe.expire(
-                verification_code, current_app.config["EMAIL_VERIFY_DEADLINE"]
-            )
-            pipe.execute()
-
-    @staticmethod
-    def send_verification_by_email(verification_code, to_send_email):
-        mail_title = "[대마타임] 회원가입 인증 코드입니다."
-        mail = email_sender.make_mail(
-            subject=mail_title, message=verification_code
-        )
-
-        try:
-            email_sender.send_mail(to_email=to_send_email, message=mail)
-        except SMTPException as e:
-            abort(
-                500, "An error occurred while send e-mail, plz try again later"
-            )
-
-    @staticmethod
-    def generate_verification_code():
-        while True:
-            temp_code = (
-                random_string_generator.generate_verification_code()
-            )
-
-            if not (redis_client.exists(temp_code)):
-                return temp_code
 
     @staticmethod
     def validate_verification_code(code):
