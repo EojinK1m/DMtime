@@ -148,7 +148,7 @@ def create_temp_account(app, session):
         temp_user = UserModel(
             email=email,
             username=username,
-            password_hash=bcrypt.generate_password_hash(password),
+            password=password,
             explain=user_explain,
         )
 
