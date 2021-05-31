@@ -52,6 +52,7 @@ class GalleryList(Resource):
 
 
 class Gallery(Resource):
+    @jwt_required
     def get(self, gallery_id):
         gallery = GalleryService.get_gallery_by_id(gallery_id)
 
