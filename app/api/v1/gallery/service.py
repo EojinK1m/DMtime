@@ -5,6 +5,8 @@ from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from app.extensions import db
 from app.api.v1.gallery.model import GalleryModel
 from app.api.v1.user.model import UserModel
+from ..user.repository import UserRepository
+from app.api.v1.general.service import get_user_from_token
 
 
 class GalleryListService:
@@ -65,6 +67,9 @@ class GalleryListService:
 
 
 class GalleryService:
+    def __init__(self):
+        self.user_repository = UserRepository()
+
     class gallery_manager_required:
         """
         Check what user who send request is manager of gallery.
@@ -117,3 +122,17 @@ class GalleryService:
             abort(404, f"Gallery{gallery_id} is not found.")
 
         return gallery
+
+    def get_gallery(self, gallery_id, email):
+        gallery = GalleryService.get_gallery_by_id(gallery_id)
+        user = self.user_repository.get_user_by_email(email)
+
+        is_mine = self.is_user_has_authority_about_gallery(gallery, user)
+
+        return gallery, is_mine
+
+    @classmethod
+    def is_user_has_authority_about_gallery(cls, gallery, user):
+        return gallery.is_manager(user) or user.is_admin()
+
+

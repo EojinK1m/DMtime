@@ -54,9 +54,14 @@ class GalleryList(Resource):
 class Gallery(Resource):
     @jwt_required
     def get(self, gallery_id):
-        gallery = GalleryService.get_gallery_by_id(gallery_id)
+        request_user_email = get_jwt_identity()
 
-        return gallery_schema.dump(gallery), 200
+        gallery, is_mine = GalleryService().get_gallery(gallery_id, request_user_email)
+
+        response = gallery_schema.dump(gallery)
+        response['is_mine'] = is_mine
+
+        return response, 200
 
     @GalleryService.gallery_manager_required
     def patch(self, gallery_id):
