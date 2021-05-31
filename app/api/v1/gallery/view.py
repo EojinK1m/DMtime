@@ -5,13 +5,10 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.util.request_validator import RequestValidator
 from app.api.v1.gallery.service import GalleryService, GalleryListService
 from app.api.v1.gallery.model import (
-    GALLERY_TYPES,
-    galleries_schema,
-    gallery_schema,
-    GetGalleriesQueryParameterValidateSchema,
-    PostGalleryValidateSchema,
-    PatchGalleryValidateSchema
+    GALLERY_TYPES
 )
+from app.api.v1.gallery.schema import gallery_schema, galleries_schema, GetGalleriesQueryParameterValidateSchema, \
+    PostGalleryValidateSchema, PatchGalleryValidateSchema
 from app.api.v1.general.service import verify_admin_jwt_in_request
 from app.api.v1.user.service import AccountService
 
