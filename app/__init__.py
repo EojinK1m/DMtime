@@ -1,5 +1,5 @@
 from flask import Flask
-from .extentions import (
+from .extensions import (
     file_saver,
     ma,
     db,
