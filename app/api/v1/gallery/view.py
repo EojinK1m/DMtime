@@ -1,10 +1,10 @@
-from flask import make_response, request, abort
+from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.util.request_validator import RequestValidator
-from app.api.v1.board.gallery.service import GalleryService, GalleryListService
-from app.api.v1.board.gallery.model import (
+from app.api.v1.gallery.service import GalleryService, GalleryListService
+from app.api.v1.gallery.model import (
     GALLERY_TYPES,
     galleries_schema,
     gallery_schema,

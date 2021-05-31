@@ -5,7 +5,7 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 
 from app.extensions import db
-from app.api.v1.board.post.model import (
+from app.api.v1.post.model import (
     PostModel,
     posts_schema,
     post_schema,
@@ -18,7 +18,7 @@ from app.api.v1.board.post.model import (
 from ..comment.model import CommentModel
 from app.api.v1.user.model import UserModel
 
-from app.api.v1.board.gallery.model import GalleryModel
+from app.api.v1.gallery.model import GalleryModel
 
 from app.api.v1.image.service import ImageService
 from ..postlike.model import PostlikeModel

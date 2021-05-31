@@ -2,8 +2,8 @@ import pytest
 
 from app import create_app
 from config import TestConfig
-from app.extentions import db as _db
-from app.extentions import redis_client as _redis_client
+from app.extensions import db as _db
+from app.extensions import redis_client as _redis_client
 from sqlalchemy import event
 
 
@@ -127,7 +127,7 @@ def create_temp_image(app, session):
 @pytest.fixture
 def create_temp_account(app, session):
     from app.api.v1.user.model import UserModel
-    from app.extentions import bcrypt
+    from app.extensions import bcrypt
 
     def create_temp_account_(profile_image=None, is_admin=False):
         email = f"test_account_{create_temp_account_.number}@dsm.hs.kr"
@@ -148,7 +148,7 @@ def create_temp_account(app, session):
         temp_user = UserModel(
             email=email,
             username=username,
-            password_hash=bcrypt.generate_password_hash(password),
+            password=password,
             explain=user_explain,
         )
 
@@ -168,7 +168,7 @@ def create_temp_account(app, session):
 
 @pytest.fixture()
 def create_temp_gallery(app, session, create_temp_account):
-    from app.api.v1.board.gallery.model import GalleryModel
+    from app.api.v1.gallery.model import GalleryModel
 
     def create_temp_gallery_(manager_user=None, gallery_type=1):
         if manager_user == None:
@@ -198,7 +198,7 @@ def create_temp_gallery(app, session, create_temp_account):
 
 @pytest.fixture()
 def create_temp_post(app, session):
-    from app.api.v1.board.post.model import PostModel
+    from app.api.v1.post.model import PostModel
 
     def create_temp_post_(
         uploader_id,
@@ -236,7 +236,7 @@ def create_temp_post(app, session):
 
 @pytest.fixture()
 def create_temp_comment(app, session):
-    from app.api.v1.board.comment.model import CommentModel
+    from app.api.v1.comment.model import CommentModel
 
     def create_temp_comment_(
         wrote_user_id, wrote_post_id, is_anonymous=False, upper_comment_id=None
@@ -269,7 +269,7 @@ def create_temp_comment(app, session):
 
 @pytest.fixture
 def create_temp_postlike(app, session):
-    from app.api.v1.board.post.model import PostlikeModel
+    from app.api.v1.postlike.model import PostlikeModel
 
     def create_temp_postlike_(post_id, liker_id):
         temp_postlike = PostlikeModel(post_id=post_id, liker_id=liker_id)
@@ -287,7 +287,7 @@ def create_temp_postlike(app, session):
 
 @pytest.fixture
 def create_temp_postdislike(app, session):
-    from app.api.v1.board.post.model import PostdislikeModel
+    from app.api.v1.post.model import PostdislikeModel
 
     def create_temp_postdislike_(post_id, liker_id):
         temp_postdislike = PostdislikeModel(post_id=post_id, liker_id=liker_id)
@@ -305,7 +305,7 @@ def create_temp_postdislike(app, session):
 
 @pytest.fixture
 def create_temp_report(app, session):
-    from app.api.v1.board.gallery.report.model import ReportModel, ContentType
+    from app.api.v1.gallery.report.model import ReportModel, ContentType
 
     def create_temp_report_(
         reported_user_id,
@@ -352,7 +352,7 @@ def create_temp_register_account(app, session, redis_client):
     from app.util import random_string_generator
     from app.api.v1.user.model import UserModel
     from app.api.v1.user.view import Users
-    from app.extentions import bcrypt
+    from app.extensions import bcrypt
 
     def create_temp_register_account_():
         email = (
@@ -385,7 +385,7 @@ def create_temp_register_account(app, session, redis_client):
 
 @pytest.fixture
 def create_temp_post_report(app, session):
-    from app.api.v1.board.report.model import PostReport
+    from app.api.v1.report.model import PostReport
 
     def create_temp_post_report_(user, post, reason=1, detail_reason='None'):
         if not detail_reason:
@@ -410,7 +410,7 @@ def create_temp_post_report(app, session):
 
 @pytest.fixture
 def create_temp_comment_report(app, session):
-    from app.api.v1.board.report.model import CommentReport
+    from app.api.v1.report.model import CommentReport
 
     def create_temp_comment_report_(user, comment, reason=1, detail_reason='None'):
         if not detail_reason:

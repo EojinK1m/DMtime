@@ -5,8 +5,8 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
-from app.api.v1.board.comment.service import CommentService, CommentListService
-from app.api.v1.board.comment.model import (
+from app.api.v1.comment.service import CommentService, CommentListService
+from app.api.v1.comment.model import (
     comments_schema,
     CommentInputSchema,
     PostCommentParameterSchema,
@@ -15,7 +15,7 @@ from app.api.v1.board.comment.model import (
         #     abort(400, "post_id and username cant be given together, u must give one of both")
         # elif post_id is None and username is None:
         #     abort(400, "Parameter missed")
-from app.api.v1.board.post.service import PostService
+from app.api.v1.post.service import PostService
 from app.api.v1.user.service import UserService
 from app.api.v1.user.service import AccountService
 

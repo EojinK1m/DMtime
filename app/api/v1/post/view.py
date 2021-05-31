@@ -1,17 +1,17 @@
 from datetime import datetime
 
-from flask import request, abort
+from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
 from app.extensions import db
-from app.api.v1.board.post.service import (
+from app.api.v1.post.service import (
     PostService,
     PostListService
 )
-from app.api.v1.board.post.model import (
+from app.api.v1.post.model import (
     posts_schema,
     post_schema,
     PostGetQueryParameterValidateSchema,
@@ -19,11 +19,11 @@ from app.api.v1.board.post.model import (
     PostResourceQueryParameterValidateSchema,
     PostPatchInputValidateSchema,
 )
-from app.api.v1.board.gallery.service import GalleryService
+from app.api.v1.gallery.service import GalleryService
 from app.api.v1.user.service import AccountService
 from app.api.v1.user.service import UserService
 from app.api.v1.image.service import ImageService
-from ...auth.service import TokenService
+from app.api.v1.auth.service import TokenService
 
 
 class PostList(Resource):

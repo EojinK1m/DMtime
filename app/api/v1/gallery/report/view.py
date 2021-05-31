@@ -1,14 +1,14 @@
-from flask import make_response, request, abort
+from flask import request, abort
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.util.request_validator import RequestValidator
 
-from app.api.v1.board.gallery.report.service import (
+from app.api.v1.gallery.report.service import (
     ReportService,
     ReportListService,
 )
-from app.api.v1.board.gallery.report.model import (
+from app.api.v1.gallery.report.model import (
     ContentType,
     ReportPostInputSchema,
     ReportCommentInputSchema,
@@ -18,10 +18,10 @@ from app.api.v1.board.gallery.report.model import (
     post_report_schema,
 )
 
-from app.api.v1.board.gallery.service import GalleryService
-from app.api.v1.board.post.service import PostService
+from app.api.v1.gallery.service import GalleryService
+from app.api.v1.post.service import PostService
 from app.api.v1.user.service import AccountService
-from app.api.v1.board.comment.service import CommentService
+from app.api.v1.comment.service import CommentService
 
 
 class Report(Resource):

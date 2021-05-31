@@ -96,7 +96,7 @@ class PostSchema(ma.SQLAlchemySchema):
                 "profile_image": None
             }
         else:
-            from app.api.v1.user.model import UserSchema
+            from ..user.schema import UserSchema
 
             return UserSchema(only=["username", "profile_image"]).dump(obj.uploader)
 

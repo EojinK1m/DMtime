@@ -1,22 +1,16 @@
-from werkzeug import exceptions
 from flask import jsonify, abort
-from flask_jwt_extended import get_jwt_identity
 
 from app.extensions import db
-from app.api.v1.board.gallery.report.model import (
+from app.api.v1.gallery.report.model import (
     ReportModel,
     reports_schema,
-    comment_report_schema,
-    post_report_schema,
     ReportInputSchema,
     ReportCommentInputSchema,
     ReportPostInputSchema,
     ContentType,
 )
-from app.api.v1.user.model import UserModel
-from app.api.v1.board.gallery.service import GalleryService
-from app.api.v1.board.comment.service import CommentService
-from app.api.v1.board.post.service import PostService
+from app.api.v1.comment.service import CommentService
+from app.api.v1.post.service import PostService
 
 
 class ReportService:

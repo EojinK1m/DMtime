@@ -2,7 +2,7 @@ from flask import abort
 
 from app.extensions import db
 
-from app.api.v1.board.postlike.model import PostlikeModel, PostdislikeModel
+from app.api.v1.postlike.model import PostlikeModel, PostdislikeModel
 
 
 class PostlikeService():

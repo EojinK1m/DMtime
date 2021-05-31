@@ -21,10 +21,7 @@ from sqlalchemy.sql import text
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
-
-    from app.api.v1 import v1_blueprint
-
-    app.register_blueprint(v1_blueprint, url_prefix="/api/v1")
+    import_models()
 
     db.init_app(app)
     ma.init_app(app)
@@ -37,8 +34,12 @@ def create_app(config):
     wait_db_ready(app)
     wait_redis_ready(app)
 
+
     with app.app_context():
         db.create_all()
+
+    from app.api.v1 import v1_blueprint
+    app.register_blueprint(v1_blueprint, url_prefix="/api/v1")
 
     return app
 
@@ -79,3 +80,14 @@ def wait_redis_ready(app):
             continue
         except Exception as e:
             raise e
+
+
+def import_models():
+    import app.api.v1.user.model
+
+    import app.api.v1.gallery.model
+    import app.api.v1.image.model
+    import app.api.v1.post.model
+    import app.api.v1.report.model
+    import app.api.v1.comment.model
+    import app.api.v1.postlike.model
