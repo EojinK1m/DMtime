@@ -13,16 +13,10 @@ class GallerySchema(ma.SQLAlchemySchema):
     explain = ma.auto_field()
     gallery_id = ma.auto_field()
     gallery_type = ma.auto_field()
-    is_mine = ma.Method(serialize="get_is_mine")
-
-    def get_is_mine(self, obj: GalleryModel):
-        request_user = get_user_from_token()
-
-        return obj.is_manager(request_user) or request_user.is_admin()
 
 
 gallery_schema = GallerySchema()
-galleries_schema = GallerySchema(many=True, exclude=['is_mine'])
+galleries_schema = GallerySchema(many=True)
 
 
 class GetGalleriesQueryParameterValidateSchema(ma.Schema):
