@@ -1,6 +1,18 @@
 from flask.blueprints import Blueprint
 from flask_restful import Api
 
+
+
+import app.api.v1.gallery.model
+import app.api.v1.post.model
+
+import app.api.v1.comment.model
+import app.api.v1.user.model
+import app.api.v1.image.model
+import app.api.v1.report.model
+import app.api.v1.postlike.model
+
+
 from .post.view import (
     Post,
     PostList,
