@@ -1,4 +1,3 @@
-from app.api.v1.post.view import PostList
 import math
 from datetime import datetime, timedelta
 
@@ -411,7 +410,7 @@ class PostListService:
         per_page=20,
     ):
         if(gallery and gallery.gallery_id is "recommand"):
-            return PostList.get_recommand_post_list()
+            return PostListService.get_recommand_post_list()
 
         query = PostModel
 
