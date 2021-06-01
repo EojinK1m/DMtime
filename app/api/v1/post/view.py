@@ -1,3 +1,4 @@
+from app.api.v1.user.model import UserModel
 from datetime import datetime
 
 from flask import request
@@ -110,8 +111,11 @@ class Post(Resource):
     @jwt_required
     def get(self, post_id):
         post = PostService.get_post_by_post_id(post_id)
-
         post.increase_view()
+
+        from ..general.service import get_user_from_token
+        user = get_user_from_token()
+        user.read_posts.add(post.id)
 
         return post_schema.dump(post), 200
 

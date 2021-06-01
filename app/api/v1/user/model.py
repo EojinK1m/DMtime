@@ -1,5 +1,5 @@
 from flask import current_app
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token\
 
 from app.extensions import bcrypt, db, jwt
 
@@ -39,6 +39,9 @@ class UserModel(db.Model):
             "username": username,
             "explain": explain
         }
+        
+        self.read_posts = set()
+
         super().__init__(**kwargs)
 
     @property

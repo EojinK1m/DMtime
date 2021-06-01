@@ -1,3 +1,4 @@
+from app.api.v1.post.view import PostList
 import math
 from datetime import datetime, timedelta
 
@@ -409,13 +410,15 @@ class PostListService:
         page=1,
         per_page=20,
     ):
-        query = PostModel.query
+        if(gallery and gallery.gallery_id is "recommand"):
+            return PostList.get_recommand_post_list()
+
+        query = PostModel
 
         if user:
             query = query.filter_by(uploader_id=user.email)
-
         if gallery:
-            query = query.filter_by(gallery_id=gallery.id)
+            query = query.filter_by(gallery_id=gallery.id)        
 
         paged_posts = query\
             .order_by(PostModel.posted_datetime.desc())\
@@ -450,3 +453,11 @@ class PostListService:
             .order_by(PostModel.posted_datetime.desc()) \
             .paginate(per_page=per_page, page=page)
 
+    @staticmethod
+    def get_recommanmd_post_list(user):
+        posts = set()
+
+        for id in user.read_posts:
+            posts.add(recommand(id))
+
+        return posts
