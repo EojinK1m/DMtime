@@ -47,28 +47,15 @@ class User(Resource):
 
     @UserService.user_access_authorize_required
     def put(self, username):
-        user = UserService.get_user_by_username(username)
         json = request.json
-
         RequestValidator.validate_request(UserPutInputSchema(), json)
 
-        username = json["username"]
-        explain = json["user_explain"]
-        profile_image = json["profile_image"]
-
-        # if profile_image is not None:
-        #     profile_image = ImageService.get_image_by_id(profile_image)
-        # if user.username != username:
-        #     AccountService.check_exist_same_username(json["username"])
-        #
-        # UserService.update_user(
-        #     user=user,
-        #     username=username,
-        #     explain=explain,
-        #     email=user.email,
-        #     profile_image=profile_image,
-        #     password_hash=user.password_hash,
-        # )
+        UserService().update_user(
+            username=username,
+            new_username=json['username'],
+            explain=json['user_explain'],
+            profile_image=json['profile_image']
+        )
 
         return {}, 200
 

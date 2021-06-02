@@ -20,6 +20,9 @@ from .repository import UserRepository
 
 
 class UserService:
+    def __init__(self):
+        self.user_repository = UserRepository()
+
     @staticmethod
     def get_user_by_username(username):
         find_user = UserModel.query.filter_by(username=username).first()
@@ -44,18 +47,29 @@ class UserService:
     def get_user_by_email_or_none(email):
         return UserModel.query.filter_by(email=email).first()
 
-    @staticmethod
     def update_user(
-        user, email, password_hash, username, explain, profile_image
+        self, username, new_username, explain, profile_image
     ):
-        user.email = email
-        user.password_hash = password_hash
-        user.username = username
-        user.explain = explain
-        user.profile_image = profile_image
+        user = self.user_repository.get_user_by_username(username)
+        image = ImageService.get_image_by_id(profile_image) if profile_image else None
 
-        db.session.flush()
+        self.update_username(user, new_username)
+        self.update_profile_image(user, image)
+        user.explain = explain
+
+        self.user_repository.add(user)
         return user
+
+    @classmethod
+    def update_username(cls, user, new_username):
+        if new_username != user.username:
+            AccountService().abort_409_if_username_is_using(new_username)
+            user.username = new_username
+
+    @classmethod
+    def update_profile_image(cls, user, image):
+        if user.profile_image != image:
+            user.profile_image = image
 
     @staticmethod
     def delete_user(user):
