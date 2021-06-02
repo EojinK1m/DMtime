@@ -63,7 +63,8 @@ user_api_routes = {
     DuplicateCheckUsername: users_url + "/username-duplication",
     DuplicateCheckEmail: users_url + "/email-duplication",
     Account: account_url,
-    AccountPassword: account_url + '/password'
+    AccountPassword: account_url + '/password',
+    Me: '/me'
 }
 
 board_api_routes = {
