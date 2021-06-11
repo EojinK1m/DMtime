@@ -170,13 +170,14 @@ def create_temp_account(app, session):
 def create_temp_gallery(app, session, create_temp_account):
     from app.api.v1.gallery.model import GalleryModel
 
-    def create_temp_gallery_(manager_user=None, gallery_type=1):
+    def create_temp_gallery_(manager_user=None, gallery_type=1, gallery_id=""):
         if manager_user == None:
             manager_user = create_temp_account()
 
         name = f"test_gallery{create_temp_gallery_.number}_name"
         explain = f"test_gallery{create_temp_gallery_.number}_explain"
-        gallery_id = f"test_gallery{create_temp_gallery_.number}_id"
+        if not gallery_id:
+            gallery_id = f"test_gallery{create_temp_gallery_.number}_id"
 
         temp_gallery = GalleryModel(
             name=name,
